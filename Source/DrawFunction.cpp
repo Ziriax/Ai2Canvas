@@ -22,6 +22,7 @@
 
 #include "IllustratorSDK.h"
 #include "DrawFunction.h"
+#include "IndentableStream.h"
 
 using namespace CanvasExport;
 
@@ -240,32 +241,34 @@ void DrawFunction::RenderDrawFunctionCall(const AIRealRect& documentBounds)
 // Render a drawing function
 void DrawFunction::RenderDrawFunction(const AIRealRect& documentBounds)
 {
+	outDeclarationFile << "export function " << name << "(ctx: CanvasRenderingContext2D);" << endl;
+
 	// Begin function block
-	outFile << "\n\n    function " << name << "(ctx) {";
+	outFile << "aiAsset." << name << " = function(ctx) {" << endl << indent;
 
 	// Need a blank line?
 	if (hasAlpha || hasGradients || hasPatterns)
 	{
-		outFile << "\n";
+		outFile << endl;
 	}
 
 	// Does this draw function have alpha changes?
 	if (hasAlpha)
 	{
 		// Grab the alpha value (so we can use it to compute new globalAlpha values during this draw function)
-		outFile << "\n" << Indent(0) << "var alpha = ctx.globalAlpha;";
+		outFile << "var alpha = ctx.globalAlpha;" << endl;
 	}
 
 	// Will we be encountering gradients?
 	if (hasGradients)
 	{
-		outFile << "\n" << Indent(0) << "var gradient;";
+		outFile << "var gradient;";
 	}
 
 	// Will we be encountering patterns?
 	if (hasPatterns)
 	{
-		outFile << "\n" << Indent(0) << "var pattern;";
+		outFile << "var pattern;";
 	}
 
 	/// Re-set matrix based on document
@@ -295,7 +298,7 @@ void DrawFunction::RenderDrawFunction(const AIRealRect& documentBounds)
 		// TODO: Note that this only rasterizes the first associated layer. What if this has multiple layers?
 
 		// Output layer name
-		outFile << "\n\n" << Indent(1) << "// " << name;
+		outFile << "// " << name;
 
 		canvas->RenderUnsupportedArt(layers[0]->artHandle, rasterizeFileName, 1);
 	}
@@ -313,7 +316,7 @@ void DrawFunction::RenderDrawFunction(const AIRealRect& documentBounds)
 	}
 
 	// End function block
-	outFile << "\n    }";
+	outFile << endl << undent << "};" << endl;
 }
 
 // Output repositioning translation for a draw function

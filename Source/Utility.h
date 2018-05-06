@@ -33,7 +33,8 @@
 namespace CanvasExport
 {
 	// Globals
-	extern ofstream outFile;
+	extern std::ostream& outFile;
+	extern std::ostream& outDeclarationFile;
 	extern bool debug;
 
 	bool OpenFile(const std::string& filePath);

@@ -21,14 +21,14 @@
 // THE SOFTWARE.
 
 #include "IllustratorSDK.h"
-#include "Document.h"
+#include "HtmlDocument.h"
 
 // Current plug-in version
 #define PLUGIN_VERSION "1.3"
 
 using namespace CanvasExport;
 
-Document::Document(const std::string& pathName)
+HtmlDocument::HtmlDocument(const std::string& pathName)
 {
 	// Initialize Document
 	this->canvas = NULL;
@@ -42,7 +42,7 @@ Document::Document(const std::string& pathName)
 	this->canvas = canvases.Add("canvas", "ctx", &resources);
 }
 
-Document::~Document()
+HtmlDocument::~HtmlDocument()
 {
 	// Clear layers
 	for (unsigned int i = 0; i < layers.size(); i++)
@@ -52,7 +52,7 @@ Document::~Document()
 	}
 }
 
-void Document::Render()
+void HtmlDocument::Render()
 {
 	// Document type
 	outFile << "<!DOCTYPE html>";
@@ -162,7 +162,7 @@ void Document::Render()
 }
 
 // Set the bounds for the primary document
-void Document::SetDocumentBounds()
+void HtmlDocument::SetDocumentBounds()
 {
 	// Set default bounds
 	// Start with maximums and minimums, so any value will cause them to be set
@@ -196,7 +196,7 @@ void Document::SetDocumentBounds()
 }
 
 // Find the base folder path and filename
-void Document::ParseFolderPath(const std::string& pathName)
+void HtmlDocument::ParseFolderPath(const std::string& pathName)
 {
 	// Construct a FilePath
 	ai::UnicodeString usPathName(pathName);
@@ -208,7 +208,7 @@ void Document::ParseFolderPath(const std::string& pathName)
 }
 
 // Parse the layers
-void Document::ParseLayers()
+void HtmlDocument::ParseLayers()
 {
 	// Loop through all layers
 	for (unsigned int i = 0; i < layers.size(); i++)
@@ -275,7 +275,7 @@ void Document::ParseLayers()
 	functions.BindTriggers();
 }
 
-bool Document::HasAnimationOption(const std::vector<std::string>& options)
+bool HtmlDocument::HasAnimationOption(const std::vector<std::string>& options)
 {
 	bool result = false;
 
@@ -325,7 +325,7 @@ bool Document::HasAnimationOption(const std::vector<std::string>& options)
 }
 
 // Parses an individual layer name/options
-void Document::ParseLayerName(const Layer& layer, std::string& name, std::string& optionValue)
+void HtmlDocument::ParseLayerName(const Layer& layer, std::string& name, std::string& optionValue)
 {
 	// We may need to modify the functionName
 	AIBoolean hasFunctionName = false;
@@ -376,7 +376,7 @@ void Document::ParseLayerName(const Layer& layer, std::string& name, std::string
 }
 
 // Render the document
-void Document::RenderDocument()
+void HtmlDocument::RenderDocument()
 {
 	// Set document bounds
 	SetDocumentBounds();
@@ -504,7 +504,7 @@ void Document::RenderDocument()
 	RenderPatternFunction();
 }
 
-void Document::RenderAnimations()
+void HtmlDocument::RenderAnimations()
 {
 	// Is there any animation in this document (paths or rotation?)
 	if (hasAnimation)
@@ -542,7 +542,7 @@ void Document::RenderAnimations()
 }
 
 // Set the options for a draw or animation function
-void Document::SetFunctionOptions(const std::vector<std::string>& options, Function& function)
+void HtmlDocument::SetFunctionOptions(const std::vector<std::string>& options, Function& function)
 {
 	// Loop through options
 	for (unsigned int i = 0; i < options.size(); i++)
@@ -608,7 +608,7 @@ void Document::SetFunctionOptions(const std::vector<std::string>& options, Funct
 //   Track maximum bounds of visible artwork per layer
 //   Track pattern fills used by visible artwork
 //   Track if gradient fills are used by visible artwork per layer
-void Document::ScanDocument()
+void HtmlDocument::ScanDocument()
 {
 	AILayerHandle layerHandle = NULL;
 	ai::int32 layerCount = 0;
@@ -643,7 +643,7 @@ void Document::ScanDocument()
 	}
 }
 
-void Document::ScanLayer(Layer& layer)
+void HtmlDocument::ScanLayer(Layer& layer)
 {
 	// Get the first art in this layer
 	AIArtHandle artHandle = NULL;
@@ -657,7 +657,7 @@ void Document::ScanLayer(Layer& layer)
 }
 
 // Scans a layer's artwork tree to capture important data
-void Document::ScanLayerArtwork(AIArtHandle artHandle, unsigned int depth, Layer& layer)
+void HtmlDocument::ScanLayerArtwork(AIArtHandle artHandle, unsigned int depth, Layer& layer)
 {
 	// Loop through all artwork at this depth
 	do
@@ -816,7 +816,7 @@ void Document::ScanLayerArtwork(AIArtHandle artHandle, unsigned int depth, Layer
 }
 
 // Creates the JavaScript animation file (if it doesn't already exist)
-void Document::CreateAnimationFile()
+void HtmlDocument::CreateAnimationFile()
 {
 	// Full path to JavaScript animation support file
 	std::string fullPath = resources.folderPath + "Ai2CanvasAnimation.js";
@@ -850,14 +850,14 @@ void Document::CreateAnimationFile()
 	}
 }
 
-void Document::OutputScriptHeader(ofstream& file)
+void HtmlDocument::OutputScriptHeader(ofstream& file)
 {
 	file <<     "// Ai2CanvasAnimation.js Version " << PLUGIN_VERSION;
 	file <<   "\n// Animation support for the Ai->Canvas Export Plug-In";
 	file <<   "\n// By Mike Swanson (http://blog.mikeswanson.com/)";
 }
 
-void Document::OutputClockFunctions(ofstream& file)
+void HtmlDocument::OutputClockFunctions(ofstream& file)
 {
 	file << "\n\n// Create a shared standard clock";
 	file <<   "\nvar timeProvider = new standardClock();";
@@ -1101,7 +1101,7 @@ void Document::OutputClockFunctions(ofstream& file)
 	file <<   "\n};";
 }
 
-void Document::OutputAnimationFunctions(ofstream& file)
+void HtmlDocument::OutputAnimationFunctions(ofstream& file)
 {
 	// Animation path support functions
 	file << "\n\n// Updates animation path";
@@ -1251,7 +1251,7 @@ void Document::OutputAnimationFunctions(ofstream& file)
 	file <<   "\n}";
 }
 
-void Document::OutputTimingFunctions(ofstream& file)
+void HtmlDocument::OutputTimingFunctions(ofstream& file)
 {
 	// Timing functions
 	file << "\n\n// Penner timing functions";
@@ -1399,7 +1399,7 @@ void Document::OutputTimingFunctions(ofstream& file)
 	file <<   "\n}";
 }
 
-void Document::RenderSymbolFunctions()
+void HtmlDocument::RenderSymbolFunctions()
 {
 	// Do we have symbol functions to render?
 	if (canvas->documentResources->patterns.HasSymbols())
@@ -1485,7 +1485,7 @@ void Document::RenderSymbolFunctions()
 	}
 }
 
-void Document::RenderPatternFunction()
+void HtmlDocument::RenderPatternFunction()
 {
 	// Do we have pattern functions to render?
 	if (canvas->documentResources->patterns.HasPatterns())
@@ -1581,7 +1581,7 @@ void Document::RenderPatternFunction()
 	}
 }
 
-void Document::DebugInfo()
+void HtmlDocument::DebugInfo()
 {
 	outFile << "\n\n<p>This document has been exported in debug mode.</p>";
 
@@ -1595,7 +1595,7 @@ void Document::DebugInfo()
 	functions.DebugInfo();
 }
 
-void Document::DebugClockJS()
+void HtmlDocument::DebugClockJS()
 {
 	outFile << "\n\n    // Debug clock";
 	outFile <<   "\n    function debugClock() {";
@@ -1637,7 +1637,7 @@ void Document::DebugClockJS()
     outFile <<   "\n    }";
 }
 
-void Document::DebugAnimationPathJS()
+void HtmlDocument::DebugAnimationPathJS()
 {
 	outFile << "\n\n    function plotAnchorPoints(ctx) {";
 

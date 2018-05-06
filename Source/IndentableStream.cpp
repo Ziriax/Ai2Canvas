@@ -1,6 +1,6 @@
-// ImageCollection.h
+// IndentableStream.cpp
 //
-// Copyright (c) 2010-2014 Mike Swanson (http://blog.mikeswanson.com)
+// Copyright (c) 2018- Peter Verswyvelen (http://github.com/Ziriax)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,37 +20,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef IMAGECOLLECTION_H
-#define IMAGECOLLECTION_H
-
 #include "IllustratorSDK.h"
-#include "Image.h"
-#include "Utility.h"
+#include "IndentableStream.h"
 
 namespace CanvasExport
 {
-	// Globals
-	extern std::ostream& outFile;
-	extern bool debug;
-
-	/// Represents a collection of images
-	class ImageCollection
+	IndentationBuffer::IndentationBuffer(std::streambuf* sbuf)
+		: m_streamBuffer(sbuf)
+		, m_indentationLevel(0)
+		, m_shouldIndent(true)
 	{
-	private:
+	}
 
-		std::vector<Image*>		images;				// Collection of image pointers
+	std::basic_streambuf<char>::int_type IndentationBuffer::overflow(const int_type c)
+	{
+		if (traits_type::eq_int_type(c, traits_type::eof()))
+			return m_streamBuffer->sputc(c);
 
-	public:
+		if (m_shouldIndent)
+		{
+			fill_n(std::ostreambuf_iterator<char>(m_streamBuffer), m_indentationLevel, '\t');
+			m_shouldIndent = false;
+		}
 
-		ImageCollection();
-		~ImageCollection();
+		if (traits_type::eq_int_type(m_streamBuffer->sputc(c), traits_type::eof()))
+			return traits_type::eof();
 
-		void					Render();
-		Image*					Add(const std::string& path);
-		Image*					Find(const std::string& path);
-		void					DebugInfo();
+		if (traits_type::eq_int_type(c, traits_type::to_char_type('\n')))
+			m_shouldIndent = true;
 
-	};
+		return traits_type::not_eof(c);
+	}
+
 }
-
-#endif

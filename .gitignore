@@ -54,3 +54,5 @@ DerivedData
 *.hmap
 *.xccheckout
 Ai2Canvas.build*/
+.vs/
+

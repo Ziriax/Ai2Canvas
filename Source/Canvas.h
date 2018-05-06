@@ -41,7 +41,7 @@
 namespace CanvasExport
 {
 	// Globals
-	extern ofstream outFile;
+	extern std::ostream& outFile;
 	extern bool debug;
 
 	// Drop shadow parameters

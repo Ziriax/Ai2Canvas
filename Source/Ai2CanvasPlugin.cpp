@@ -25,7 +25,8 @@
 
 // CanvasExport stuff
 #include "Utility.h"
-#include "Document.h"
+//#include "HtmlDocument.h"
+#include "JavascriptDocument.h"
 #include "Image.h"
 #include "State.h"
 #include "Canvas.h"
@@ -43,7 +44,6 @@ using namespace CanvasExport;
 namespace CanvasExport
 {
 	// Globals
-	ofstream outFile;
 	bool debug;
 }
 
@@ -150,14 +150,14 @@ ASErr Ai2CanvasPlugin::AddFileFormats(SPInterfaceMessage* message)
 	ASErr error = kNoErr;
 
 	PlatformAddFileFormatData affd;
-	char pstrCanvas[kMaxStringLength] = "<canvas>";
+	char pstrCanvas[kMaxStringLength] = "<Javascript canvas code>";
 	
 	this->CStrToPStr(pstrCanvas, kMaxStringLength);
 	affd.title = (unsigned char*)pstrCanvas;
 	affd.titleOrder = 0;
-	affd.extension = "html";
+	affd.extension = "js";
 	
-	error = sAIFileFormat->AddFileFormat( message->d.self, "<canvas>",
+	error = sAIFileFormat->AddFileFormat( message->d.self, "<Javascript canvas code>",
 				                          &affd, kFileFormatExport,
 										  &this->fFileFormatCanvas, kNoExtendedOptions );
 	return error;
@@ -208,7 +208,7 @@ ASErr Ai2CanvasPlugin::WriteText(const char* pathName)
 		CanvasExport::debug = debug;
 
 		// Create a new document
-		Document* document = new Document(file);
+		JavascriptDocument* document = new JavascriptDocument(file);
 
 		// Render the document
 		document->Render();

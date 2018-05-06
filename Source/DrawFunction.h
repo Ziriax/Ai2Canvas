@@ -28,20 +28,13 @@
 #include "Canvas.h"
 #include "AnimationFunction.h"
 #include "Layer.h"
-#include "Utility.h"
 #include "AnimationClock.h"
 
 namespace CanvasExport
 {
-	// Globals
-	extern ofstream outFile;
-	extern bool debug;
-
 	/// Represents a JavaScript drawing function
 	class DrawFunction : public Function
 	{
-	private:
-
 	public:
 
 		enum RotateDirection { kRotateNone, kRotateClockwise, kRotateCounterclockwise };

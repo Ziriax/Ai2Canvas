@@ -1,6 +1,7 @@
-// Document.h
+// JavascriptDocument.h
 //
 // Copyright (c) 2010-2014 Mike Swanson (http://blog.mikeswanson.com)
+// Copyright (c) 2018- Peter Verswyvelen (http://github.com/Ziriax)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,8 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef DOCUMENT_H
-#define DOCUMENT_H
+#ifndef JAVASCRIPT_DOCUMENT_H
+#define JAVASCRIPT_DOCUMENT_H
 
 #include "IllustratorSDK.h"
 #include "Ai2CanvasSuites.h"
@@ -36,11 +37,13 @@ AIBoolean			ProgressProc(long current, long total);
 namespace CanvasExport
 {
 	// Globals
-	extern ofstream outFile;
+	extern std::ostream& outFile;
+	extern std::ostream& outDeclarationFile;
+
 	extern bool debug;
 
 	/// Represents a document
-	class Document
+	class JavascriptDocument
 	{
 	private:
 
@@ -61,18 +64,18 @@ namespace CanvasExport
 		void				DebugClockJS();
 		void				DebugAnimationPathJS();
 		void				CreateAnimationFile();
-		void				OutputScriptHeader(ofstream& file);
-		void				OutputAnimationFunctions(ofstream& file);
-		void				OutputClockFunctions(ofstream& file);
-		void				OutputTimingFunctions(ofstream& file);
+		void				OutputScriptHeader(std::ofstream& file);
+		void				OutputAnimationFunctions(std::ofstream& file);
+		void				OutputClockFunctions(std::ofstream& file);
+		void				OutputTimingFunctions(std::ofstream& file);
 		void				RenderSymbolFunctions();
 		void				RenderPatternFunction();
 		void				DebugInfo();
 
 	public:
 
-		Document(const std::string& pathName);
-		~Document();
+		JavascriptDocument(const std::string& pathName);
+		~JavascriptDocument();
 
 		DocumentResources	resources;						// Document resources
 

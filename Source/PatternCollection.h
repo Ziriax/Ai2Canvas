@@ -31,7 +31,7 @@
 namespace CanvasExport
 {
 	// Globals
-	extern ofstream outFile;
+	extern std::ostream& outFile;
 	extern bool debug;
 
 	/// Represents a collection of patterns (which includes symbols)
