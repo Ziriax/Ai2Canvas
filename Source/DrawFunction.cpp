@@ -241,16 +241,14 @@ void DrawFunction::RenderDrawFunctionCall(const AIRealRect& documentBounds)
 // Render a drawing function
 void DrawFunction::RenderDrawFunction(const AIRealRect& documentBounds)
 {
-	outDeclarationFile << "export function " << name << "(ctx: CanvasRenderingContext2D);" << endl;
-
 	// Begin function block
-	outFile << "aiAsset." << name << " = function(ctx) {" << endl << indent;
+	outFile << "export function " << name << "(ctx: CanvasRenderingContext2D) {" << endl << indent;
 
-	// Need a blank line?
-	if (hasAlpha || hasGradients || hasPatterns)
-	{
-		outFile << endl;
-	}
+	//// Need a blank line?
+	//if (hasAlpha || hasGradients || hasPatterns)
+	//{
+	//	outFile << endl;
+	//}
 
 	// Does this draw function have alpha changes?
 	if (hasAlpha)
@@ -262,13 +260,13 @@ void DrawFunction::RenderDrawFunction(const AIRealRect& documentBounds)
 	// Will we be encountering gradients?
 	if (hasGradients)
 	{
-		outFile << "var gradient;";
+		outFile << "var gradient: any;" << endl;
 	}
 
 	// Will we be encountering patterns?
 	if (hasPatterns)
 	{
-		outFile << "var pattern;";
+		outFile << "var pattern: any;" << endl;
 	}
 
 	/// Re-set matrix based on document

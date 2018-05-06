@@ -38,12 +38,11 @@ namespace CanvasExport
 {
 	// Globals
 	extern std::ostream& outFile;
-	extern std::ostream& outDeclarationFile;
-
+	
 	extern bool debug;
 
 	/// Represents a document
-	class JavascriptDocument
+	class TypescriptDocument
 	{
 	private:
 
@@ -74,8 +73,8 @@ namespace CanvasExport
 
 	public:
 
-		JavascriptDocument(const std::string& pathName);
-		~JavascriptDocument();
+		TypescriptDocument(const std::string& pathName);
+		~TypescriptDocument();
 
 		DocumentResources	resources;						// Document resources
 

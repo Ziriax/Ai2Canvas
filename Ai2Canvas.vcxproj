@@ -178,7 +178,7 @@
       <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
       <ForcedIncludeFiles>pragma.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <EnablePREfast>false</EnablePREfast>
@@ -337,7 +337,7 @@
     <ClInclude Include="Source\PatternCollection.h" />
     <ClInclude Include="Source\State.h" />
     <ClInclude Include="Source\Trigger.h" />
-    <ClInclude Include="Source\JavascriptDocument.h" />
+    <ClInclude Include="Source\TypescriptDocument.h" />
     <ClInclude Include="Source\Utility.h" />
   </ItemGroup>
   <ItemGroup>
@@ -447,7 +447,7 @@
     <ClCompile Include="Source\PatternCollection.cpp" />
     <ClCompile Include="Source\State.cpp" />
     <ClCompile Include="Source\Trigger.cpp" />
-    <ClCompile Include="Source\JavascriptDocument.cpp" />
+    <ClCompile Include="Source\TypescriptDocument.cpp" />
     <ClCompile Include="Source\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>

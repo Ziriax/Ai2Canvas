@@ -22,7 +22,7 @@
 // THE SOFTWARE.
 
 #include "IllustratorSDK.h"
-#include "JavascriptDocument.h"
+#include "TypescriptDocument.h"
 #include "IndentableStream.h"
 
 // Current plug-in version
@@ -30,7 +30,7 @@
 
 using namespace CanvasExport;
 
-JavascriptDocument::JavascriptDocument(const std::string& pathName)
+TypescriptDocument::TypescriptDocument(const std::string& pathName)
 {
 	// Initialize Document
 	this->canvas = NULL;
@@ -44,7 +44,7 @@ JavascriptDocument::JavascriptDocument(const std::string& pathName)
 	this->canvas = canvases.Add("canvas", "ctx", &resources);
 }
 
-JavascriptDocument::~JavascriptDocument()
+TypescriptDocument::~TypescriptDocument()
 {
 	// Clear layers
 	for (unsigned int i = 0; i < layers.size(); i++)
@@ -54,7 +54,7 @@ JavascriptDocument::~JavascriptDocument()
 	}
 }
 
-void JavascriptDocument::Render()
+void TypescriptDocument::Render()
 {
 	// Scan the document for layers and layer attributes
 	ScanDocument();
@@ -67,7 +67,7 @@ void JavascriptDocument::Render()
 }
 
 // Set the bounds for the primary document
-void JavascriptDocument::SetDocumentBounds()
+void TypescriptDocument::SetDocumentBounds()
 {
 	// Set default bounds
 	// Start with maximums and minimums, so any value will cause them to be set
@@ -101,7 +101,7 @@ void JavascriptDocument::SetDocumentBounds()
 }
 
 // Find the base folder path and filename
-void JavascriptDocument::ParseFolderPath(const std::string& pathName)
+void TypescriptDocument::ParseFolderPath(const std::string& pathName)
 {
 	// Construct a FilePath
 	ai::UnicodeString usPathName(pathName);
@@ -113,7 +113,7 @@ void JavascriptDocument::ParseFolderPath(const std::string& pathName)
 }
 
 // Parse the layers
-void JavascriptDocument::ParseLayers()
+void TypescriptDocument::ParseLayers()
 {
 	// Loop through all layers
 	for (unsigned int i = 0; i < layers.size(); i++)
@@ -180,7 +180,7 @@ void JavascriptDocument::ParseLayers()
 	functions.BindTriggers();
 }
 
-bool JavascriptDocument::HasAnimationOption(const std::vector<std::string>& options)
+bool TypescriptDocument::HasAnimationOption(const std::vector<std::string>& options)
 {
 	bool result = false;
 
@@ -230,7 +230,7 @@ bool JavascriptDocument::HasAnimationOption(const std::vector<std::string>& opti
 }
 
 // Parses an individual layer name/options
-void JavascriptDocument::ParseLayerName(const Layer& layer, std::string& name, std::string& optionValue)
+void TypescriptDocument::ParseLayerName(const Layer& layer, std::string& name, std::string& optionValue)
 {
 	// We may need to modify the functionName
 	AIBoolean hasFunctionName = false;
@@ -281,13 +281,12 @@ void JavascriptDocument::ParseLayerName(const Layer& layer, std::string& name, s
 }
 
 // Render the document
-void JavascriptDocument::RenderDocument()
+void TypescriptDocument::RenderDocument()
 {
 	// Open asset namespace
 	std::string assetName = fileName;
 	CleanString(assetName, true);
-	outFile << "aiAssets." << assetName << " = (function(aiAsset) {" << endl << indent;
-	outDeclarationFile << "export namespace aiAsset {" << endl << indent;
+	outFile << "export namespace " << assetName << " {" << endl << indent;
 
 	// Set document bounds
 	SetDocumentBounds();
@@ -308,11 +307,10 @@ void JavascriptDocument::RenderDocument()
 	RenderPatternFunction();
 
 	// Close asset namespace
-	outFile << undent << "})({});" << endl;
-	outDeclarationFile << undent << "};" << endl;
+	outFile << undent << "};" << endl;
 }
 
-void JavascriptDocument::RenderAnimations()
+void TypescriptDocument::RenderAnimations()
 {
 	// Is there any animation in this document (paths or rotation?)
 	if (hasAnimation)
@@ -350,7 +348,7 @@ void JavascriptDocument::RenderAnimations()
 }
 
 // Set the options for a draw or animation function
-void JavascriptDocument::SetFunctionOptions(const std::vector<std::string>& options, Function& function)
+void TypescriptDocument::SetFunctionOptions(const std::vector<std::string>& options, Function& function)
 {
 	// Loop through options
 	for (unsigned int i = 0; i < options.size(); i++)
@@ -416,7 +414,7 @@ void JavascriptDocument::SetFunctionOptions(const std::vector<std::string>& opti
 //   Track maximum bounds of visible artwork per layer
 //   Track pattern fills used by visible artwork
 //   Track if gradient fills are used by visible artwork per layer
-void JavascriptDocument::ScanDocument()
+void TypescriptDocument::ScanDocument()
 {
 	AILayerHandle layerHandle = NULL;
 	ai::int32 layerCount = 0;
@@ -451,7 +449,7 @@ void JavascriptDocument::ScanDocument()
 	}
 }
 
-void JavascriptDocument::ScanLayer(Layer& layer)
+void TypescriptDocument::ScanLayer(Layer& layer)
 {
 	// Get the first art in this layer
 	AIArtHandle artHandle = NULL;
@@ -465,7 +463,7 @@ void JavascriptDocument::ScanLayer(Layer& layer)
 }
 
 // Scans a layer's artwork tree to capture important data
-void JavascriptDocument::ScanLayerArtwork(AIArtHandle artHandle, unsigned int depth, Layer& layer)
+void TypescriptDocument::ScanLayerArtwork(AIArtHandle artHandle, unsigned int depth, Layer& layer)
 {
 	// Loop through all artwork at this depth
 	do
@@ -624,7 +622,7 @@ void JavascriptDocument::ScanLayerArtwork(AIArtHandle artHandle, unsigned int de
 }
 
 // Creates the JavaScript animation file (if it doesn't already exist)
-void JavascriptDocument::CreateAnimationFile()
+void TypescriptDocument::CreateAnimationFile()
 {
 	// Full path to JavaScript animation support file
 	std::string fullPath = resources.folderPath + "Ai2CanvasAnimation.js";
@@ -658,14 +656,14 @@ void JavascriptDocument::CreateAnimationFile()
 	}
 }
 
-void JavascriptDocument::OutputScriptHeader(ofstream& file)
+void TypescriptDocument::OutputScriptHeader(ofstream& file)
 {
 	file <<     "// Ai2CanvasAnimation.js Version " << PLUGIN_VERSION;
 	file <<   "\n// Animation support for the Ai->Canvas Export Plug-In";
 	file <<   "\n// By Mike Swanson (http://blog.mikeswanson.com/)";
 }
 
-void JavascriptDocument::OutputClockFunctions(ofstream& file)
+void TypescriptDocument::OutputClockFunctions(ofstream& file)
 {
 	file << "\n\n// Create a shared standard clock";
 	file <<   "\nvar timeProvider = new standardClock();";
@@ -909,7 +907,7 @@ void JavascriptDocument::OutputClockFunctions(ofstream& file)
 	file <<   "\n};";
 }
 
-void JavascriptDocument::OutputAnimationFunctions(ofstream& file)
+void TypescriptDocument::OutputAnimationFunctions(ofstream& file)
 {
 	// Animation path support functions
 	file << "\n\n// Updates animation path";
@@ -1059,7 +1057,7 @@ void JavascriptDocument::OutputAnimationFunctions(ofstream& file)
 	file <<   "\n}";
 }
 
-void JavascriptDocument::OutputTimingFunctions(ofstream& file)
+void TypescriptDocument::OutputTimingFunctions(ofstream& file)
 {
 	// Timing functions
 	file << "\n\n// Penner timing functions";
@@ -1207,7 +1205,7 @@ void JavascriptDocument::OutputTimingFunctions(ofstream& file)
 	file <<   "\n}";
 }
 
-void JavascriptDocument::RenderSymbolFunctions()
+void TypescriptDocument::RenderSymbolFunctions()
 {
 	// Do we have symbol functions to render?
 	if (canvas->documentResources->patterns.HasSymbols())
@@ -1293,7 +1291,7 @@ void JavascriptDocument::RenderSymbolFunctions()
 	}
 }
 
-void JavascriptDocument::RenderPatternFunction()
+void TypescriptDocument::RenderPatternFunction()
 {
 	// Do we have pattern functions to render?
 	if (canvas->documentResources->patterns.HasPatterns())
@@ -1389,7 +1387,7 @@ void JavascriptDocument::RenderPatternFunction()
 	}
 }
 
-void JavascriptDocument::DebugInfo()
+void TypescriptDocument::DebugInfo()
 {
 	outFile << "\n\n<p>This document has been exported in debug mode.</p>";
 
@@ -1403,7 +1401,7 @@ void JavascriptDocument::DebugInfo()
 	functions.DebugInfo();
 }
 
-void JavascriptDocument::DebugClockJS()
+void TypescriptDocument::DebugClockJS()
 {
 	outFile << "\n\n    // Debug clock";
 	outFile <<   "\n    function debugClock() {";
@@ -1445,7 +1443,7 @@ void JavascriptDocument::DebugClockJS()
     outFile <<   "\n    }";
 }
 
-void JavascriptDocument::DebugAnimationPathJS()
+void TypescriptDocument::DebugAnimationPathJS()
 {
 	outFile << "\n\n    function plotAnchorPoints(ctx) {";
 

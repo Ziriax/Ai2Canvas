@@ -30,35 +30,19 @@ namespace CanvasExport
 	std::ofstream outFileStream;
 	IndentableStream indentableStream(outFileStream);
 	std::ostream& outFile = indentableStream;
-
-	std::ofstream outDeclarationFileStream;
-	IndentableStream indentableDeclarationStream(outDeclarationFileStream);
-	std::ostream& outDeclarationFile = indentableDeclarationStream;
 }
 
 // TODO: Consider something more like: fprintf(m_fp, "\n%*sIndented by 2", 2, "");
 // Or std::string(indent, ' ')
 std::string CanvasExport::Indent(size_t depth)
 {
-	if (debug)
-	{
-		return std::string((depth * 2), ' ');
-	}
-	else
-	{
-		return "      ";
-	}
+	return std::string((depth * 2), ' ');
 }
 
 bool CanvasExport::OpenFile(const std::string& filePath)
 {
 	// Open the files
 	outFileStream.open(filePath.c_str(), ios::out);
-	outDeclarationFileStream.open(filePath.substr(0, filePath.size() - 3) + ".d.ts", ios::out);
-
-	// Create the namespace
-	outFile << "(function(aiAssets) {" << endl << indent;
-	outDeclarationFile << "export namespace aiAssets {" << endl << indent;
 
 	// Return result
 	return outFileStream.is_open();
@@ -66,13 +50,8 @@ bool CanvasExport::OpenFile(const std::string& filePath)
 
 void CanvasExport::CloseFile()
 {
-	// Close the namespace
-	outFile << undent << "})(aiAssets || (aiAssets={}));" << endl;
-	outDeclarationFile << undent << "};" << endl;
-
 	// Close the file
 	outFileStream.close();
-	outDeclarationFileStream.close();
 }
 
 void CanvasExport::RenderTransform(const AIRealMatrix& matrix)

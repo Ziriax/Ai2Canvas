@@ -39,7 +39,7 @@ namespace CanvasExport
 
 		if (m_shouldIndent)
 		{
-			fill_n(std::ostreambuf_iterator<char>(m_streamBuffer), m_indentationLevel, '\t');
+			fill_n(std::ostreambuf_iterator<char>(m_streamBuffer), m_indentationLevel * 2, ' ');
 			m_shouldIndent = false;
 		}
 
