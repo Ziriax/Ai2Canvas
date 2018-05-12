@@ -36,7 +36,7 @@ namespace CanvasExport
 // Or std::string(indent, ' ')
 std::string CanvasExport::Indent(size_t depth)
 {
-	return std::string((depth * 2), ' ');
+	return "";
 }
 
 bool CanvasExport::OpenFile(const std::string& filePath)

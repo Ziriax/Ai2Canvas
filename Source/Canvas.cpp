@@ -1035,9 +1035,9 @@ void Canvas::RenderSymbolArt(AIArtHandle artHandle, unsigned int depth)
 	sAIRealMath->AIRealMatrixConcat(&transform, &currentState->internalTransform, &transform);
 	
 	// Render symbol transformation
-	outFile  << Indent(depth) << contextName << ".transform(" << endl;
+	outFile  << Indent(depth) << contextName << ".transform(";
 	RenderTransform(transform);
-	outFile << ");";
+	outFile << ");" << endl;
 
 	// Get the symbol pattern
 	AIPatternHandle symbolPatternHandle = NULL;
