@@ -1414,7 +1414,7 @@ void HtmlDocument::RenderSymbolFunctions()
 				Pattern* pattern = canvas->documentResources->patterns.Patterns()[i];
 
 				// Begin symbol function block
-				outFile << "function " << pattern->name << "(ctx) {" << endl;
+				outFile << "function " << pattern->name << "(ctx: CanvasRenderingContext2D) {" << endl;
 
 				// Need a blank line?
 				if (pattern->hasAlpha || pattern->hasGradients || pattern->hasPatterns)
@@ -1639,7 +1639,7 @@ void HtmlDocument::DebugClockJS()
 
 void HtmlDocument::DebugAnimationPathJS()
 {
-	outFile << "function plotAnchorPoints(ctx) {" << endl;
+	outFile << "function plotAnchorPoints(ctx: CanvasRenderingContext2D) {" << endl;
 
 	outFile << "ctx.save();" << endl;
     outFile << "ctx.fillStyle = \"rgb(255, 0, 0)\";" << endl;
@@ -1658,7 +1658,7 @@ void HtmlDocument::DebugAnimationPathJS()
 	outFile << "ctx.restore();" << endl;
 	outFile << "}" << endl;
 
-	outFile << "function plotLinearPoints(ctx) {" << endl;
+	outFile << "function plotLinearPoints(ctx: CanvasRenderingContext2D) {" << endl;
 	outFile << "ctx.save();" << endl;
     outFile << "ctx.fillStyle = \"rgb(0, 0, 255)\";" << endl;
 	outFile << "var animationCount = animations.length;" << endl;

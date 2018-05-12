@@ -1219,7 +1219,7 @@ void TypescriptDocument::RenderSymbolFunctions()
 				Pattern* pattern = canvas->documentResources->patterns.Patterns()[i];
 
 				// Begin symbol function block
-				outFile << "function " << pattern->name << "(ctx) {" << endl;
+				outFile << "function " << pattern->name << "(ctx: CanvasRenderingContext2D) {" << endl;
 
 				// Need a blank line?
 				if (pattern->hasAlpha || pattern->hasGradients || pattern->hasPatterns)
@@ -1237,14 +1237,14 @@ void TypescriptDocument::RenderSymbolFunctions()
 				// Will we be encountering gradients?
 				if (pattern->hasGradients)
 				{
-					outFile << Indent(0) << "const gradient;" << endl;
+					outFile << Indent(0) << "var gradient: CanvasGradient;" << endl;
 				}
 
 				// Will we be encountering patterns?
 				// TODO: Is this even possible?
 				if (pattern->hasPatterns)
 				{
-					outFile << Indent(0) << "const pattern;" << endl;
+					outFile << Indent(0) << "var pattern: CanvasPattern;" << endl;
 				}
 
 				// Get a handle to the pattern art
@@ -1444,7 +1444,7 @@ void TypescriptDocument::DebugClockJS()
 
 void TypescriptDocument::DebugAnimationPathJS()
 {
-	outFile << "function plotAnchorPoints(ctx) {" << endl;
+	outFile << "function plotAnchorPoints(ctx: CanvasRenderingContext2D) {" << endl;
 
 	outFile << "ctx.save();" << endl;
 	outFile << "ctx.fillStyle = \"rgb(255, 0, 0)\";" << endl;
@@ -1463,7 +1463,7 @@ void TypescriptDocument::DebugAnimationPathJS()
 	outFile << "ctx.restore();" << endl;
 	outFile << "}" << endl;
 
-	outFile << "function plotLinearPoints(ctx) {" << endl;
+	outFile << "function plotLinearPoints(ctx: CanvasRenderingContext2D) {" << endl;
 	outFile << "ctx.save();" << endl;
 	outFile << "ctx.fillStyle = \"rgb(0, 0, 255)\";" << endl;
 	outFile << "const animationCount = animations.length;" << endl;

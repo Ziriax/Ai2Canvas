@@ -1570,9 +1570,9 @@ void Canvas::RenderGradientStops(const AIGradientStyle& gradientStyle, unsigned 
 			stopPoint = (gradientStop.rampPoint + ((gradientStop.midPoint / (float)100)*(gradientStopNext.rampPoint - gradientStop.rampPoint))) / (float)100;
 			outFile  << Indent(depth) << "gradient.addColorStop(" <<
 				setiosflags(ios::fixed) << setprecision(2) <<
-				stopPoint << ", \"" << endl;
+				stopPoint << ", \"";
 			RenderMidPointColor(gradientStop.color, gradientStop.opacity, gradientStopNext.color, gradientStopNext.opacity);
-			outFile << "\");";
+			outFile << "\");" << endl;
 		}
 	}
 }
