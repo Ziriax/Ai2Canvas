@@ -22,6 +22,7 @@
 
 #include "IllustratorSDK.h"
 #include "AnimationFunction.h"
+#include "IndentableStream.h"
 
 using namespace CanvasExport;
 
@@ -50,36 +51,39 @@ void AnimationFunction::RenderInit(const AIRealRect& documentBounds)
 {
 	// Begin function block
 	outFile << "function " << name << "() {" << endl;
+	{
+		Indentation fun(outFile);
 
-	outFile << "// Control and anchor points" << endl;
-	outFile << "this.points = [" << endl;
+		outFile << "// Control and anchor points" << endl;
+		outFile << "this.points = [" << endl;
 
-	// Re-set matrix based on document
-	// TODO: Need to make this more isolated/encapsulated
-	sAIRealMath->AIRealMatrixSetIdentity(&canvas->currentState->internalTransform);
-	sAIRealMath->AIRealMatrixConcatScale(&canvas->currentState->internalTransform, 1, -1);
-	sAIRealMath->AIRealMatrixConcatTranslate(&canvas->currentState->internalTransform, - 1 * documentBounds.left, documentBounds.top);
+		// Re-set matrix based on document
+		// TODO: Need to make this more isolated/encapsulated
+		sAIRealMath->AIRealMatrixSetIdentity(&canvas->currentState->internalTransform);
+		sAIRealMath->AIRealMatrixConcatScale(&canvas->currentState->internalTransform, 1, -1);
+		sAIRealMath->AIRealMatrixConcatTranslate(&canvas->currentState->internalTransform, -1 * documentBounds.left, documentBounds.top);
 
-	// Render animation
-	RenderArt(artHandle, 1);
+		// Render animation
+		RenderArt(artHandle, 1);
 
-	outFile << "];" << endl;
+		outFile << "];" << endl;
 
-	// Add arc-length data
-	ArcLength(1);
+		// Add arc-length data
+		ArcLength(1);
 
-	// Other values
-	outFile << "this.lastValue = -1.0;" << endl;
-	outFile << "this.x = 0;" << endl;
-	outFile << "this.y = 0;" << endl;
-	outFile << "this.orientation = 0.0;" << endl;
+		// Other values
+		outFile << "this.lastValue = -1.0;" << endl;
+		outFile << "this.x = 0;" << endl;
+		outFile << "this.y = 0;" << endl;
+		outFile << "this.orientation = 0.0;" << endl;
 
-	RenderClockInit();
+		RenderClockInit();
 
-	outFile << "// Update function" << endl;
-	outFile << "this.update = updatePath;" << endl;
-	//outFile << "// Establish orientation" << endl;
-	//outFile << "this.update();" << endl;
+		outFile << "// Update function" << endl;
+		outFile << "this.update = updatePath;" << endl;
+		//outFile << "// Establish orientation" << endl;
+		//outFile << "this.update();" << endl;
+	}
 
 	// End function block
 	outFile << "}" << endl;

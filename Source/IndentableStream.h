@@ -99,6 +99,23 @@ namespace CanvasExport
 		auto is = dynamic_cast<IndentableStream*>(&stream);
 		return is ? is->undent() : stream;
 	}
+
+	class Indentation
+	{
+	private:
+		std::ostream& os;
+
+	public:
+		Indentation(std::ostream& os) :os(os)
+		{
+			os << indent;
+		}
+
+		~Indentation()
+		{
+			os << undent;
+		}
+	};
 }
 
 #endif
