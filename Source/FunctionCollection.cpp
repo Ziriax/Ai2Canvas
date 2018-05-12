@@ -86,7 +86,7 @@ void FunctionCollection::RenderClockInit()
 	// Any draw function animation?
 	if (HasDrawFunctionAnimation())
 	{
-		outFile << "\n\n      // Initialize animations";
+		outFile << "// Initialize animations" << endl;
 
 		// Set default draw function animation values
 		for (unsigned int i = 0; i < functions.size(); i++)
@@ -104,7 +104,7 @@ void FunctionCollection::RenderClockInit()
 	// NOTE: We do this *after* all clocks have been initialized. If we don't, we have ordering problems (e.g. clocks aren't initialized yet)
 	if (HasValidTriggers())
 	{
-		outFile << "\n\n      // Configure animation triggers";
+		outFile << "// Configure animation triggers" << endl;
 
 		// Configure function triggers
 		for (unsigned int i = 0; i < functions.size(); i++)
@@ -119,7 +119,7 @@ void FunctionCollection::RenderClockInit()
 void FunctionCollection::RenderClockStart()
 {
 	// Start clocks
-	outFile << "\n\n      // Start animation clocks";
+	outFile << "// Start animation clocks" << endl;
 
 	// Start animation clocks (if they have no "start" trigger defined)
 	for (unsigned int i = 0; i < functions.size(); i++)
@@ -135,8 +135,8 @@ void FunctionCollection::RenderClockTick()
 	// Any draw function animation?
 	if (HasDrawFunctionAnimation())
 	{
-		outFile << "\n\n      // Update animation clocks";
-		outFile <<   "\n      updateAllClocks();";
+		outFile << "// Update animation clocks" << endl;
+		outFile << "updateAllClocks();" << endl;
 
 		//for (unsigned int i = 0; i < functions.size(); i++)
 		//{
@@ -152,11 +152,11 @@ void FunctionCollection::RenderClockTick()
 	// If we have animation functions, include JavaScript function to update each of them
 	if (HasAnimationFunctions())
 	{
-		outFile << "\n\n      // Update animation paths";
+		outFile << "// Update animation paths" << endl;
 		outFile << "  \n      var animationCount = animations.length;";
-		outFile <<   "\n      for (var i = 0; i < animationCount; i++) {";
-		outFile <<   "\n        animations[i].update();";
-		outFile <<   "\n      }";
+		outFile << "for (var i = 0; i < animationCount; i++) {" << endl;
+		outFile << "animations[i].update();" << endl;
+		outFile << "}" << endl;
 	}
 }
 
@@ -193,8 +193,8 @@ void FunctionCollection::RenderAnimationFunctionInits(const AIRealRect& document
 	// Any animations to render?
 	if (HasAnimationFunctions())
 	{
-		outFile << "\n\n    // Animations";
-		outFile <<   "\n    var animations = [";
+		outFile << "// Animations" << endl;
+		outFile << "var animations = [" << endl;
 		
 		// Loop through animation functions
 		bool addComma = false;
@@ -666,13 +666,13 @@ void FunctionCollection::DebugInfo()
 	}
 	
 	// Animation function debug info
-	outFile <<   "\n<p>Animation functions: " << animationFunctionCount << "</p>";
+	outFile << "<p>Animation functions: " << animationFunctionCount << "</p>" << endl;
 
 	// Anything to list?
 	if (animationFunctionCount > 0)
 	{
 		// Start unordered list
-		outFile <<   "\n<ul>";
+		outFile << "<ul>" << endl;
 
 		// Loop through each animation function
 		for (unsigned int i = 0; i < functions.size(); i++)
@@ -682,24 +682,24 @@ void FunctionCollection::DebugInfo()
 				// For convenience
 				AnimationFunction* animationFunction = (AnimationFunction*)functions[i];
 
-				outFile <<   "\n  <li>name: " << animationFunction->name << ", index: " << animationFunction->index <<
+				outFile << "<li>name: " << animationFunction->name << ", index: " << animationFunction->index <<
 							 ", segments: " << animationFunction->beziers.size() <<
-							 ", linear segment length: " << setiosflags(ios::fixed) << setprecision(1) << animationFunction->segmentLength << "</li>";
+							 ", linear segment length: " << setiosflags(ios::fixed) << setprecision(1) << animationFunction->segmentLength << "</li>" << endl;
 			}
 		}
 
 		// End unordered list
-		outFile <<   "\n</ul>";
+		outFile << "</ul>" << endl;
 	}
 
 	// Draw function debug info
-	outFile <<   "\n<p>Draw functions: " << drawFunctionCount << "</p>";
+	outFile << "<p>Draw functions: " << drawFunctionCount << "</p>" << endl;
 
 	// Anything to list?
 	if (drawFunctionCount > 0)
 	{
 		// Start unordered list
-		outFile <<   "\n<ul>";
+		outFile << "<ul>" << endl;
 
 		// Loop through each draw function
 		for (unsigned int i = 0; i < functions.size(); i++)
@@ -709,11 +709,11 @@ void FunctionCollection::DebugInfo()
 				// For convenience
 				DrawFunction* drawFunction = (DrawFunction*)functions[i];
 
-				outFile <<   "\n  <li>name: " << drawFunction->name << ", layers: " << drawFunction->layers.size() << "</li>";
+				outFile << "<li>name: " << drawFunction->name << ", layers: " << drawFunction->layers.size() << "</li>" << endl;
 			}
 		}
 
 		// End unordered list
-		outFile <<   "\n</ul>";
+		outFile << "</ul>" << endl;
 	}
 }

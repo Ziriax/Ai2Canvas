@@ -59,32 +59,32 @@ void HtmlDocument::Render()
 
 	// Header, version information, and contact details
 	#ifdef MAC_ENV
-		outFile << "\n\n<!-- Created with Ai->Canvas Export Plug-In Version " << PLUGIN_VERSION << " (Mac)   -->";
+		outFile << "<!-- Created with Ai->Canvas Export Plug-In Version " << PLUGIN_VERSION << " (Mac)   -->" << endl;
 	#endif 
 	#ifdef WIN_ENV
 	#ifdef _WIN64
-		outFile << "\n\n<!-- Created with Ai->Canvas Export Plug-In Version " << PLUGIN_VERSION << " (PC/64) -->";
+		outFile << "<!-- Created with Ai->Canvas Export Plug-In Version " << PLUGIN_VERSION << " (PC/64) -->" << endl;
 	#else
-		outFile << "\n\n<!-- Created with Ai->Canvas Export Plug-In Version " << PLUGIN_VERSION << " (PC/32) -->";
+		outFile << "<!-- Created with Ai->Canvas Export Plug-In Version " << PLUGIN_VERSION << " (PC/32) -->" << endl;
 	#endif
 	#endif 
 	size_t length = std::string(PLUGIN_VERSION).length();
 	std::string padding = std::string(length, ' ');
-	outFile <<   "\n<!-- By Mike Swanson (http://blog.mikeswanson.com/)    " << padding << "      -->\n";
+	outFile << "<!-- By Mike Swanson (http://blog.mikeswanson.com/)    " << padding << "      -->\n" << endl;
 
 	// Output header information
-	outFile << "\n<html lang=\"en\">";
-	outFile << "\n <head>";
-	outFile << "\n  <meta charset=\"UTF-8\" />";
+	outFile << "<html lang=\"en\">" << endl;
+	outFile << "<head>" << endl;
+	outFile << "<meta charset=\"UTF-8\" />" << endl;
 
 	// NOTE: The following meta tag is required when browsing HTML files using IE9 over an intranet
-	//outFile << "\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=9\" />";
+	//outFile << "<meta http-equiv=\"X-UA-Compatible\" content=\"IE=9\" />" << endl;
 
-	outFile << "\n  <title>" << fileName << "</title>";
+	outFile << "<title>" << fileName << "</title>" << endl;
 
 	if (debug)
 	{
-		outFile << "\n\n<!--";
+		outFile << "<!--" << endl;
 	}
 
 	if (debug)
@@ -100,7 +100,7 @@ void HtmlDocument::Render()
 
 	if (debug)
 	{
-		outFile << "\n-->\n";
+		outFile << "-->\n" << endl;
 	}
 
 	// If we have animation, link to animation JavaScript support file
@@ -110,37 +110,37 @@ void HtmlDocument::Render()
 		CreateAnimationFile();
 
 		// Output a reference
-		outFile << "\n  <script src=\"Ai2CanvasAnimation.js\"></script>";
+		outFile << "<script src=\"Ai2CanvasAnimation.js\"></script>" << endl;
 	}
 
 	// Note that "type='text/javascript'" is no longer required as of HTML5, unless the language isn't javascript
-	outFile << "\n  <script>";
+	outFile << "<script>" << endl;
 	
 	// Render the document
 	RenderDocument();
 
 	// Close script tag
-	outFile << "\n  </script>";
+	outFile << "</script>" << endl;
 
 	// Debug style information
 	if (debug)
 	{
-		outFile << "\n  <style type=\"text/css\">";
-		outFile << "\n    body {";
-		outFile << "\n      font-family: Verdana, Geneva, sans-serif;";
-		outFile << "\n      font-size: 12px;";
-		outFile << "\n    }";
-		outFile << "\n    canvas {";
-		outFile << "\n      border: 1px solid grey;";
-		outFile << "\n    }";
-		outFile << "\n  </style>";
+		outFile << "<style type=\"text/css\">" << endl;
+		outFile << "body {" << endl;
+		outFile << "font-family: Verdana, Geneva, sans-serif;" << endl;
+		outFile << "font-size: 12px;" << endl;
+		outFile << "}" << endl;
+		outFile << "canvas {" << endl;
+		outFile << "border: 1px solid grey;" << endl;
+		outFile << "}" << endl;
+		outFile << "</style>" << endl;
 	}
 
 	// End of header
-	outFile << "\n </head>";
+	outFile << "</head>" << endl;
 
 	// Body header with onLoad init function to execute
-	outFile << "\n <body onload=\"init()\">";
+	outFile << "<body onload=\"init()\">" << endl;
 
 	// Render canvases
 	canvases.Render();
@@ -155,10 +155,10 @@ void HtmlDocument::Render()
 	}
 
 	// Body end
-	outFile << "\n </body>";
+	outFile << "</body>" << endl;
 
 	// End of document
-	outFile << "\n</html>";
+	outFile << "</html>" << endl;
 }
 
 // Set the bounds for the primary document
@@ -352,7 +352,7 @@ void HtmlDocument::ParseLayerName(const Layer& layer, std::string& name, std::st
 
 				if (debug)
 				{
-					outFile << "\n//   Found options = " << optionValue;
+					outFile << "//   Found options = " << optionValue << endl;
 				}
 
 				// Terminate the layer name starting at the opening parenthesis
@@ -384,29 +384,29 @@ void HtmlDocument::RenderDocument()
 	// For animation, create global canvas and context references
 	if (hasAnimation)
 	{
-		outFile << "\n\n    // Main canvas and context references";
-		outFile <<   "\n    var " << canvas->id << ";";
-		outFile <<   "\n    var " << canvas->contextName << ";";
+		outFile << "// Main canvas and context references" << endl;
+		outFile << "var " << canvas->id << ";" << endl;
+		outFile << "var " << canvas->contextName << ";" << endl;
 	}
 
 	// Render animations
 	RenderAnimations();
 
 	// Begin init function block
-	outFile << "\n\n    function init() {";
+	outFile << "function init() {" << endl;
 
 	// For animation, set main canvas and context references
 	if (hasAnimation)
 	{
-		outFile << "\n\n      // Set main canvas and context references";
-		outFile <<   "\n      " << canvas->id << " = document.getElementById(\"" << canvas->id << "\");";
-		outFile <<   "\n      " << canvas->contextName << " = " << canvas->id << ".getContext(\"2d\");";
+		outFile << "// Set main canvas and context references" << endl;
+		outFile  << canvas->id << " = document.getElementById(\"" << canvas->id << "\");" << endl;
+		outFile  << canvas->contextName << " = " << canvas->id << ".getContext(\"2d\");" << endl;
 	}
 
 	// Do we need a pattern function?
 	if (canvas->documentResources->patterns.HasPatterns())
 	{
-		outFile << "\n\n      drawPatterns();";
+		outFile << "drawPatterns();" << endl;
 	}
 
 	// Any animations to set-up?
@@ -415,9 +415,9 @@ void HtmlDocument::RenderDocument()
 		if (debug)
 		{
 			// Use mouse movement to debug animation
-			outFile << "\n\n      // Capture mouse events for debug clock";
-		    outFile <<   "\n      " << canvas->id << ".addEventListener(\"click\", setDebugClock, false);";
-		    outFile <<   "\n      " << canvas->id << ".addEventListener(\"mousemove\", getMouseLocation, false);";
+			outFile << "// Capture mouse events for debug clock" << endl;
+		    outFile  << canvas->id << ".addEventListener(\"click\", setDebugClock, false);" << endl;
+		    outFile  << canvas->id << ".addEventListener(\"mousemove\", getMouseLocation, false);" << endl;
 		}
 
 		// Initialize animation clocks
@@ -427,26 +427,26 @@ void HtmlDocument::RenderDocument()
 		functions.RenderClockStart();
 
 		// Set animation timer
-		outFile << "\n\n      // Set animation timer";
-		outFile <<   "\n      setInterval(drawFrame, (1000 / fps));";
-		outFile <<   "\n    }";
+		outFile << "// Set animation timer" << endl;
+		outFile << "setInterval(drawFrame, (1000 / fps));" << endl;
+		outFile << "}" << endl;
 
 		// Include "update animations"
-		outFile << "\n\n    function updateAnimations() {";
+		outFile << "function updateAnimations() {" << endl;
 
 		// Tick animation clocks
 		functions.RenderClockTick();
 
-		outFile <<   "\n    }";
+		outFile << "}" << endl;
 
 		// Render drawFrame function
-		outFile << "\n\n    function drawFrame() {";
-		outFile << "\n\n      // Update animations";
-		outFile <<   "\n      updateAnimations();";
-		outFile << "\n\n      // Clear canvas";
+		outFile << "function drawFrame() {" << endl;
+		outFile << "// Update animations" << endl;
+		outFile << "updateAnimations();" << endl;
+		outFile << "// Clear canvas" << endl;
 		// The following method should clear the canvas, but it causes visual glitching with Safari and Chrome
-		//outFile <<   "\n      " << canvas->id << ".width = " << canvas->id << ".width;";
-		outFile <<   "\n      " << canvas->contextName << ".clearRect(0, 0, " << canvas->id << ".width, " << canvas->id << ".height);";
+		//outFile  << canvas->id << ".width = " << canvas->id << ".width;" << endl;
+		outFile  << canvas->contextName << ".clearRect(0, 0, " << canvas->id << ".width, " << canvas->id << ".height);" << endl;
 
 		// Draw function calls
 		functions.RenderDrawFunctionCalls(documentBounds);
@@ -455,43 +455,43 @@ void HtmlDocument::RenderDocument()
 		if (debug && functions.HasAnimationFunctions())
 		{
 			// Debug linear animation
-			outFile << "\n\n      plotLinearPoints(" << canvas->contextName  << ");";
-			outFile <<   "\n      plotAnchorPoints(" << canvas->contextName  << ");";
+			outFile << "plotLinearPoints(" << canvas->contextName  << ");" << endl;
+			outFile << "plotAnchorPoints(" << canvas->contextName  << ");" << endl;
 		}
 
 		// Debug animation fps
 		if (debug)
 		{
-			outFile << "\n\n      // Count actual fps";
-			outFile <<   "\n      ++frameCount;";
-			outFile <<   "\n      var now = new Date().getTime();";
-			outFile <<   "\n      if (now > frameTime) {";
-			outFile << "\n\n        frameTime = now + 1000;";
-			outFile <<   "\n        frameReport = frameCount;";
-			outFile <<   "\n        frameCount = 0;";
-			outFile <<   "\n      }";
-			outFile << "\n\n      // Report debug information";
-			outFile <<   "\n      " << canvas->contextName << ".save();";
-			outFile <<   "\n      " << canvas->contextName << ".fillStyle = \"rgb(0, 0, 255)\";";
-			outFile <<   "\n      " << canvas->contextName << ".fillText(frameReport + \" fps\", 5, 10);";
-			outFile <<   "\n      " << canvas->contextName << ".fillText((debug.ticks() / 1000).toFixed(1) + \" / \" + debug.timeRange.toFixed(1) + \" s\", 5, 20);";
-			outFile <<   "\n      " << canvas->contextName << ".restore();";
+			outFile << "// Count actual fps" << endl;
+			outFile << "++frameCount;" << endl;
+			outFile << "var now = new Date().getTime();" << endl;
+			outFile << "if (now > frameTime) {" << endl;
+			outFile << "frameTime = now + 1000;" << endl;
+			outFile << "frameReport = frameCount;" << endl;
+			outFile << "frameCount = 0;" << endl;
+			outFile << "}" << endl;
+			outFile << "// Report debug information" << endl;
+			outFile  << canvas->contextName << ".save();" << endl;
+			outFile  << canvas->contextName << ".fillStyle = \"rgb(0, 0, 255)\";" << endl;
+			outFile  << canvas->contextName << ".fillText(frameReport + \" fps\", 5, 10);" << endl;
+			outFile  << canvas->contextName << ".fillText((debug.ticks() / 1000).toFixed(1) + \" / \" + debug.timeRange.toFixed(1) + \" s\", 5, 20);" << endl;
+			outFile  << canvas->contextName << ".restore();" << endl;
 		}
 
 		// End function block
-		outFile <<   "\n    }";
+		outFile << "}" << endl;
 	}
 	else
 	{
 		// No animations
-		outFile << "\n\n      var " << canvas->id << " = document.getElementById(\"" << canvas->id << "\");";
-		outFile <<   "\n      var " << canvas->contextName << " = " << canvas->id << ".getContext(\"2d\");";
+		outFile << "var " << canvas->id << " = document.getElementById(\"" << canvas->id << "\");" << endl;
+		outFile << "var " << canvas->contextName << " = " << canvas->id << ".getContext(\"2d\");" << endl;
 
 		// Draw function calls
 		functions.RenderDrawFunctionCalls(documentBounds);
 
 		// End function block
-		outFile << "\n    }";
+		outFile << "}" << endl;
 	}
 
 	// Render the functions/layers
@@ -510,15 +510,15 @@ void HtmlDocument::RenderAnimations()
 	if (hasAnimation)
 	{
 		// Output frames per second
-		outFile << "\n\n    // Frames per second";
-		outFile <<   "\n    var fps = 60.0;";
+		outFile << "// Frames per second" << endl;
+		outFile << "var fps = 60.0;" << endl;
 
 		if (debug)
 		{
-			outFile <<   "\n    var frameTime = 0;";
-			outFile <<   "\n    var frameCount = 0;";
-			outFile <<   "\n    var frameReport = 0;";
-			outFile <<   "\n    var debug = new debugClock();";
+			outFile << "var frameTime = 0;" << endl;
+			outFile << "var frameCount = 0;" << endl;
+			outFile << "var frameReport = 0;" << endl;
+			outFile << "var debug = new debugClock();" << endl;
 		}
 	}
 
@@ -628,7 +628,7 @@ void HtmlDocument::ScanDocument()
 		sAILayer->GetLayerVisible(layerHandle, &isLayerVisible);
 		if (debug)
 		{
-			outFile << "\n\n// Layer visible = " << isLayerVisible;
+			outFile << "// Layer visible = " << isLayerVisible << endl;
 		}
 
 		// Only process if the layer is visible
@@ -853,550 +853,550 @@ void HtmlDocument::CreateAnimationFile()
 void HtmlDocument::OutputScriptHeader(ofstream& file)
 {
 	file <<     "// Ai2CanvasAnimation.js Version " << PLUGIN_VERSION;
-	file <<   "\n// Animation support for the Ai->Canvas Export Plug-In";
-	file <<   "\n// By Mike Swanson (http://blog.mikeswanson.com/)";
+	file << "// Animation support for the Ai->Canvas Export Plug-In" << endl;
+	file << "// By Mike Swanson (http://blog.mikeswanson.com/)" << endl;
 }
 
 void HtmlDocument::OutputClockFunctions(ofstream& file)
 {
-	file << "\n\n// Create a shared standard clock";
-	file <<   "\nvar timeProvider = new standardClock();";
-	file << "\n\n// All animation clocks";
-	file <<   "\nvar clocks = new Array();";
-	file << "\n\n// Represents an animation clock";
-	file <<   "\nfunction clock(duration, delay, direction, reverses, iterations, timingFunction, range, multiplier, offset) {";
-	file << "\n\n  // Initialize";
-	file <<   "\n  this.timeProvider = timeProvider;                 // Time provider";
-	file <<   "\n  this.duration = duration;                         // Duration (in seconds)";
-	file <<   "\n  this.delay = delay;                               // Initial delay (in seconds)";
-	file <<   "\n  this.direction = direction;                       // Direction (-1 = backward, 1 = forward)";
-	file <<   "\n  this.reverses = reverses;                         // Does this reverse? (true/false)";
-	file <<   "\n  this.iterations = iterations;                     // Number of iterations (0 = infinite)";
-	file <<   "\n  this.timingFunction = timingFunction;             // Timing function";
-	file <<   "\n  this.multiplier = (range * multiplier);           // Value multiplier (after timing function)";
-	file <<   "\n  this.offset = (range * offset);                   // Value offset (after multiplier)";
-	file << "\n\n  // Reset the clock";
-	file <<   "\n  this.reset = function () {";
-	file << "\n\n    this.startTime = 0;                             // Start time reference";
-	file <<   "\n    this.stopTime = 0;                              // Stop time reference";
-	file <<   "\n    this.lastTime = 0;                              // Last time reference";
-	file <<   "\n    this.baseDirection = this.direction;            // Base direction";
-	file <<   "\n    this.d = this.baseDirection;                    // Current direction";
-	file <<   "\n    this.t = (this.baseDirection == 1 ? 0.0 : 1.0); // Current clock time (0.0 - 1.0)";
-	file <<   "\n    this.i = 0;                                     // Current iteration";
-	file <<   "\n    this.isRunning = false;                         // Is this running?";
-	file <<   "\n    this.isFinished = false;                        // Is the entire clock run finished?";
-	file <<   "\n    this.value = 0.0;                               // Current computed clock value";
-	file <<   "\n  }";
-	file << "\n\n  // Reset to initial conditions";
-	file <<   "\n  this.reset();";
-	file << "\n\n  // Add events";
-	file <<   "\n  this.started = new customEvent(\"started\");";
-	file <<   "\n  this.stopped = new customEvent(\"stopped\");";
-	file <<   "\n  this.iterated = new customEvent(\"iterated\");";
-	file <<   "\n  this.finished = new customEvent(\"finished\");";
-	file << "\n\n  // Start the clock";
-	file <<   "\n  this.start = function () {";
-	file << "\n\n    // Only start if the clock isn't running and it hasn't finished";
-	file <<   "\n    if (!this.isRunning && !this.isFinished) {";
-	file << "\n\n      // Capture start time";
-	file <<   "\n      this.startTime = this.timeProvider.ticks() - (this.stopTime - this.startTime);";
-	file << "\n\n      // Start the animation";
-	file <<   "\n      this.isRunning = true;";
-	file << "\n\n      // Started event";
-	file <<   "\n      this.started.fire(null, { message: this.started.eventName });";
-	file <<   "\n    }";
-	file <<   "\n  }";
-	file << "\n\n  // Re-start the clock (reset and start)";
-	file <<   "\n  this.restart = function () {";
-	file << "\n\n    this.reset();";
-	file <<   "\n    this.start();";
-	file <<   "\n  }";
-	file << "\n\n  // Stop the clock";
-	file <<   "\n  this.stop = function () {";
-	file << "\n\n    // Only stop if the clock is running and it hasn't finished";
-	file <<   "\n    if (this.isRunning && !this.isFinished) {";
-	file << "\n\n      // Capture stop time";
-	file <<   "\n      this.stopTime = this.timeProvider.ticks();";
-	file << "\n\n      // Stop the animation";
-	file <<   "\n      this.isRunning = false;";
-	file << "\n\n      // Stopped event";
-	file <<   "\n      this.stopped.fire(null, { message: this.stopped.eventName });";
-	file <<   "\n    }";
-	file <<   "\n  }";
-	file << "\n\n  // Toggle the clock";
-	file <<   "\n  this.toggle = function () {";
-	file << "\n\n    // Only toggle the clock if it hasn't finished";
-	file <<   "\n    if (!this.isFinished) {";
-	file << "\n\n      // Is the clock running?";
-	file <<   "\n      if (this.isRunning) {";
-	file << "\n\n        // Stop the clock";
-	file <<   "\n        this.stop();";
-	file <<   "\n      }";
-	file <<   "\n      else {";
-	file << "\n\n        // Start the clock";
-	file <<   "\n        this.start();";
-	file <<   "\n      }";
-	file <<   "\n    }";
-	file <<   "\n  }";
-	file << "\n\n  // Rewind the clock";
-	file <<   "\n  this.rewind = function () {";
-	file << "\n\n    // Only rewind if the clock is running and it hasn't finished";
-	file <<   "\n    if (this.isRunning && !this.isFinished) {";
-	file << "\n\n      // Rewind to the beginning of the current iteration";
-	file <<   "\n      this.jumpTo(this.i);";
-	file <<   "\n    }";
-	file <<   "\n  }";
-	file << "\n\n  // Fast-forward the clock";
-	file <<   "\n  this.fastForward = function () {";
-	file << "\n\n    // Only fast-forward if the clock is running and it hasn't finished";
-	file <<   "\n    if (this.isRunning && !this.isFinished) {";
-	file << "\n\n      // Fast-forward to the beginning of the next iteration";
-	file <<   "\n      this.jumpTo(this.i + 1);";
-	file <<   "\n    }";
-	file <<   "\n  }";
-	file << "\n\n  // Reverse the clock";
-	file <<   "\n  this.reverse = function () {";
-	file << "\n\n    // Only reverse if the clock is running and it hasn't finished";
-	file <<   "\n    if (this.isRunning && !this.isFinished) {";
-	file << "\n\n      // Reverse the clock direction";
-	file <<   "\n      this.baseDirection = -this.baseDirection;";
-	file << "\n\n      // Jump to the same position, but in reverse";
-	file <<   "\n      var position = this.i + (this.d == -1.0 ? this.t : (1.0 - this.t));";
-	file <<   "\n      this.jumpTo(position);";
-	file <<   "\n    }";
-	file <<   "\n  }";
-	file << "\n\n  // Jump to iteration";
-	file <<   "\n  this.jumpTo = function(iteration) {";
-	file << "\n\n    // Determine iteration time";
-	file <<   "\n    var now = this.timeProvider.ticks();";
-	file <<   "\n    var ticksPerSecond = this.timeProvider.ticksPerSecond();";
-	file <<   "\n    var iterationTime = (this.delay * ticksPerSecond) + ";
-	file <<   "\n                        ((iteration * this.duration) * ticksPerSecond);";
-	file <<   "\n    this.startTime = (now - iterationTime);";
-	file <<   "\n  }";
-	file << "\n\n  // Update function";
-	file <<   "\n  this.update = updateClock;";
-	file << "\n\n  // Set initial value";
-	file <<   "\n  this.value = (this.timingFunction(this.t) * this.multiplier) + this.offset;";
-	file << "\n\n  // Add to clocks array";
-	file <<   "\n  clocks.push(this);";
-	file <<   "\n}";
-	file << "\n\n// Update clock state";
-	file <<   "\nfunction updateClock() {";
-	file << "\n\n  // Is clock running?";
-	file <<   "\n  if (this.isRunning && !this.isFinished) {";
-	file << "\n\n    // Capture the current time";
-	file <<   "\n    var now = this.timeProvider.ticks();";
-	file << "\n\n    // Has the time changed?";
-	file <<   "\n    if (now != this.lastTime) {";
-	file << "\n\n      // How many seconds have elapsed since the clock started?";
-	file <<   "\n      var elapsed = (now - this.startTime) / this.timeProvider.ticksPerSecond();";
-	file << "\n\n      // How many possible iterations?";
-	file <<   "\n      var iterations = (elapsed - this.delay) / this.duration;";
-	file << "\n\n      // Need to wait more?";
-	file <<   "\n      if (iterations < 0.0) {";
-	file << "\n\n        // Reset to 0";
-	file <<   "\n        iterations = 0.0;";
-	file <<   "\n      }";
-	file << "\n\n      // Capture current iteration";
-	file <<   "\n      var currentIteration = Math.floor(iterations);";
-	file << "\n\n      // Iteration changed?";
-	file <<   "\n      if (currentIteration != this.i) {";
-	file << "\n\n        // Iterated event";
-	file <<   "\n        this.iterated.fire(null, { message: this.iterated.eventName });";
-	file <<   "\n      }";
-	file << "\n\n      // How far \"into\" the iteration?";
-	file <<   "\n      this.t = iterations - currentIteration;";
-	file << "\n\n      // Is this finite?";
-	file <<   "\n      if (this.iterations != 0) {";
-	file << "\n\n        // Reached the limit?";
-	file <<   "\n        if (currentIteration >= this.iterations) {";
-	file << "\n\n          // Set to end of final iteration";
-	file <<   "\n          currentIteration = this.iterations - 1;";
-	file <<   "\n          this.t = 1.0;";
-	file << "\n\n          // Stop clock";
-	file <<   "\n          this.stop();";
-	file << "\n\n          // This clock has finished";
-	file <<   "\n          this.isFinished = true;";
-	file << "\n\n          // Finished event";
-	file <<   "\n          this.finished.fire(null, { message: this.finished.eventName });";
-	file <<   "\n        }";
-	file <<   "\n      }";
-	file << "\n\n      // Track current iteration";
-	file <<   "\n      this.i = currentIteration;";
-	file << "\n\n      // Does direction ever change?";
-	file <<   "\n      if (this.reverses) {";
-	file << "\n\n        // Is this an even iteration? (0 is considered even)";
-	file <<   "\n        if ((Math.floor(this.i) % 2) == 0) {";
-	file << "\n\n          // Original direction";
-	file <<   "\n          this.d = this.baseDirection;";
-	file <<   "\n        }";
-	file <<   "\n        else {";
-	file << "\n\n          // Alternate direction";
-	file <<   "\n          this.d = -this.baseDirection;";
-	file <<   "\n        }";
-	file <<   "\n      }";
-	file <<   "\n      else {";
-	file << "\n\n        // Direction doesn't change";
-	file <<   "\n        this.d = this.baseDirection;";
-	file <<   "\n      }";
-	file << "\n\n      // Moving \"backwards\"?";
-	file <<   "\n      if (this.d == -1) {";
-	file << "\n\n        // Adjust \"t\"";
-	file <<   "\n        this.t = (1.0 - this.t);";
-	file <<   "\n      }";
-	file << "\n\n      // Update current computed clock value";
-	file <<   "\n      this.value = (this.timingFunction(this.t) * this.multiplier) + this.offset;";
-	file << "\n\n      // Remember last time";
-	file <<   "\n      this.lastTime = now;";
-	file <<   "\n    }";
-	file <<   "\n  }";
-	file <<   "\n}";
-	file << "\n\n// Update all animation clocks";
-	file <<   "\nfunction updateAllClocks() {";
-	file << "\n\n  // Loop through clocks";
-	file <<   "\n  var clockCount = clocks.length;";
-	file <<   "\n  for (var i = 0; i < clockCount; i++) {";
-	file << "\n\n    // Update clock";
-	file <<   "\n    clocks[i].update();";
-	file <<   "\n  }";
-	file <<   "\n}";
-	file << "\n\n// Standard clock";
-	file <<   "\nfunction standardClock() {";
-	file << "\n\n  // Return current tick count";
-	file <<   "\n  this.ticks = function() {";
-	file << "\n\n    return new Date().getTime();";
-	file <<   "\n  }";
-	file << "\n\n  // Return number of ticks per second";
-	file <<   "\n  this.ticksPerSecond = function() {";
-	file << "\n\n    return 1000;";
-	file <<   "\n  }";
-	file <<   "\n}";
-	file << "\n\n// Custom event";
-	file <<   "\nfunction customEvent() {";
-	file << "\n\n  // Name of the event";
-	file <<   "\n  this.eventName = arguments[0];";
-	file << "\n\n  // Subscribers to notify on event fire";
-	file <<   "\n  this.subscribers = new Array();";
-	file << "\n\n  // Subscribe a function to the event";
-	file <<   "\n  this.subscribe = function(fn) {";
-	file << "\n\n    // Only add if the function doesn't already exist";
-	file <<   "\n    if (this.subscribers.indexOf(fn) == -1) {";
-	file << "\n\n      // Add the function";
-	file <<   "\n      this.subscribers.push(fn);";
-	file <<   "\n    }";
-	file <<   "\n  };";
-	file << "\n\n  // Fire the event";
-	file <<   "\n  this.fire = function(sender, eventArgs) {";
-	file << "\n\n    // Any subscribers?";
-	file <<   "\n    if (this.subscribers.length > 0) {";
-	file << "\n\n      // Loop through all subscribers";
-	file <<   "\n      for (var i = 0; i < this.subscribers.length; i++) {";
-	file << "\n\n        // Notify subscriber";
-	file <<   "\n        this.subscribers[i](sender, eventArgs);";
-	file <<   "\n      }";
-	file <<   "\n    }";
-	file <<   "\n  };";
-	file <<   "\n};";
+	file << "// Create a shared standard clock" << endl;
+	file << "var timeProvider = new standardClock();" << endl;
+	file << "// All animation clocks" << endl;
+	file << "var clocks = new Array();" << endl;
+	file << "// Represents an animation clock" << endl;
+	file << "function clock(duration, delay, direction, reverses, iterations, timingFunction, range, multiplier, offset) {" << endl;
+	file << "// Initialize" << endl;
+	file << "this.timeProvider = timeProvider;                 // Time provider" << endl;
+	file << "this.duration = duration;                         // Duration (in seconds)" << endl;
+	file << "this.delay = delay;                               // Initial delay (in seconds)" << endl;
+	file << "this.direction = direction;                       // Direction (-1 = backward, 1 = forward)" << endl;
+	file << "this.reverses = reverses;                         // Does this reverse? (true/false)" << endl;
+	file << "this.iterations = iterations;                     // Number of iterations (0 = infinite)" << endl;
+	file << "this.timingFunction = timingFunction;             // Timing function" << endl;
+	file << "this.multiplier = (range * multiplier);           // Value multiplier (after timing function)" << endl;
+	file << "this.offset = (range * offset);                   // Value offset (after multiplier)" << endl;
+	file << "// Reset the clock" << endl;
+	file << "this.reset = function () {" << endl;
+	file << "this.startTime = 0;                             // Start time reference" << endl;
+	file << "this.stopTime = 0;                              // Stop time reference" << endl;
+	file << "this.lastTime = 0;                              // Last time reference" << endl;
+	file << "this.baseDirection = this.direction;            // Base direction" << endl;
+	file << "this.d = this.baseDirection;                    // Current direction" << endl;
+	file << "this.t = (this.baseDirection == 1 ? 0.0 : 1.0); // Current clock time (0.0 - 1.0)" << endl;
+	file << "this.i = 0;                                     // Current iteration" << endl;
+	file << "this.isRunning = false;                         // Is this running?" << endl;
+	file << "this.isFinished = false;                        // Is the entire clock run finished?" << endl;
+	file << "this.value = 0.0;                               // Current computed clock value" << endl;
+	file << "}" << endl;
+	file << "// Reset to initial conditions" << endl;
+	file << "this.reset();" << endl;
+	file << "// Add events" << endl;
+	file << "this.started = new customEvent(\"started\");" << endl;
+	file << "this.stopped = new customEvent(\"stopped\");" << endl;
+	file << "this.iterated = new customEvent(\"iterated\");" << endl;
+	file << "this.finished = new customEvent(\"finished\");" << endl;
+	file << "// Start the clock" << endl;
+	file << "this.start = function () {" << endl;
+	file << "// Only start if the clock isn't running and it hasn't finished" << endl;
+	file << "if (!this.isRunning && !this.isFinished) {" << endl;
+	file << "// Capture start time" << endl;
+	file << "this.startTime = this.timeProvider.ticks() - (this.stopTime - this.startTime);" << endl;
+	file << "// Start the animation" << endl;
+	file << "this.isRunning = true;" << endl;
+	file << "// Started event" << endl;
+	file << "this.started.fire(null, { message: this.started.eventName });" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Re-start the clock (reset and start)" << endl;
+	file << "this.restart = function () {" << endl;
+	file << "this.reset();" << endl;
+	file << "this.start();" << endl;
+	file << "}" << endl;
+	file << "// Stop the clock" << endl;
+	file << "this.stop = function () {" << endl;
+	file << "// Only stop if the clock is running and it hasn't finished" << endl;
+	file << "if (this.isRunning && !this.isFinished) {" << endl;
+	file << "// Capture stop time" << endl;
+	file << "this.stopTime = this.timeProvider.ticks();" << endl;
+	file << "// Stop the animation" << endl;
+	file << "this.isRunning = false;" << endl;
+	file << "// Stopped event" << endl;
+	file << "this.stopped.fire(null, { message: this.stopped.eventName });" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Toggle the clock" << endl;
+	file << "this.toggle = function () {" << endl;
+	file << "// Only toggle the clock if it hasn't finished" << endl;
+	file << "if (!this.isFinished) {" << endl;
+	file << "// Is the clock running?" << endl;
+	file << "if (this.isRunning) {" << endl;
+	file << "// Stop the clock" << endl;
+	file << "this.stop();" << endl;
+	file << "}" << endl;
+	file << "else {" << endl;
+	file << "// Start the clock" << endl;
+	file << "this.start();" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Rewind the clock" << endl;
+	file << "this.rewind = function () {" << endl;
+	file << "// Only rewind if the clock is running and it hasn't finished" << endl;
+	file << "if (this.isRunning && !this.isFinished) {" << endl;
+	file << "// Rewind to the beginning of the current iteration" << endl;
+	file << "this.jumpTo(this.i);" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Fast-forward the clock" << endl;
+	file << "this.fastForward = function () {" << endl;
+	file << "// Only fast-forward if the clock is running and it hasn't finished" << endl;
+	file << "if (this.isRunning && !this.isFinished) {" << endl;
+	file << "// Fast-forward to the beginning of the next iteration" << endl;
+	file << "this.jumpTo(this.i + 1);" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Reverse the clock" << endl;
+	file << "this.reverse = function () {" << endl;
+	file << "// Only reverse if the clock is running and it hasn't finished" << endl;
+	file << "if (this.isRunning && !this.isFinished) {" << endl;
+	file << "// Reverse the clock direction" << endl;
+	file << "this.baseDirection = -this.baseDirection;" << endl;
+	file << "// Jump to the same position, but in reverse" << endl;
+	file << "var position = this.i + (this.d == -1.0 ? this.t : (1.0 - this.t));" << endl;
+	file << "this.jumpTo(position);" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Jump to iteration" << endl;
+	file << "this.jumpTo = function(iteration) {" << endl;
+	file << "// Determine iteration time" << endl;
+	file << "var now = this.timeProvider.ticks();" << endl;
+	file << "var ticksPerSecond = this.timeProvider.ticksPerSecond();" << endl;
+	file << "var iterationTime = (this.delay * ticksPerSecond) + " << endl;
+	file << "((iteration * this.duration) * ticksPerSecond);" << endl;
+	file << "this.startTime = (now - iterationTime);" << endl;
+	file << "}" << endl;
+	file << "// Update function" << endl;
+	file << "this.update = updateClock;" << endl;
+	file << "// Set initial value" << endl;
+	file << "this.value = (this.timingFunction(this.t) * this.multiplier) + this.offset;" << endl;
+	file << "// Add to clocks array" << endl;
+	file << "clocks.push(this);" << endl;
+	file << "}" << endl;
+	file << "// Update clock state" << endl;
+	file << "function updateClock() {" << endl;
+	file << "// Is clock running?" << endl;
+	file << "if (this.isRunning && !this.isFinished) {" << endl;
+	file << "// Capture the current time" << endl;
+	file << "var now = this.timeProvider.ticks();" << endl;
+	file << "// Has the time changed?" << endl;
+	file << "if (now != this.lastTime) {" << endl;
+	file << "// How many seconds have elapsed since the clock started?" << endl;
+	file << "var elapsed = (now - this.startTime) / this.timeProvider.ticksPerSecond();" << endl;
+	file << "// How many possible iterations?" << endl;
+	file << "var iterations = (elapsed - this.delay) / this.duration;" << endl;
+	file << "// Need to wait more?" << endl;
+	file << "if (iterations < 0.0) {" << endl;
+	file << "// Reset to 0" << endl;
+	file << "iterations = 0.0;" << endl;
+	file << "}" << endl;
+	file << "// Capture current iteration" << endl;
+	file << "var currentIteration = Math.floor(iterations);" << endl;
+	file << "// Iteration changed?" << endl;
+	file << "if (currentIteration != this.i) {" << endl;
+	file << "// Iterated event" << endl;
+	file << "this.iterated.fire(null, { message: this.iterated.eventName });" << endl;
+	file << "}" << endl;
+	file << "// How far \"into\" the iteration?" << endl;
+	file << "this.t = iterations - currentIteration;" << endl;
+	file << "// Is this finite?" << endl;
+	file << "if (this.iterations != 0) {" << endl;
+	file << "// Reached the limit?" << endl;
+	file << "if (currentIteration >= this.iterations) {" << endl;
+	file << "// Set to end of final iteration" << endl;
+	file << "currentIteration = this.iterations - 1;" << endl;
+	file << "this.t = 1.0;" << endl;
+	file << "// Stop clock" << endl;
+	file << "this.stop();" << endl;
+	file << "// This clock has finished" << endl;
+	file << "this.isFinished = true;" << endl;
+	file << "// Finished event" << endl;
+	file << "this.finished.fire(null, { message: this.finished.eventName });" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Track current iteration" << endl;
+	file << "this.i = currentIteration;" << endl;
+	file << "// Does direction ever change?" << endl;
+	file << "if (this.reverses) {" << endl;
+	file << "// Is this an even iteration? (0 is considered even)" << endl;
+	file << "if ((Math.floor(this.i) % 2) == 0) {" << endl;
+	file << "// Original direction" << endl;
+	file << "this.d = this.baseDirection;" << endl;
+	file << "}" << endl;
+	file << "else {" << endl;
+	file << "// Alternate direction" << endl;
+	file << "this.d = -this.baseDirection;" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "else {" << endl;
+	file << "// Direction doesn't change" << endl;
+	file << "this.d = this.baseDirection;" << endl;
+	file << "}" << endl;
+	file << "// Moving \"backwards\"?" << endl;
+	file << "if (this.d == -1) {" << endl;
+	file << "// Adjust \"t\"" << endl;
+	file << "this.t = (1.0 - this.t);" << endl;
+	file << "}" << endl;
+	file << "// Update current computed clock value" << endl;
+	file << "this.value = (this.timingFunction(this.t) * this.multiplier) + this.offset;" << endl;
+	file << "// Remember last time" << endl;
+	file << "this.lastTime = now;" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Update all animation clocks" << endl;
+	file << "function updateAllClocks() {" << endl;
+	file << "// Loop through clocks" << endl;
+	file << "var clockCount = clocks.length;" << endl;
+	file << "for (var i = 0; i < clockCount; i++) {" << endl;
+	file << "// Update clock" << endl;
+	file << "clocks[i].update();" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Standard clock" << endl;
+	file << "function standardClock() {" << endl;
+	file << "// Return current tick count" << endl;
+	file << "this.ticks = function() {" << endl;
+	file << "return new Date().getTime();" << endl;
+	file << "}" << endl;
+	file << "// Return number of ticks per second" << endl;
+	file << "this.ticksPerSecond = function() {" << endl;
+	file << "return 1000;" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Custom event" << endl;
+	file << "function customEvent() {" << endl;
+	file << "// Name of the event" << endl;
+	file << "this.eventName = arguments[0];" << endl;
+	file << "// Subscribers to notify on event fire" << endl;
+	file << "this.subscribers = new Array();" << endl;
+	file << "// Subscribe a function to the event" << endl;
+	file << "this.subscribe = function(fn) {" << endl;
+	file << "// Only add if the function doesn't already exist" << endl;
+	file << "if (this.subscribers.indexOf(fn) == -1) {" << endl;
+	file << "// Add the function" << endl;
+	file << "this.subscribers.push(fn);" << endl;
+	file << "}" << endl;
+	file << "};" << endl;
+	file << "// Fire the event" << endl;
+	file << "this.fire = function(sender, eventArgs) {" << endl;
+	file << "// Any subscribers?" << endl;
+	file << "if (this.subscribers.length > 0) {" << endl;
+	file << "// Loop through all subscribers" << endl;
+	file << "for (var i = 0; i < this.subscribers.length; i++) {" << endl;
+	file << "// Notify subscriber" << endl;
+	file << "this.subscribers[i](sender, eventArgs);" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "};" << endl;
+	file << "};" << endl;
 }
 
 void HtmlDocument::OutputAnimationFunctions(ofstream& file)
 {
 	// Animation path support functions
-	file << "\n\n// Updates animation path";
-	file <<   "\nfunction updatePath() {";
-	file << "\n\n  // Reference the animation path clock";
-	file <<   "\n  var clock = this.pathClock;";
-	file << "\n\n  // Where is T in the linear animation?";
-	file <<   "\n  var t = clock.value;";
-	file << "\n\n  // Has the clock value changed?";
-	file <<   "\n  if (t != this.lastValue) {";
-	file << "\n\n    // Limit t";
-	file <<   "\n    if (t < 0.0 || t > (this.linear.length - 1)) {";
-	file << "\n\n      t = (t < 0.0) ? 0.0 : (this.linear.length - 1);";
-	file <<   "\n    }";
-	file <<   "\n    var tIndex = Math.floor(t);";
-	file << "\n\n    // Distance between index points";
-	file <<   "\n    var d = (t - tIndex);";
-	file << "\n\n    // Get segment indices";
-	file <<   "\n    var segment1Index = this.linear[tIndex][0];";
-	file <<   "\n    var segment2Index = segment1Index;";
-	file << "\n\n    // U values to interpolate between";
-	file <<   "\n    var u1 = this.linear[tIndex][1];";
-	file <<   "\n    var u2 = u1;";
-	file << "\n\n    // Get T values";
-	file <<   "\n    var t1 = this.linear[tIndex][2];";
-	file <<   "\n    var t2 = t1;";
-	file << "\n\n    // If in bounds, grab second segment";
-	file <<   "\n    if ((tIndex + 1) < (this.linear.length))";
-	file <<   "\n    {";
-	file <<   "\n      var segment2Index = this.linear[(tIndex + 1)][0];";
-	file <<   "\n      var u2 = this.linear[(tIndex + 1)][1];";
-	file <<   "\n      var t2 = this.linear[(tIndex + 1)][2];";
-	file <<   "\n    }";
-	file << "\n\n    // Segment index and U value";
-	file <<   "\n    var segmentIndex = segment1Index;";
-	file <<   "\n    var u = 0.0;";
-	file << "\n\n    // Interpolate";
-	file << "\n\n    // Same segment?";
-	file <<   "\n    if (segment1Index == segment2Index)";
-	file <<   "\n    {";
-	file <<   "\n      // Interpolate U value";
-	file <<   "\n      u = (d * (u2 - u1)) + u1;";
-	file <<   "\n    }";
-	file <<   "\n    else";
-	file <<   "\n    {";
-	file << "\n\n      // Difference in T";
-	file <<   "\n      var deltaT = t2 - t1;";
-	file << "\n\n      // Based on distance, how \"far\" are we along T?";
-	file <<   "\n      var tDistance = d * deltaT;";
-	file << "\n\n      // How much segment 1 T?";
-	file <<   "\n      var segment1T = (this.segmentT[segment1Index] - t1);";
-	file << "\n\n      // Part of the first segment (before the anchor point)?";
-	file <<   "\n      if ((t1 + tDistance) < this.segmentT[segment1Index])";
-	file <<   "\n      {";
-	file << "\n\n        // How far along?";
-	file <<   "\n        var p = (segment1T == 0 ? 0 : tDistance / segment1T);";
-	file << "\n\n        // Compute U";
-	file <<   "\n        u = ((1.0 - u1) * p) + u1;";
-	file <<   "\n      }";
-	file <<   "\n      else";
-	file <<   "\n      {";
-	file <<   "\n        // Beginning of second segment";
-	file <<   "\n        segmentIndex = segment2Index;";
-	file << "\n\n        // How much segment 2 T?";
-	file <<   "\n        var segment2T = (t2 - this.segmentT[segment1Index]);";
-	file << "\n\n        // How much T remains in this segment?";
-	file <<   "\n        var tRemaining = tDistance - segment1T;";
-	file << "\n\n        // How far along?";
-	file <<   "\n        var p = (segment2T == 0 ? 0 : tRemaining / segment2T);";
-	file << "\n\n        // Compute U";
-	file <<   "\n        u = p * u2;";
-	file <<   "\n      }";
-	file <<   "\n    }";
-	file << "\n\n    // Calculate bezier curve position";
-	file <<   "\n    this.x = bezier(u,";
-	file <<   "\n                    this.points[segmentIndex][0][0],";
-	file <<   "\n                    this.points[segmentIndex][1][0],";
-	file <<   "\n                    this.points[segmentIndex][2][0],";
-	file <<   "\n                    this.points[segmentIndex][3][0]);";
-	file << "\n\n    this.y = bezier(u,";
-	file <<   "\n                    this.points[segmentIndex][0][1],";
-	file <<   "\n                    this.points[segmentIndex][1][1],";
-	file <<   "\n                    this.points[segmentIndex][2][1],";
-	file <<   "\n                    this.points[segmentIndex][3][1]);";
-	file << "\n\n    // Determine follow orientation";
-	file <<   "\n    var qx = 0.0;";
-	file <<   "\n    var qy = 0.0;";
-	file << "\n\n    // At a 0.0 or 1.0 boundary?";
-	file <<   "\n    if (u == 0.0) {";
-	file << "\n\n      // Use control point";
-	file <<   "\n      qx = this.points[segmentIndex][1][0];";
-	file <<   "\n      qy = this.points[segmentIndex][1][1];";
-	file << "\n\n      this.orientation = followOrientation(this.x, this.y, qx, qy, clock.d);";
-	file <<   "\n    }";
-	file <<   "\n    else if (u == 1.0) {";
-	file << "\n\n      // Use control point";
-	file <<   "\n      qx = this.points[segmentIndex][1][0];";
-	file <<   "\n      qy = this.points[segmentIndex][1][1];";
-	file << "\n\n      this.orientation = followOrientation(qx, qy, this.x, this.y, clock.d);";
-	file <<   "\n    }";
-	file <<   "\n    else {";
-	file << "\n\n      // Calculate quadratic curve position";
-	file <<   "\n      qx = quadratic(u,";
-	file <<   "\n                     this.points[segmentIndex][0][0],";
-	file <<   "\n                     this.points[segmentIndex][1][0],";
-	file <<   "\n                     this.points[segmentIndex][2][0]);";
-	file << "\n\n      qy = quadratic(u,";
-	file <<   "\n                     this.points[segmentIndex][0][1],";
-	file <<   "\n                     this.points[segmentIndex][1][1],";
-	file <<   "\n                     this.points[segmentIndex][2][1]);";
-	file << "\n\n      this.orientation = followOrientation(qx, qy, this.x, this.y, clock.d);";
-	file <<   "\n    }";
-	file << "\n\n    // Remember this clock value";
-	file <<   "\n    this.lastValue = t;";
-	file <<   "\n  }";
-	file << "\n\n  // Update clock";
-	file <<   "\n  clock.update();";
-	file <<   "\n}";
-	file << "\n\n// Returns follow orientation";
-	file <<   "\nfunction followOrientation(x1, y1, x2, y2, direction) {";
-	file << "\n\n  // Forward?";
-	file <<   "\n  if (direction == 1) {";
-	file << "\n\n    return slope(x1, y1, x2, y2);";
-	file <<   "\n  }";
-	file <<   "\n  else {";
-	file << "\n\n    return slope(x2, y2, x1, y1);";
-	file <<   "\n  }";
-	file <<   "\n}";
-	file << "\n\n// Returns a position along a cubic Bezier curve";
-	file <<   "\nfunction bezier(u, p0, p1, p2, p3) {";
-	file << "\n\n  return Math.pow(u, 3) * (p3 + 3 * (p1 - p2) - p0)";
-	file <<   "\n         + 3 * Math.pow(u, 2) * (p0 - 2 * p1 + p2)";
-	file <<   "\n         + 3 * u * (p1 - p0) + p0;";
-	file <<   "\n}";
-	file << "\n\n// Returns a position along a quadratic curve";
-	file <<   "\nfunction quadratic(u, p0, p1, p2) {";
-	file << "\n\n  u = Math.max(Math.min(1.0, u), 0.0);";
-	file << "\n\n  return Math.pow((1.0 - u), 2) * p0 +";
-	file <<   "\n         2 * u * (1.0 - u) * p1 +";
-	file <<   "\n         u * u * p2;";
-	file <<   "\n}";
-	file << "\n\n// Returns the slope between two points";
-	file <<   "\nfunction slope(x1, y1, x2, y2) {";
-	file << "\n\n  var dx = (x2 - x1);";
-	file <<   "\n  var dy = (y2 - y1);";
-	file << "\n\n  return Math.atan2(dy, dx);";
-	file <<   "\n}";
+	file << "// Updates animation path" << endl;
+	file << "function updatePath() {" << endl;
+	file << "// Reference the animation path clock" << endl;
+	file << "var clock = this.pathClock;" << endl;
+	file << "// Where is T in the linear animation?" << endl;
+	file << "var t = clock.value;" << endl;
+	file << "// Has the clock value changed?" << endl;
+	file << "if (t != this.lastValue) {" << endl;
+	file << "// Limit t" << endl;
+	file << "if (t < 0.0 || t > (this.linear.length - 1)) {" << endl;
+	file << "t = (t < 0.0) ? 0.0 : (this.linear.length - 1);" << endl;
+	file << "}" << endl;
+	file << "var tIndex = Math.floor(t);" << endl;
+	file << "// Distance between index points" << endl;
+	file << "var d = (t - tIndex);" << endl;
+	file << "// Get segment indices" << endl;
+	file << "var segment1Index = this.linear[tIndex][0];" << endl;
+	file << "var segment2Index = segment1Index;" << endl;
+	file << "// U values to interpolate between" << endl;
+	file << "var u1 = this.linear[tIndex][1];" << endl;
+	file << "var u2 = u1;" << endl;
+	file << "// Get T values" << endl;
+	file << "var t1 = this.linear[tIndex][2];" << endl;
+	file << "var t2 = t1;" << endl;
+	file << "// If in bounds, grab second segment" << endl;
+	file << "if ((tIndex + 1) < (this.linear.length))" << endl;
+	file << "{" << endl;
+	file << "var segment2Index = this.linear[(tIndex + 1)][0];" << endl;
+	file << "var u2 = this.linear[(tIndex + 1)][1];" << endl;
+	file << "var t2 = this.linear[(tIndex + 1)][2];" << endl;
+	file << "}" << endl;
+	file << "// Segment index and U value" << endl;
+	file << "var segmentIndex = segment1Index;" << endl;
+	file << "var u = 0.0;" << endl;
+	file << "// Interpolate" << endl;
+	file << "// Same segment?" << endl;
+	file << "if (segment1Index == segment2Index)" << endl;
+	file << "{" << endl;
+	file << "// Interpolate U value" << endl;
+	file << "u = (d * (u2 - u1)) + u1;" << endl;
+	file << "}" << endl;
+	file << "else" << endl;
+	file << "{" << endl;
+	file << "// Difference in T" << endl;
+	file << "var deltaT = t2 - t1;" << endl;
+	file << "// Based on distance, how \"far\" are we along T?" << endl;
+	file << "var tDistance = d * deltaT;" << endl;
+	file << "// How much segment 1 T?" << endl;
+	file << "var segment1T = (this.segmentT[segment1Index] - t1);" << endl;
+	file << "// Part of the first segment (before the anchor point)?" << endl;
+	file << "if ((t1 + tDistance) < this.segmentT[segment1Index])" << endl;
+	file << "{" << endl;
+	file << "// How far along?" << endl;
+	file << "var p = (segment1T == 0 ? 0 : tDistance / segment1T);" << endl;
+	file << "// Compute U" << endl;
+	file << "u = ((1.0 - u1) * p) + u1;" << endl;
+	file << "}" << endl;
+	file << "else" << endl;
+	file << "{" << endl;
+	file << "// Beginning of second segment" << endl;
+	file << "segmentIndex = segment2Index;" << endl;
+	file << "// How much segment 2 T?" << endl;
+	file << "var segment2T = (t2 - this.segmentT[segment1Index]);" << endl;
+	file << "// How much T remains in this segment?" << endl;
+	file << "var tRemaining = tDistance - segment1T;" << endl;
+	file << "// How far along?" << endl;
+	file << "var p = (segment2T == 0 ? 0 : tRemaining / segment2T);" << endl;
+	file << "// Compute U" << endl;
+	file << "u = p * u2;" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Calculate bezier curve position" << endl;
+	file << "this.x = bezier(u," << endl;
+	file << "this.points[segmentIndex][0][0]," << endl;
+	file << "this.points[segmentIndex][1][0]," << endl;
+	file << "this.points[segmentIndex][2][0]," << endl;
+	file << "this.points[segmentIndex][3][0]);" << endl;
+	file << "this.y = bezier(u," << endl;
+	file << "this.points[segmentIndex][0][1]," << endl;
+	file << "this.points[segmentIndex][1][1]," << endl;
+	file << "this.points[segmentIndex][2][1]," << endl;
+	file << "this.points[segmentIndex][3][1]);" << endl;
+	file << "// Determine follow orientation" << endl;
+	file << "var qx = 0.0;" << endl;
+	file << "var qy = 0.0;" << endl;
+	file << "// At a 0.0 or 1.0 boundary?" << endl;
+	file << "if (u == 0.0) {" << endl;
+	file << "// Use control point" << endl;
+	file << "qx = this.points[segmentIndex][1][0];" << endl;
+	file << "qy = this.points[segmentIndex][1][1];" << endl;
+	file << "this.orientation = followOrientation(this.x, this.y, qx, qy, clock.d);" << endl;
+	file << "}" << endl;
+	file << "else if (u == 1.0) {" << endl;
+	file << "// Use control point" << endl;
+	file << "qx = this.points[segmentIndex][1][0];" << endl;
+	file << "qy = this.points[segmentIndex][1][1];" << endl;
+	file << "this.orientation = followOrientation(qx, qy, this.x, this.y, clock.d);" << endl;
+	file << "}" << endl;
+	file << "else {" << endl;
+	file << "// Calculate quadratic curve position" << endl;
+	file << "qx = quadratic(u," << endl;
+	file << "this.points[segmentIndex][0][0]," << endl;
+	file << "this.points[segmentIndex][1][0]," << endl;
+	file << "this.points[segmentIndex][2][0]);" << endl;
+	file << "qy = quadratic(u," << endl;
+	file << "this.points[segmentIndex][0][1]," << endl;
+	file << "this.points[segmentIndex][1][1]," << endl;
+	file << "this.points[segmentIndex][2][1]);" << endl;
+	file << "this.orientation = followOrientation(qx, qy, this.x, this.y, clock.d);" << endl;
+	file << "}" << endl;
+	file << "// Remember this clock value" << endl;
+	file << "this.lastValue = t;" << endl;
+	file << "}" << endl;
+	file << "// Update clock" << endl;
+	file << "clock.update();" << endl;
+	file << "}" << endl;
+	file << "// Returns follow orientation" << endl;
+	file << "function followOrientation(x1, y1, x2, y2, direction) {" << endl;
+	file << "// Forward?" << endl;
+	file << "if (direction == 1) {" << endl;
+	file << "return slope(x1, y1, x2, y2);" << endl;
+	file << "}" << endl;
+	file << "else {" << endl;
+	file << "return slope(x2, y2, x1, y1);" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Returns a position along a cubic Bezier curve" << endl;
+	file << "function bezier(u, p0, p1, p2, p3) {" << endl;
+	file << "return Math.pow(u, 3) * (p3 + 3 * (p1 - p2) - p0)" << endl;
+	file << "+ 3 * Math.pow(u, 2) * (p0 - 2 * p1 + p2)" << endl;
+	file << "+ 3 * u * (p1 - p0) + p0;" << endl;
+	file << "}" << endl;
+	file << "// Returns a position along a quadratic curve" << endl;
+	file << "function quadratic(u, p0, p1, p2) {" << endl;
+	file << "u = Math.max(Math.min(1.0, u), 0.0);" << endl;
+	file << "return Math.pow((1.0 - u), 2) * p0 +" << endl;
+	file << "2 * u * (1.0 - u) * p1 +" << endl;
+	file << "u * u * p2;" << endl;
+	file << "}" << endl;
+	file << "// Returns the slope between two points" << endl;
+	file << "function slope(x1, y1, x2, y2) {" << endl;
+	file << "var dx = (x2 - x1);" << endl;
+	file << "var dy = (y2 - y1);" << endl;
+	file << "return Math.atan2(dy, dx);" << endl;
+	file << "}" << endl;
 }
 
 void HtmlDocument::OutputTimingFunctions(ofstream& file)
 {
 	// Timing functions
-	file << "\n\n// Penner timing functions";
-	file <<   "\n// Based on Robert Penner's easing equations: http://www.robertpenner.com/easing/";
-	file <<   "\nfunction linear(t) {";
-	file <<   "\n  return t;";
-	file <<   "\n}";
-	file << "\n\nfunction sineEaseIn(t) {";
-	file <<   "\n  return -Math.cos(t * (Math.PI/2)) + 1;";
-	file <<   "\n}";
-	file << "\n\nfunction sineEaseOut(t) {";
-	file <<   "\n  return Math.sin(t * (Math.PI/2));";
-	file <<   "\n}";
-	file << "\n\nfunction sineEaseInOut(t) {";
-	file <<   "\n  return -0.5 * (Math.cos(Math.PI * t) - 1);";
-	file <<   "\n}";
-	file << "\n\nfunction quintEaseIn(t) {";
-	file <<   "\n  return t * t * t * t * t;";
-	file <<   "\n}";
-	file << "\n\nfunction quintEaseOut(t) {";
-	file <<   "\n  t--;";
-	file <<   "\n  return t * t * t * t * t + 1;";
-	file <<   "\n}";
-	file << "\n\nfunction quintEaseInOut(t) {";
-	file <<   "\n  t /= 0.5;";
-	file <<   "\n  if (t < 1) { return 0.5 * t * t * t * t * t; }";
-	file <<   "\n  t -= 2;";
-	file <<   "\n  return 0.5 * (t * t * t * t * t + 2);";
-	file <<   "\n}";
-	file << "\n\nfunction quartEaseIn(t) {";
-	file <<   "\n  return t * t * t * t;";
-	file <<   "\n}";
-	file << "\n\nfunction quartEaseOut(t) {";
-	file <<   "\n  t--;";
-	file <<   "\n  return -(t * t * t * t - 1);";
-	file <<   "\n}";
-	file << "\n\nfunction quartEaseInOut(t) {";
-	file <<   "\n  t /= 0.5;";
-	file <<   "\n  if (t < 1) { return 0.5 * t * t * t * t; }";
-	file <<   "\n  t -= 2;";
-	file <<   "\n  return -0.5 * (t * t * t * t - 2);";
-	file <<   "\n}";
-	file << "\n\nfunction circEaseIn(t) {";
-	file <<   "\n  return -(Math.sqrt(1 - (t * t)) - 1);";
-	file <<   "\n}";
-	file << "\n\nfunction circEaseOut(t) {";
-	file <<   "\n  t--;";
-	file <<   "\n  return Math.sqrt(1 - (t * t));";
-	file <<   "\n}";
-	file << "\n\nfunction circEaseInOut(t) {";
-	file <<   "\n  t /= 0.5;";
-	file <<   "\n  if (t < 1) { return -0.5 * (Math.sqrt(1 - t * t) - 1); }";
-	file <<   "\n  t-= 2;";
-	file <<   "\n  return 0.5 * (Math.sqrt(1 - t * t) + 1);";
-	file <<   "\n}";
-	file << "\n\nfunction quadEaseIn(t) {";
-	file <<   "\n  return t * t;";
-	file <<   "\n}";
-	file << "\n\nfunction quadEaseOut(t) {";
-	file <<   "\n  return -1.0 * t * (t - 2.0);";
-	file <<   "\n}";
-	file << "\n\nfunction quadEaseInOut(t) {";
-	file <<   "\n  t /= 0.5;";
-	file <<   "\n  if (t < 1.0) {";
-	file <<   "\n    return 0.5 * t * t;";
-	file <<   "\n  }";
-	file <<   "\n  t--;";
-	file <<   "\n  return -0.5 * (t * (t - 2.0) - 1);";
-	file <<   "\n}";
-	file << "\n\nfunction cubicEaseIn(t) {";
-	file <<   "\n  return t * t * t;";
-	file <<   "\n}";
-	file << "\n\nfunction cubicEaseOut(t) {";
-	file <<   "\n  t--;";
-	file <<   "\n  return t * t * t + 1;";
-	file <<   "\n}";
-	file << "\n\nfunction cubicEaseInOut(t) {";
-	file <<   "\n  t /= 0.5;";
-	file <<   "\n  if (t < 1) { return 0.5 * t * t * t; }";
-	file <<   "\n  t -= 2;";
-	file <<   "\n  return 0.5 * (t * t * t + 2);";
-	file <<   "\n}";
-	file << "\n\nfunction bounceEaseOut(t) {";
-	file <<   "\n  if (t < (1.0 / 2.75)) {";
-	file <<   "\n    return (7.5625 * t * t);";
-	file <<   "\n  } else if (t < (2 / 2.75)) {";
-	file <<   "\n    t -= (1.5 / 2.75);";
-	file <<   "\n    return (7.5625 * t * t + 0.75);";
-	file <<   "\n  } else if (t < (2.5 / 2.75)) {";
-	file <<   "\n    t -= (2.25 / 2.75);";
-	file <<   "\n    return (7.5625 * t * t + 0.9375);";
-	file <<   "\n  } else {";
-	file <<   "\n    t -= (2.625 / 2.75);";
-	file <<   "\n    return (7.5625 * t * t + 0.984375);";
-	file <<   "\n  }";
-	file <<   "\n}";
-	file << "\n\nfunction bounceEaseIn(t) {";
-	file <<   "\n  return 1.0 - bounceEaseOut(1.0 - t);";
-	file <<   "\n}";
-	file << "\n\nfunction bounceEaseInOut(t) {";
-	file <<   "\n  if (t < 0.5) {";
-	file <<   "\n    return bounceEaseIn(t * 2.0) * 0.5;";
-	file <<   "\n  } else {";
-	file <<   "\n    return bounceEaseOut(t * 2.0 - 1.0) * 0.5 + 0.5;";
-	file <<   "\n  }";
-	file <<   "\n}";
-	file << "\n\nfunction expoEaseIn(t) {";
-	file <<   "\n  return (t == 0.0) ? 0.0 : Math.pow(2.0, 10.0 * (t - 1));";
-	file <<   "\n}";
-	file << "\n\nfunction expoEaseOut(t) {";
-	file <<   "\n  return (t == 1.0) ? 1.0 : -Math.pow(2.0, -10.0 * t) + 1.0;";
-	file <<   "\n}";
-	file << "\n\nfunction expoEaseInOut(t) {";
-	file <<   "\n  if (t == 0) {";
-	file <<   "\n    return 0.0;";
-	file <<   "\n  } else if (t == 1.0) {";
-	file <<   "\n    return 1.0;";
-	file <<   "\n  } else if ((t / 0.5) < 1.0) {";
-	file <<   "\n    t /= 0.5;";
-	file <<   "\n    return 0.5 * Math.pow(2.0, 10.0 * (t - 1));";
-	file <<   "\n  } else {";
-	file <<   "\n    t /= 0.5;";
-	file <<   "\n    return 0.5 * (-Math.pow(2.0, -10.0 * (t - 1)) + 2);";
-	file <<   "\n  }";
-	file <<   "\n}";
-	file << "\n\n// Other timing functions";
-	file << "\n\nfunction zeroStep(t) {";
-	file <<   "\n  return (t <= 0.0 ? 0.0 : 1.0);";
-	file << "\n\n}";
-	file << "\n\nfunction halfStep(t) {";
-	file <<   "\n  return (t < 0.5 ? 0.0 : 1.0);";
-	file << "\n\n}";
-	file << "\n\nfunction oneStep(t) {";
-	file <<   "\n  return (t >= 1.0 ? 1.0 : 0.0);";
-	file <<   "\n}";
-	file << "\n\nfunction random(t) {";
-	file <<   "\n  return Math.random();";
-	file <<   "\n}";
-	file << "\n\nfunction randomLimit(t) {";
-	file <<   "\n  return Math.random() * t;";
-	file <<   "\n}";
-	file << "\n\nfunction clockTick(t) {";
-	file <<   "\n  var steps = 60.0;";
-	file <<   "\n  return Math.floor(t * steps) / steps;";
-	file <<   "\n}";
+	file << "// Penner timing functions" << endl;
+	file << "// Based on Robert Penner's easing equations: http://www.robertpenner.com/easing/" << endl;
+	file << "function linear(t) {" << endl;
+	file << "return t;" << endl;
+	file << "}" << endl;
+	file << "function sineEaseIn(t) {" << endl;
+	file << "return -Math.cos(t * (Math.PI/2)) + 1;" << endl;
+	file << "}" << endl;
+	file << "function sineEaseOut(t) {" << endl;
+	file << "return Math.sin(t * (Math.PI/2));" << endl;
+	file << "}" << endl;
+	file << "function sineEaseInOut(t) {" << endl;
+	file << "return -0.5 * (Math.cos(Math.PI * t) - 1);" << endl;
+	file << "}" << endl;
+	file << "function quintEaseIn(t) {" << endl;
+	file << "return t * t * t * t * t;" << endl;
+	file << "}" << endl;
+	file << "function quintEaseOut(t) {" << endl;
+	file << "t--;" << endl;
+	file << "return t * t * t * t * t + 1;" << endl;
+	file << "}" << endl;
+	file << "function quintEaseInOut(t) {" << endl;
+	file << "t /= 0.5;" << endl;
+	file << "if (t < 1) { return 0.5 * t * t * t * t * t; }" << endl;
+	file << "t -= 2;" << endl;
+	file << "return 0.5 * (t * t * t * t * t + 2);" << endl;
+	file << "}" << endl;
+	file << "function quartEaseIn(t) {" << endl;
+	file << "return t * t * t * t;" << endl;
+	file << "}" << endl;
+	file << "function quartEaseOut(t) {" << endl;
+	file << "t--;" << endl;
+	file << "return -(t * t * t * t - 1);" << endl;
+	file << "}" << endl;
+	file << "function quartEaseInOut(t) {" << endl;
+	file << "t /= 0.5;" << endl;
+	file << "if (t < 1) { return 0.5 * t * t * t * t; }" << endl;
+	file << "t -= 2;" << endl;
+	file << "return -0.5 * (t * t * t * t - 2);" << endl;
+	file << "}" << endl;
+	file << "function circEaseIn(t) {" << endl;
+	file << "return -(Math.sqrt(1 - (t * t)) - 1);" << endl;
+	file << "}" << endl;
+	file << "function circEaseOut(t) {" << endl;
+	file << "t--;" << endl;
+	file << "return Math.sqrt(1 - (t * t));" << endl;
+	file << "}" << endl;
+	file << "function circEaseInOut(t) {" << endl;
+	file << "t /= 0.5;" << endl;
+	file << "if (t < 1) { return -0.5 * (Math.sqrt(1 - t * t) - 1); }" << endl;
+	file << "t-= 2;" << endl;
+	file << "return 0.5 * (Math.sqrt(1 - t * t) + 1);" << endl;
+	file << "}" << endl;
+	file << "function quadEaseIn(t) {" << endl;
+	file << "return t * t;" << endl;
+	file << "}" << endl;
+	file << "function quadEaseOut(t) {" << endl;
+	file << "return -1.0 * t * (t - 2.0);" << endl;
+	file << "}" << endl;
+	file << "function quadEaseInOut(t) {" << endl;
+	file << "t /= 0.5;" << endl;
+	file << "if (t < 1.0) {" << endl;
+	file << "return 0.5 * t * t;" << endl;
+	file << "}" << endl;
+	file << "t--;" << endl;
+	file << "return -0.5 * (t * (t - 2.0) - 1);" << endl;
+	file << "}" << endl;
+	file << "function cubicEaseIn(t) {" << endl;
+	file << "return t * t * t;" << endl;
+	file << "}" << endl;
+	file << "function cubicEaseOut(t) {" << endl;
+	file << "t--;" << endl;
+	file << "return t * t * t + 1;" << endl;
+	file << "}" << endl;
+	file << "function cubicEaseInOut(t) {" << endl;
+	file << "t /= 0.5;" << endl;
+	file << "if (t < 1) { return 0.5 * t * t * t; }" << endl;
+	file << "t -= 2;" << endl;
+	file << "return 0.5 * (t * t * t + 2);" << endl;
+	file << "}" << endl;
+	file << "function bounceEaseOut(t) {" << endl;
+	file << "if (t < (1.0 / 2.75)) {" << endl;
+	file << "return (7.5625 * t * t);" << endl;
+	file << "} else if (t < (2 / 2.75)) {" << endl;
+	file << "t -= (1.5 / 2.75);" << endl;
+	file << "return (7.5625 * t * t + 0.75);" << endl;
+	file << "} else if (t < (2.5 / 2.75)) {" << endl;
+	file << "t -= (2.25 / 2.75);" << endl;
+	file << "return (7.5625 * t * t + 0.9375);" << endl;
+	file << "} else {" << endl;
+	file << "t -= (2.625 / 2.75);" << endl;
+	file << "return (7.5625 * t * t + 0.984375);" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "function bounceEaseIn(t) {" << endl;
+	file << "return 1.0 - bounceEaseOut(1.0 - t);" << endl;
+	file << "}" << endl;
+	file << "function bounceEaseInOut(t) {" << endl;
+	file << "if (t < 0.5) {" << endl;
+	file << "return bounceEaseIn(t * 2.0) * 0.5;" << endl;
+	file << "} else {" << endl;
+	file << "return bounceEaseOut(t * 2.0 - 1.0) * 0.5 + 0.5;" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "function expoEaseIn(t) {" << endl;
+	file << "return (t == 0.0) ? 0.0 : Math.pow(2.0, 10.0 * (t - 1));" << endl;
+	file << "}" << endl;
+	file << "function expoEaseOut(t) {" << endl;
+	file << "return (t == 1.0) ? 1.0 : -Math.pow(2.0, -10.0 * t) + 1.0;" << endl;
+	file << "}" << endl;
+	file << "function expoEaseInOut(t) {" << endl;
+	file << "if (t == 0) {" << endl;
+	file << "return 0.0;" << endl;
+	file << "} else if (t == 1.0) {" << endl;
+	file << "return 1.0;" << endl;
+	file << "} else if ((t / 0.5) < 1.0) {" << endl;
+	file << "t /= 0.5;" << endl;
+	file << "return 0.5 * Math.pow(2.0, 10.0 * (t - 1));" << endl;
+	file << "} else {" << endl;
+	file << "t /= 0.5;" << endl;
+	file << "return 0.5 * (-Math.pow(2.0, -10.0 * (t - 1)) + 2);" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Other timing functions" << endl;
+	file << "function zeroStep(t) {" << endl;
+	file << "return (t <= 0.0 ? 0.0 : 1.0);" << endl;
+	file << "}" << endl;
+	file << "function halfStep(t) {" << endl;
+	file << "return (t < 0.5 ? 0.0 : 1.0);" << endl;
+	file << "}" << endl;
+	file << "function oneStep(t) {" << endl;
+	file << "return (t >= 1.0 ? 1.0 : 0.0);" << endl;
+	file << "}" << endl;
+	file << "function random(t) {" << endl;
+	file << "return Math.random();" << endl;
+	file << "}" << endl;
+	file << "function randomLimit(t) {" << endl;
+	file << "return Math.random() * t;" << endl;
+	file << "}" << endl;
+	file << "function clockTick(t) {" << endl;
+	file << "var steps = 60.0;" << endl;
+	file << "return Math.floor(t * steps) / steps;" << endl;
+	file << "}" << endl;
 }
 
 void HtmlDocument::RenderSymbolFunctions()
@@ -1414,32 +1414,32 @@ void HtmlDocument::RenderSymbolFunctions()
 				Pattern* pattern = canvas->documentResources->patterns.Patterns()[i];
 
 				// Begin symbol function block
-				outFile << "\n\n    function " << pattern->name << "(ctx) {";
+				outFile << "function " << pattern->name << "(ctx) {" << endl;
 
 				// Need a blank line?
 				if (pattern->hasAlpha || pattern->hasGradients || pattern->hasPatterns)
 				{
-					outFile << "\n";
+					outFile  << endl;
 				}
 
 				// Does this draw function have alpha changes?
 				if (pattern->hasAlpha)
 				{
 					// Grab the alpha value (so we can use it to compute new globalAlpha values during this draw function)
-					outFile << "\n" << Indent(0) << "var alpha = ctx.globalAlpha;";
+					outFile  << Indent(0) << "var alpha = ctx.globalAlpha;" << endl;
 				}
 
 				// Will we be encountering gradients?
 				if (pattern->hasGradients)
 				{
-					outFile << "\n" << Indent(0) << "var gradient;";
+					outFile  << Indent(0) << "var gradient;" << endl;
 				}
 
 				// Will we be encountering patterns?
 				// TODO: Is this even possible?
 				if (pattern->hasPatterns)
 				{
-					outFile << "\n" << Indent(0) << "var pattern;";
+					outFile  << Indent(0) << "var pattern;" << endl;
 				}
 
 				// Get a handle to the pattern art
@@ -1451,11 +1451,11 @@ void HtmlDocument::RenderSymbolFunctions()
 				sAIArt->GetArtBounds(patternArtHandle, &bounds);
 				if (debug)
 				{
-					outFile << "\n\n" << Indent(0) << "// Symbol art bounds = " <<
+					outFile  << Indent(0) << "// Symbol art bounds = " <<
 						"left:" << setiosflags(ios::fixed) << setprecision(1) << bounds.left <<
 						", top:" << bounds.top <<
 						", right:" << bounds.right <<
-						", bottom:" << bounds.bottom;
+						", bottom:" << bounds.bottom << endl;
 				}
 
 				// Create canvas and set size
@@ -1479,7 +1479,7 @@ void HtmlDocument::RenderSymbolFunctions()
 				delete canvas;
 
 				// End function block
-				outFile << "\n    }";
+				outFile << "}" << endl;
 			}
 		}
 	}
@@ -1491,7 +1491,7 @@ void HtmlDocument::RenderPatternFunction()
 	if (canvas->documentResources->patterns.HasPatterns())
 	{
 		// Begin pattern function block
-		outFile << "\n\n    function drawPatterns() {";
+		outFile << "function drawPatterns() {" << endl;
 
 		// Loop through patterns
 		for (unsigned int i = 0; i < canvas->documentResources->patterns.Patterns().size(); i++)
@@ -1509,7 +1509,7 @@ void HtmlDocument::RenderPatternFunction()
 				sAIPattern->GetPatternName(pattern->patternHandle, patternName);
 				if (debug)
 				{
-					outFile << "\n//   Pattern name = " << patternName.as_Platform() << " (" << pattern->patternHandle << ")";
+					outFile << "//   Pattern name = " << patternName.as_Platform() << " (" << pattern->patternHandle << ")" << endl;
 				}
 
 				// Create canvas ID
@@ -1526,8 +1526,8 @@ void HtmlDocument::RenderPatternFunction()
 				canvas->currentState->isProcessingSymbol = false;
 
 				// Render context commands
-				outFile << "\n\n" << Indent(1) << "var " << canvas->id << " = document.getElementById(\"" << canvas->id << "\");";
-				outFile << "\n" << Indent(1) << "var " << canvas->contextName << " = " << canvas->id << ".getContext(\"2d\");";
+				outFile  << Indent(1) << "var " << canvas->id << " = document.getElementById(\"" << canvas->id << "\");" << endl;
+				outFile  << Indent(1) << "var " << canvas->contextName << " = " << canvas->id << ".getContext(\"2d\");" << endl;
 
 				// Get a handle to the pattern art
 				AIArtHandle patternArtHandle = nil;
@@ -1538,11 +1538,11 @@ void HtmlDocument::RenderPatternFunction()
 				sAIArt->GetArtBounds(patternArtHandle, &bounds);
 				if (debug)
 				{
-					outFile << "\n\n" << Indent(0) << "// Symbol art bounds = " <<
+					outFile  << Indent(0) << "// Symbol art bounds = " <<
 						"left:" << setiosflags(ios::fixed) << setprecision(1) << bounds.left <<
 						", top:" << bounds.top <<
 						", right:" << bounds.right <<
-						", bottom:" << bounds.bottom;
+						", bottom:" << bounds.bottom << endl;
 				}
 
 				// Set canvas size
@@ -1577,17 +1577,17 @@ void HtmlDocument::RenderPatternFunction()
 		}
 
 		// End function block
-		outFile << "\n    }";
+		outFile << "}" << endl;
 	}
 }
 
 void HtmlDocument::DebugInfo()
 {
-	outFile << "\n\n<p>This document has been exported in debug mode.</p>";
+	outFile << "<p>This document has been exported in debug mode.</p>" << endl;
 
 	if (hasAnimation)
 	{
-		outFile <<   "\n<p>To scrub animations, click a Y location to set the time window, then move left/right to scrub.</p>";
+		outFile << "<p>To scrub animations, click a Y location to set the time window, then move left/right to scrub.</p>" << endl;
 	}
 
 	resources.images.DebugInfo();
@@ -1597,90 +1597,90 @@ void HtmlDocument::DebugInfo()
 
 void HtmlDocument::DebugClockJS()
 {
-	outFile << "\n\n    // Debug clock";
-	outFile <<   "\n    function debugClock() {";
-	outFile << "\n\n      // Mouse state";
-	outFile <<   "\n      this.mouseX = 0;";
-	outFile <<   "\n      this.mouseY = 0;";
-	outFile <<   "\n      this.resetMouse = true;";
-	outFile << "\n\n      // Y location on mouseDown";
-	outFile <<   "\n      this.y = 0.0;";
-	outFile << "\n\n      // Time range";
-	outFile <<   "\n      this.timeRange = 0.0;";
-	outFile << "\n\n      // Return current tick count";
-	outFile <<   "\n      this.ticks = function() {";
-	outFile << "\n\n        // Reset Y?    ";
-	outFile <<   "\n        if (this.resetMouse) {";
-	outFile << "\n\n          // Capture Y";
-	outFile <<   "\n          this.y = this.mouseY;";
-	outFile << "\n\n          // Update time range";
-	outFile <<   "\n          this.timeRange = (this.y / " << canvas->id << ".height) * 120;";
-	outFile <<   "\n          this.resetMouse = false;";
-	outFile <<   "\n        }";
-	outFile << "\n\n        return ((this.mouseX / " << canvas->id << ".width) * this.timeRange * 1000);";
-	outFile <<   "\n      }";
-	outFile << "\n\n      // Return number of ticks per second";
-	outFile <<   "\n      this.ticksPerSecond = function() {";
-	outFile << "\n\n        return 1000;";
-	outFile <<   "\n      }";
-	outFile <<   "\n    }";
+	outFile << "// Debug clock" << endl;
+	outFile << "function debugClock() {" << endl;
+	outFile << "// Mouse state" << endl;
+	outFile << "this.mouseX = 0;" << endl;
+	outFile << "this.mouseY = 0;" << endl;
+	outFile << "this.resetMouse = true;" << endl;
+	outFile << "// Y location on mouseDown" << endl;
+	outFile << "this.y = 0.0;" << endl;
+	outFile << "// Time range" << endl;
+	outFile << "this.timeRange = 0.0;" << endl;
+	outFile << "// Return current tick count" << endl;
+	outFile << "this.ticks = function() {" << endl;
+	outFile << "// Reset Y?    " << endl;
+	outFile << "if (this.resetMouse) {" << endl;
+	outFile << "// Capture Y" << endl;
+	outFile << "this.y = this.mouseY;" << endl;
+	outFile << "// Update time range" << endl;
+	outFile << "this.timeRange = (this.y / " << canvas->id << ".height) * 120;" << endl;
+	outFile << "this.resetMouse = false;" << endl;
+	outFile << "}" << endl;
+	outFile << "return ((this.mouseX / " << canvas->id << ".width) * this.timeRange * 1000);" << endl;
+	outFile << "}" << endl;
+	outFile << "// Return number of ticks per second" << endl;
+	outFile << "this.ticksPerSecond = function() {" << endl;
+	outFile << "return 1000;" << endl;
+	outFile << "}" << endl;
+	outFile << "}" << endl;
 
-	outFile << "\n\n    function setDebugClock() {";
-	outFile << "\n\n      debug.resetMouse = true;";
-    outFile <<   "\n    }";
+	outFile << "function setDebugClock() {" << endl;
+	outFile << "debug.resetMouse = true;" << endl;
+    outFile << "}" << endl;
 
-	outFile << "\n\n    function getMouseLocation(e) {";
-    outFile << "\n\n      debug.mouseX = e.clientX + document.body.scrollLeft +";
-	outFile <<   "\n                     document.documentElement.scrollLeft - canvas.offsetLeft;";
-    outFile <<   "\n      debug.mouseY = e.clientY + document.body.scrollTop +";
-	outFile <<   "\n                     document.documentElement.scrollTop - canvas.offsetTop;";
-    outFile <<   "\n    }";
+	outFile << "function getMouseLocation(e) {" << endl;
+    outFile << "debug.mouseX = e.clientX + document.body.scrollLeft +" << endl;
+	outFile << "document.documentElement.scrollLeft - canvas.offsetLeft;" << endl;
+    outFile << "debug.mouseY = e.clientY + document.body.scrollTop +" << endl;
+	outFile << "document.documentElement.scrollTop - canvas.offsetTop;" << endl;
+    outFile << "}" << endl;
 }
 
 void HtmlDocument::DebugAnimationPathJS()
 {
-	outFile << "\n\n    function plotAnchorPoints(ctx) {";
+	outFile << "function plotAnchorPoints(ctx) {" << endl;
 
-	outFile << "\n\n      ctx.save();";
-    outFile <<   "\n      ctx.fillStyle = \"rgb(255, 0, 0)\";";
-    outFile << "\n\n      var animation;";
-	outFile <<   "\n      var animationCount = animations.length;";
-	outFile <<   "\n      for (var a = 0; a < animationCount; a++) {";
-	outFile << "\n\n        animation = animations[a];";
-	outFile << "\n\n        var pointCount = animation.points.length;";
-	outFile <<   "\n        for (var i = 0; i < pointCount; i++) {";
-	outFile << "\n\n          ctx.fillRect(animation.points[i][0][0] - 2, animation.points[i][0][1] - 2, 5, 5);";
-    outFile <<   "\n        }";
-    outFile <<   "\n      }";
-	outFile << "\n\n      // Final anchor point";
-	outFile <<   "\n      ctx.fillRect(animation.points[(animation.points.length - 1)][3][0] - 2,";
-	outFile <<   "\n                   animation.points[(animation.points.length - 1)][3][1] - 2, 5, 5);";
-	outFile << "\n\n      ctx.restore();";
-	outFile <<   "\n    }";
+	outFile << "ctx.save();" << endl;
+    outFile << "ctx.fillStyle = \"rgb(255, 0, 0)\";" << endl;
+    outFile << "var animation;" << endl;
+	outFile << "var animationCount = animations.length;" << endl;
+	outFile << "for (var a = 0; a < animationCount; a++) {" << endl;
+	outFile << "animation = animations[a];" << endl;
+	outFile << "var pointCount = animation.points.length;" << endl;
+	outFile << "for (var i = 0; i < pointCount; i++) {" << endl;
+	outFile << "ctx.fillRect(animation.points[i][0][0] - 2, animation.points[i][0][1] - 2, 5, 5);" << endl;
+    outFile << "}" << endl;
+    outFile << "}" << endl;
+	outFile << "// Final anchor point" << endl;
+	outFile << "ctx.fillRect(animation.points[(animation.points.length - 1)][3][0] - 2," << endl;
+	outFile << "animation.points[(animation.points.length - 1)][3][1] - 2, 5, 5);" << endl;
+	outFile << "ctx.restore();" << endl;
+	outFile << "}" << endl;
 
-	outFile << "\n\n    function plotLinearPoints(ctx) {";
-	outFile << "\n\n      ctx.save();";
-    outFile <<   "\n      ctx.fillStyle = \"rgb(0, 0, 255)\";";
-	outFile << "\n\n      var animationCount = animations.length;";
-	outFile <<   "\n      for (var a = 0; a < animationCount; a++) {";
-	outFile << "\n\n        var animation = animations[a];";
-	outFile << "\n\n        var linearCount = animation.linear.length;";
-	outFile <<   "\n        for (var i = 0; i < linearCount; i++) {";
-	outFile << "\n\n          var segmentIndex = animation.linear[i][0];";
-    outFile <<   "\n          var u = animation.linear[i][1];";
-	outFile << "\n\n          var x = bezier(u,";
-	outFile <<   "\n                         animation.points[segmentIndex][0][0],";
-    outFile <<   "\n                         animation.points[segmentIndex][1][0],";
-	outFile <<   "\n                         animation.points[segmentIndex][2][0],";
-	outFile <<   "\n                         animation.points[segmentIndex][3][0]);";
-	outFile << "\n\n          var y = bezier(u,";
-	outFile <<   "\n                         animation.points[segmentIndex][0][1],";
-	outFile <<   "\n                         animation.points[segmentIndex][1][1],";
-	outFile <<   "\n                         animation.points[segmentIndex][2][1],";
-	outFile <<   "\n                         animation.points[segmentIndex][3][1]);";
-	outFile << "\n\n          ctx.fillRect(x - 1, y - 1, 3, 3);";
-    outFile <<   "\n        }";
-    outFile <<   "\n      }";
-	outFile << "\n\n      ctx.restore();";
-	outFile <<   "\n    }";
+	outFile << "function plotLinearPoints(ctx) {" << endl;
+	outFile << "ctx.save();" << endl;
+    outFile << "ctx.fillStyle = \"rgb(0, 0, 255)\";" << endl;
+	outFile << "var animationCount = animations.length;" << endl;
+	outFile << "for (var a = 0; a < animationCount; a++) {" << endl;
+	outFile << "var animation = animations[a];" << endl;
+	outFile << "var linearCount = animation.linear.length;" << endl;
+	outFile << "for (var i = 0; i < linearCount; i++) {" << endl;
+	outFile << "var segmentIndex = animation.linear[i][0];" << endl;
+    outFile << "var u = animation.linear[i][1];" << endl;
+	outFile << "var x = bezier(u," << endl;
+	outFile << "animation.points[segmentIndex][0][0]," << endl;
+    outFile << "animation.points[segmentIndex][1][0]," << endl;
+	outFile << "animation.points[segmentIndex][2][0]," << endl;
+	outFile << "animation.points[segmentIndex][3][0]);" << endl;
+	outFile << "var y = bezier(u," << endl;
+	outFile << "animation.points[segmentIndex][0][1]," << endl;
+	outFile << "animation.points[segmentIndex][1][1]," << endl;
+	outFile << "animation.points[segmentIndex][2][1]," << endl;
+	outFile << "animation.points[segmentIndex][3][1]);" << endl;
+	outFile << "ctx.fillRect(x - 1, y - 1, 3, 3);" << endl;
+    outFile << "}" << endl;
+    outFile << "}" << endl;
+	outFile << "ctx.restore();" << endl;
+	outFile << "}" << endl;
 }

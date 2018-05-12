@@ -97,22 +97,22 @@ Image* ImageCollection::Find(const std::string& path)
 void ImageCollection::DebugInfo()
 {
 	// Image debug info
-	outFile <<   "\n<p>Bitmap images: " << images.size() << "</p>";
+	outFile << "<p>Bitmap images: " << images.size() << "</p>" << endl;
 
 	// Anything to list?
 	if (images.size() > 0)
 	{
 		// Start unordered list
-		outFile <<   "\n<ul>";
+		outFile << "<ul>" << endl;
 
 		// Loop through each image
 		for (unsigned int i = 0; i < images.size(); i++)
 		{
-			outFile <<   "\n  <li>ID: " << images[i]->id <<
-						 ", path: <a href=\"" << images[i]->Uri() << "\" target=\"_blank\">" << images[i]->path << "</a></li>";
+			outFile << "<li>ID: " << images[i]->id <<
+						 ", path: <a href=\"" << images[i]->Uri() << "\" target=\"_blank\">" << images[i]->path << "</a></li>" << endl;
 		}
 
 		// End unordered list
-		outFile <<   "\n</ul>";
+		outFile << "</ul>" << endl;
 	}
 }

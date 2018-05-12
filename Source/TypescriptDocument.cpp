@@ -122,7 +122,7 @@ void TypescriptDocument::ParseLayers()
 		std::string name;
 		std::string optionValue;
 		ParseLayerName(*layers[i], name, optionValue);
-		
+
 		// Tokenize the options
 		std::vector<std::string> options = Tokenize(optionValue, ";");
 
@@ -216,7 +216,7 @@ bool TypescriptDocument::HasAnimationOption(const std::vector<std::string>& opti
 					break;
 				}
 				else if (value == "drawing" ||
-						 value == "d")
+					value == "d")
 				{
 					// Not an animation
 					result = false;
@@ -257,7 +257,7 @@ void TypescriptDocument::ParseLayerName(const Layer& layer, std::string& name, s
 
 				if (debug)
 				{
-					outFile << "\n//   Found options = " << optionValue;
+					outFile << "//   Found options = " << optionValue << endl;
 				}
 
 				// Terminate the layer name starting at the opening parenthesis
@@ -316,15 +316,15 @@ void TypescriptDocument::RenderAnimations()
 	if (hasAnimation)
 	{
 		// Output frames per second
-		outFile << "\n\n    // Frames per second";
-		outFile <<   "\n    const fps = 60.0;";
+		outFile << "// Frames per second" << endl;
+		outFile << "const fps = 60.0;" << endl;
 
 		if (debug)
 		{
-			outFile <<   "\n    const frameTime = 0;";
-			outFile <<   "\n    const frameCount = 0;";
-			outFile <<   "\n    const frameReport = 0;";
-			outFile <<   "\n    const debug = new debugClock();";
+			outFile << "const frameTime = 0;" << endl;
+			outFile << "const frameCount = 0;" << endl;
+			outFile << "const frameReport = 0;" << endl;
+			outFile << "const debug = new debugClock();" << endl;
 		}
 	}
 
@@ -367,44 +367,44 @@ void TypescriptDocument::SetFunctionOptions(const std::vector<std::string>& opti
 			// Clean the parameter value
 			std::string value = split[1];
 			CleanParameter(value);
-		
+
 			// Process options based on type
 			// TODO: Can we make this more OO?
 			switch (function.type)
 			{
-				case Function::kDrawFunction:
+			case Function::kDrawFunction:
+			{
+				DrawFunction& drawFunction = (DrawFunction&)function;
+
+				// Set draw function parameter
+				drawFunction.SetParameter(parameter, value);
+
+				// Any animation?
+				if (!drawFunction.animationFunctionName.empty() ||
+					(drawFunction.rotateClock.direction != AnimationClock::kNone) ||
+					(drawFunction.scaleClock.direction != AnimationClock::kNone) ||
+					(drawFunction.alphaClock.direction != AnimationClock::kNone))
 				{
-					DrawFunction& drawFunction = (DrawFunction&)function;
-
-					// Set draw function parameter
-					drawFunction.SetParameter(parameter, value);
-
-					// Any animation?
-					if (!drawFunction.animationFunctionName.empty() ||
-					   (drawFunction.rotateClock.direction != AnimationClock::kNone) ||
-					   (drawFunction.scaleClock.direction != AnimationClock::kNone) ||
-					   (drawFunction.alphaClock.direction != AnimationClock::kNone))
-					{
-						// Document has animation
-						hasAnimation = true;
-					}
-
-					break;
-				}
-				case Function::kAnimationFunction:
-				{
-					// Set animation function parameter
-					((AnimationFunction&)function).SetParameter(parameter, value);
-
-					// Animation
+					// Document has animation
 					hasAnimation = true;
-
-					break;
 				}
-                case Function::kAnyFunction:
-                {
-                    break;
-                }
+
+				break;
+			}
+			case Function::kAnimationFunction:
+			{
+				// Set animation function parameter
+				((AnimationFunction&)function).SetParameter(parameter, value);
+
+				// Animation
+				hasAnimation = true;
+
+				break;
+			}
+			case Function::kAnyFunction:
+			{
+				break;
+			}
 			}
 		}
 	}
@@ -434,7 +434,7 @@ void TypescriptDocument::ScanDocument()
 		sAILayer->GetLayerVisible(layerHandle, &isLayerVisible);
 		if (debug)
 		{
-			outFile << "\n\n// Layer visible = " << isLayerVisible;
+			outFile << "// Layer visible = " << isLayerVisible << endl;
 		}
 
 		// Only process if the layer is visible
@@ -546,29 +546,29 @@ void TypescriptDocument::ScanLayerArtwork(AIArtHandle artHandle, unsigned int de
 			{
 				switch (style.fill.color.kind)
 				{
-					case kPattern:
-					{
-						// Add the pattern
-						canvas->documentResources->patterns.Add(style.fill.color.c.p.pattern, false);
+				case kPattern:
+				{
+					// Add the pattern
+					canvas->documentResources->patterns.Add(style.fill.color.c.p.pattern, false);
 
-						// Flag that this layer includes patterns
-						layer.hasPatterns = true;
-						break;
-					}
-					case kGradient:
-					{
-						// Flag that this layer includes gradients
-						layer.hasGradients = true;
-						break;
-					}
-                    case kGrayColor:
-                    case kFourColor:
-                    case kCustomColor:
-                    case kThreeColor:
-                    case kNoneColor:
-                    {
-                        break;
-                    }
+					// Flag that this layer includes patterns
+					layer.hasPatterns = true;
+					break;
+				}
+				case kGradient:
+				{
+					// Flag that this layer includes gradients
+					layer.hasGradients = true;
+					break;
+				}
+				case kGrayColor:
+				case kFourColor:
+				case kCustomColor:
+				case kThreeColor:
+				case kNoneColor:
+				{
+					break;
+				}
 				}
 			}
 
@@ -577,29 +577,29 @@ void TypescriptDocument::ScanLayerArtwork(AIArtHandle artHandle, unsigned int de
 			{
 				switch (style.stroke.color.kind)
 				{
-					case kPattern:
-					{
-						// Add the pattern
-						canvas->documentResources->patterns.Add(style.stroke.color.c.p.pattern, false);
+				case kPattern:
+				{
+					// Add the pattern
+					canvas->documentResources->patterns.Add(style.stroke.color.c.p.pattern, false);
 
-						// Flag that this layer includes patterns
-						layer.hasPatterns = true;
-						break;
-					}
-					case kGradient:
-					{
-						// Flag that this layer includes gradients
-						layer.hasGradients = true;
-						break;
-					}
-                    case kGrayColor:
-                    case kFourColor:
-                    case kCustomColor:
-                    case kThreeColor:
-                    case kNoneColor:
-                    {
-                        break;
-                    }
+					// Flag that this layer includes patterns
+					layer.hasPatterns = true;
+					break;
+				}
+				case kGradient:
+				{
+					// Flag that this layer includes gradients
+					layer.hasGradients = true;
+					break;
+				}
+				case kGrayColor:
+				case kFourColor:
+				case kCustomColor:
+				case kThreeColor:
+				case kNoneColor:
+				{
+					break;
+				}
 				}
 			}
 
@@ -617,8 +617,7 @@ void TypescriptDocument::ScanLayerArtwork(AIArtHandle artHandle, unsigned int de
 
 		// Find the next sibling
 		sAIArt->GetArtSibling(artHandle, &artHandle);
-	}
-	while (artHandle != NULL);
+	} while (artHandle != NULL);
 }
 
 // Creates the JavaScript animation file (if it doesn't already exist)
@@ -658,551 +657,551 @@ void TypescriptDocument::CreateAnimationFile()
 
 void TypescriptDocument::OutputScriptHeader(ofstream& file)
 {
-	file <<     "// Ai2CanvasAnimation.js Version " << PLUGIN_VERSION;
-	file <<   "\n// Animation support for the Ai->Canvas Export Plug-In";
-	file <<   "\n// By Mike Swanson (http://blog.mikeswanson.com/)";
+	file << "// Ai2CanvasAnimation.js Version " << PLUGIN_VERSION;
+	file << "// Animation support for the Ai->Canvas Export Plug-In" << endl;
+	file << "// By Mike Swanson (http://blog.mikeswanson.com/)" << endl;
 }
 
 void TypescriptDocument::OutputClockFunctions(ofstream& file)
 {
-	file << "\n\n// Create a shared standard clock";
-	file <<   "\nvar timeProvider = new standardClock();";
-	file << "\n\n// All animation clocks";
-	file <<   "\nvar clocks = new Array();";
-	file << "\n\n// Represents an animation clock";
-	file <<   "\nfunction clock(duration, delay, direction, reverses, iterations, timingFunction, range, multiplier, offset) {";
-	file << "\n\n  // Initialize";
-	file <<   "\n  this.timeProvider = timeProvider;                 // Time provider";
-	file <<   "\n  this.duration = duration;                         // Duration (in seconds)";
-	file <<   "\n  this.delay = delay;                               // Initial delay (in seconds)";
-	file <<   "\n  this.direction = direction;                       // Direction (-1 = backward, 1 = forward)";
-	file <<   "\n  this.reverses = reverses;                         // Does this reverse? (true/false)";
-	file <<   "\n  this.iterations = iterations;                     // Number of iterations (0 = infinite)";
-	file <<   "\n  this.timingFunction = timingFunction;             // Timing function";
-	file <<   "\n  this.multiplier = (range * multiplier);           // Value multiplier (after timing function)";
-	file <<   "\n  this.offset = (range * offset);                   // Value offset (after multiplier)";
-	file << "\n\n  // Reset the clock";
-	file <<   "\n  this.reset = function () {";
-	file << "\n\n    this.startTime = 0;                             // Start time reference";
-	file <<   "\n    this.stopTime = 0;                              // Stop time reference";
-	file <<   "\n    this.lastTime = 0;                              // Last time reference";
-	file <<   "\n    this.baseDirection = this.direction;            // Base direction";
-	file <<   "\n    this.d = this.baseDirection;                    // Current direction";
-	file <<   "\n    this.t = (this.baseDirection == 1 ? 0.0 : 1.0); // Current clock time (0.0 - 1.0)";
-	file <<   "\n    this.i = 0;                                     // Current iteration";
-	file <<   "\n    this.isRunning = false;                         // Is this running?";
-	file <<   "\n    this.isFinished = false;                        // Is the entire clock run finished?";
-	file <<   "\n    this.value = 0.0;                               // Current computed clock value";
-	file <<   "\n  }";
-	file << "\n\n  // Reset to initial conditions";
-	file <<   "\n  this.reset();";
-	file << "\n\n  // Add events";
-	file <<   "\n  this.started = new customEvent(\"started\");";
-	file <<   "\n  this.stopped = new customEvent(\"stopped\");";
-	file <<   "\n  this.iterated = new customEvent(\"iterated\");";
-	file <<   "\n  this.finished = new customEvent(\"finished\");";
-	file << "\n\n  // Start the clock";
-	file <<   "\n  this.start = function () {";
-	file << "\n\n    // Only start if the clock isn't running and it hasn't finished";
-	file <<   "\n    if (!this.isRunning && !this.isFinished) {";
-	file << "\n\n      // Capture start time";
-	file <<   "\n      this.startTime = this.timeProvider.ticks() - (this.stopTime - this.startTime);";
-	file << "\n\n      // Start the animation";
-	file <<   "\n      this.isRunning = true;";
-	file << "\n\n      // Started event";
-	file <<   "\n      this.started.fire(null, { message: this.started.eventName });";
-	file <<   "\n    }";
-	file <<   "\n  }";
-	file << "\n\n  // Re-start the clock (reset and start)";
-	file <<   "\n  this.restart = function () {";
-	file << "\n\n    this.reset();";
-	file <<   "\n    this.start();";
-	file <<   "\n  }";
-	file << "\n\n  // Stop the clock";
-	file <<   "\n  this.stop = function () {";
-	file << "\n\n    // Only stop if the clock is running and it hasn't finished";
-	file <<   "\n    if (this.isRunning && !this.isFinished) {";
-	file << "\n\n      // Capture stop time";
-	file <<   "\n      this.stopTime = this.timeProvider.ticks();";
-	file << "\n\n      // Stop the animation";
-	file <<   "\n      this.isRunning = false;";
-	file << "\n\n      // Stopped event";
-	file <<   "\n      this.stopped.fire(null, { message: this.stopped.eventName });";
-	file <<   "\n    }";
-	file <<   "\n  }";
-	file << "\n\n  // Toggle the clock";
-	file <<   "\n  this.toggle = function () {";
-	file << "\n\n    // Only toggle the clock if it hasn't finished";
-	file <<   "\n    if (!this.isFinished) {";
-	file << "\n\n      // Is the clock running?";
-	file <<   "\n      if (this.isRunning) {";
-	file << "\n\n        // Stop the clock";
-	file <<   "\n        this.stop();";
-	file <<   "\n      }";
-	file <<   "\n      else {";
-	file << "\n\n        // Start the clock";
-	file <<   "\n        this.start();";
-	file <<   "\n      }";
-	file <<   "\n    }";
-	file <<   "\n  }";
-	file << "\n\n  // Rewind the clock";
-	file <<   "\n  this.rewind = function () {";
-	file << "\n\n    // Only rewind if the clock is running and it hasn't finished";
-	file <<   "\n    if (this.isRunning && !this.isFinished) {";
-	file << "\n\n      // Rewind to the beginning of the current iteration";
-	file <<   "\n      this.jumpTo(this.i);";
-	file <<   "\n    }";
-	file <<   "\n  }";
-	file << "\n\n  // Fast-forward the clock";
-	file <<   "\n  this.fastForward = function () {";
-	file << "\n\n    // Only fast-forward if the clock is running and it hasn't finished";
-	file <<   "\n    if (this.isRunning && !this.isFinished) {";
-	file << "\n\n      // Fast-forward to the beginning of the next iteration";
-	file <<   "\n      this.jumpTo(this.i + 1);";
-	file <<   "\n    }";
-	file <<   "\n  }";
-	file << "\n\n  // Reverse the clock";
-	file <<   "\n  this.reverse = function () {";
-	file << "\n\n    // Only reverse if the clock is running and it hasn't finished";
-	file <<   "\n    if (this.isRunning && !this.isFinished) {";
-	file << "\n\n      // Reverse the clock direction";
-	file <<   "\n      this.baseDirection = -this.baseDirection;";
-	file << "\n\n      // Jump to the same position, but in reverse";
-	file <<   "\n      const position = this.i + (this.d == -1.0 ? this.t : (1.0 - this.t));";
-	file <<   "\n      this.jumpTo(position);";
-	file <<   "\n    }";
-	file <<   "\n  }";
-	file << "\n\n  // Jump to iteration";
-	file <<   "\n  this.jumpTo = function(iteration) {";
-	file << "\n\n    // Determine iteration time";
-	file <<   "\n    const now = this.timeProvider.ticks();";
-	file <<   "\n    const ticksPerSecond = this.timeProvider.ticksPerSecond();";
-	file <<   "\n    const iterationTime = (this.delay * ticksPerSecond) + ";
-	file <<   "\n                        ((iteration * this.duration) * ticksPerSecond);";
-	file <<   "\n    this.startTime = (now - iterationTime);";
-	file <<   "\n  }";
-	file << "\n\n  // Update function";
-	file <<   "\n  this.update = updateClock;";
-	file << "\n\n  // Set initial value";
-	file <<   "\n  this.value = (this.timingFunction(this.t) * this.multiplier) + this.offset;";
-	file << "\n\n  // Add to clocks array";
-	file <<   "\n  clocks.push(this);";
-	file <<   "\n}";
-	file << "\n\n// Update clock state";
-	file <<   "\nfunction updateClock() {";
-	file << "\n\n  // Is clock running?";
-	file <<   "\n  if (this.isRunning && !this.isFinished) {";
-	file << "\n\n    // Capture the current time";
-	file <<   "\n    const now = this.timeProvider.ticks();";
-	file << "\n\n    // Has the time changed?";
-	file <<   "\n    if (now != this.lastTime) {";
-	file << "\n\n      // How many seconds have elapsed since the clock started?";
-	file <<   "\n      const elapsed = (now - this.startTime) / this.timeProvider.ticksPerSecond();";
-	file << "\n\n      // How many possible iterations?";
-	file <<   "\n      const iterations = (elapsed - this.delay) / this.duration;";
-	file << "\n\n      // Need to wait more?";
-	file <<   "\n      if (iterations < 0.0) {";
-	file << "\n\n        // Reset to 0";
-	file <<   "\n        iterations = 0.0;";
-	file <<   "\n      }";
-	file << "\n\n      // Capture current iteration";
-	file <<   "\n      const currentIteration = Math.floor(iterations);";
-	file << "\n\n      // Iteration changed?";
-	file <<   "\n      if (currentIteration != this.i) {";
-	file << "\n\n        // Iterated event";
-	file <<   "\n        this.iterated.fire(null, { message: this.iterated.eventName });";
-	file <<   "\n      }";
-	file << "\n\n      // How far \"into\" the iteration?";
-	file <<   "\n      this.t = iterations - currentIteration;";
-	file << "\n\n      // Is this finite?";
-	file <<   "\n      if (this.iterations != 0) {";
-	file << "\n\n        // Reached the limit?";
-	file <<   "\n        if (currentIteration >= this.iterations) {";
-	file << "\n\n          // Set to end of final iteration";
-	file <<   "\n          currentIteration = this.iterations - 1;";
-	file <<   "\n          this.t = 1.0;";
-	file << "\n\n          // Stop clock";
-	file <<   "\n          this.stop();";
-	file << "\n\n          // This clock has finished";
-	file <<   "\n          this.isFinished = true;";
-	file << "\n\n          // Finished event";
-	file <<   "\n          this.finished.fire(null, { message: this.finished.eventName });";
-	file <<   "\n        }";
-	file <<   "\n      }";
-	file << "\n\n      // Track current iteration";
-	file <<   "\n      this.i = currentIteration;";
-	file << "\n\n      // Does direction ever change?";
-	file <<   "\n      if (this.reverses) {";
-	file << "\n\n        // Is this an even iteration? (0 is considered even)";
-	file <<   "\n        if ((Math.floor(this.i) % 2) == 0) {";
-	file << "\n\n          // Original direction";
-	file <<   "\n          this.d = this.baseDirection;";
-	file <<   "\n        }";
-	file <<   "\n        else {";
-	file << "\n\n          // Alternate direction";
-	file <<   "\n          this.d = -this.baseDirection;";
-	file <<   "\n        }";
-	file <<   "\n      }";
-	file <<   "\n      else {";
-	file << "\n\n        // Direction doesn't change";
-	file <<   "\n        this.d = this.baseDirection;";
-	file <<   "\n      }";
-	file << "\n\n      // Moving \"backwards\"?";
-	file <<   "\n      if (this.d == -1) {";
-	file << "\n\n        // Adjust \"t\"";
-	file <<   "\n        this.t = (1.0 - this.t);";
-	file <<   "\n      }";
-	file << "\n\n      // Update current computed clock value";
-	file <<   "\n      this.value = (this.timingFunction(this.t) * this.multiplier) + this.offset;";
-	file << "\n\n      // Remember last time";
-	file <<   "\n      this.lastTime = now;";
-	file <<   "\n    }";
-	file <<   "\n  }";
-	file <<   "\n}";
-	file << "\n\n// Update all animation clocks";
-	file <<   "\nfunction updateAllClocks() {";
-	file << "\n\n  // Loop through clocks";
-	file <<   "\n  const clockCount = clocks.length;";
-	file <<   "\n  for (const i = 0; i < clockCount; i++) {";
-	file << "\n\n    // Update clock";
-	file <<   "\n    clocks[i].update();";
-	file <<   "\n  }";
-	file <<   "\n}";
-	file << "\n\n// Standard clock";
-	file <<   "\nfunction standardClock() {";
-	file << "\n\n  // Return current tick count";
-	file <<   "\n  this.ticks = function() {";
-	file << "\n\n    return new Date().getTime();";
-	file <<   "\n  }";
-	file << "\n\n  // Return number of ticks per second";
-	file <<   "\n  this.ticksPerSecond = function() {";
-	file << "\n\n    return 1000;";
-	file <<   "\n  }";
-	file <<   "\n}";
-	file << "\n\n// Custom event";
-	file <<   "\nfunction customEvent() {";
-	file << "\n\n  // Name of the event";
-	file <<   "\n  this.eventName = arguments[0];";
-	file << "\n\n  // Subscribers to notify on event fire";
-	file <<   "\n  this.subscribers = new Array();";
-	file << "\n\n  // Subscribe a function to the event";
-	file <<   "\n  this.subscribe = function(fn) {";
-	file << "\n\n    // Only add if the function doesn't already exist";
-	file <<   "\n    if (this.subscribers.indexOf(fn) == -1) {";
-	file << "\n\n      // Add the function";
-	file <<   "\n      this.subscribers.push(fn);";
-	file <<   "\n    }";
-	file <<   "\n  };";
-	file << "\n\n  // Fire the event";
-	file <<   "\n  this.fire = function(sender, eventArgs) {";
-	file << "\n\n    // Any subscribers?";
-	file <<   "\n    if (this.subscribers.length > 0) {";
-	file << "\n\n      // Loop through all subscribers";
-	file <<   "\n      for (const i = 0; i < this.subscribers.length; i++) {";
-	file << "\n\n        // Notify subscriber";
-	file <<   "\n        this.subscribers[i](sender, eventArgs);";
-	file <<   "\n      }";
-	file <<   "\n    }";
-	file <<   "\n  };";
-	file <<   "\n};";
+	file << "// Create a shared standard clock" << endl;
+	file << "var timeProvider = new standardClock();" << endl;
+	file << "// All animation clocks" << endl;
+	file << "var clocks = new Array();" << endl;
+	file << "// Represents an animation clock" << endl;
+	file << "function clock(duration, delay, direction, reverses, iterations, timingFunction, range, multiplier, offset) {" << endl;
+	file << "// Initialize" << endl;
+	file << "this.timeProvider = timeProvider;                 // Time provider" << endl;
+	file << "this.duration = duration;                         // Duration (in seconds)" << endl;
+	file << "this.delay = delay;                               // Initial delay (in seconds)" << endl;
+	file << "this.direction = direction;                       // Direction (-1 = backward, 1 = forward)" << endl;
+	file << "this.reverses = reverses;                         // Does this reverse? (true/false)" << endl;
+	file << "this.iterations = iterations;                     // Number of iterations (0 = infinite)" << endl;
+	file << "this.timingFunction = timingFunction;             // Timing function" << endl;
+	file << "this.multiplier = (range * multiplier);           // Value multiplier (after timing function)" << endl;
+	file << "this.offset = (range * offset);                   // Value offset (after multiplier)" << endl;
+	file << "// Reset the clock" << endl;
+	file << "this.reset = function () {" << endl;
+	file << "this.startTime = 0;                             // Start time reference" << endl;
+	file << "this.stopTime = 0;                              // Stop time reference" << endl;
+	file << "this.lastTime = 0;                              // Last time reference" << endl;
+	file << "this.baseDirection = this.direction;            // Base direction" << endl;
+	file << "this.d = this.baseDirection;                    // Current direction" << endl;
+	file << "this.t = (this.baseDirection == 1 ? 0.0 : 1.0); // Current clock time (0.0 - 1.0)" << endl;
+	file << "this.i = 0;                                     // Current iteration" << endl;
+	file << "this.isRunning = false;                         // Is this running?" << endl;
+	file << "this.isFinished = false;                        // Is the entire clock run finished?" << endl;
+	file << "this.value = 0.0;                               // Current computed clock value" << endl;
+	file << "}" << endl;
+	file << "// Reset to initial conditions" << endl;
+	file << "this.reset();" << endl;
+	file << "// Add events" << endl;
+	file << "this.started = new customEvent(\"started\");" << endl;
+	file << "this.stopped = new customEvent(\"stopped\");" << endl;
+	file << "this.iterated = new customEvent(\"iterated\");" << endl;
+	file << "this.finished = new customEvent(\"finished\");" << endl;
+	file << "// Start the clock" << endl;
+	file << "this.start = function () {" << endl;
+	file << "// Only start if the clock isn't running and it hasn't finished" << endl;
+	file << "if (!this.isRunning && !this.isFinished) {" << endl;
+	file << "// Capture start time" << endl;
+	file << "this.startTime = this.timeProvider.ticks() - (this.stopTime - this.startTime);" << endl;
+	file << "// Start the animation" << endl;
+	file << "this.isRunning = true;" << endl;
+	file << "// Started event" << endl;
+	file << "this.started.fire(null, { message: this.started.eventName });" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Re-start the clock (reset and start)" << endl;
+	file << "this.restart = function () {" << endl;
+	file << "this.reset();" << endl;
+	file << "this.start();" << endl;
+	file << "}" << endl;
+	file << "// Stop the clock" << endl;
+	file << "this.stop = function () {" << endl;
+	file << "// Only stop if the clock is running and it hasn't finished" << endl;
+	file << "if (this.isRunning && !this.isFinished) {" << endl;
+	file << "// Capture stop time" << endl;
+	file << "this.stopTime = this.timeProvider.ticks();" << endl;
+	file << "// Stop the animation" << endl;
+	file << "this.isRunning = false;" << endl;
+	file << "// Stopped event" << endl;
+	file << "this.stopped.fire(null, { message: this.stopped.eventName });" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Toggle the clock" << endl;
+	file << "this.toggle = function () {" << endl;
+	file << "// Only toggle the clock if it hasn't finished" << endl;
+	file << "if (!this.isFinished) {" << endl;
+	file << "// Is the clock running?" << endl;
+	file << "if (this.isRunning) {" << endl;
+	file << "// Stop the clock" << endl;
+	file << "this.stop();" << endl;
+	file << "}" << endl;
+	file << "else {" << endl;
+	file << "// Start the clock" << endl;
+	file << "this.start();" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Rewind the clock" << endl;
+	file << "this.rewind = function () {" << endl;
+	file << "// Only rewind if the clock is running and it hasn't finished" << endl;
+	file << "if (this.isRunning && !this.isFinished) {" << endl;
+	file << "// Rewind to the beginning of the current iteration" << endl;
+	file << "this.jumpTo(this.i);" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Fast-forward the clock" << endl;
+	file << "this.fastForward = function () {" << endl;
+	file << "// Only fast-forward if the clock is running and it hasn't finished" << endl;
+	file << "if (this.isRunning && !this.isFinished) {" << endl;
+	file << "// Fast-forward to the beginning of the next iteration" << endl;
+	file << "this.jumpTo(this.i + 1);" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Reverse the clock" << endl;
+	file << "this.reverse = function () {" << endl;
+	file << "// Only reverse if the clock is running and it hasn't finished" << endl;
+	file << "if (this.isRunning && !this.isFinished) {" << endl;
+	file << "// Reverse the clock direction" << endl;
+	file << "this.baseDirection = -this.baseDirection;" << endl;
+	file << "// Jump to the same position, but in reverse" << endl;
+	file << "const position = this.i + (this.d == -1.0 ? this.t : (1.0 - this.t));" << endl;
+	file << "this.jumpTo(position);" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Jump to iteration" << endl;
+	file << "this.jumpTo = function(iteration) {" << endl;
+	file << "// Determine iteration time" << endl;
+	file << "const now = this.timeProvider.ticks();" << endl;
+	file << "const ticksPerSecond = this.timeProvider.ticksPerSecond();" << endl;
+	file << "const iterationTime = (this.delay * ticksPerSecond) + " << endl;
+	file << "((iteration * this.duration) * ticksPerSecond);" << endl;
+	file << "this.startTime = (now - iterationTime);" << endl;
+	file << "}" << endl;
+	file << "// Update function" << endl;
+	file << "this.update = updateClock;" << endl;
+	file << "// Set initial value" << endl;
+	file << "this.value = (this.timingFunction(this.t) * this.multiplier) + this.offset;" << endl;
+	file << "// Add to clocks array" << endl;
+	file << "clocks.push(this);" << endl;
+	file << "}" << endl;
+	file << "// Update clock state" << endl;
+	file << "function updateClock() {" << endl;
+	file << "// Is clock running?" << endl;
+	file << "if (this.isRunning && !this.isFinished) {" << endl;
+	file << "// Capture the current time" << endl;
+	file << "const now = this.timeProvider.ticks();" << endl;
+	file << "// Has the time changed?" << endl;
+	file << "if (now != this.lastTime) {" << endl;
+	file << "// How many seconds have elapsed since the clock started?" << endl;
+	file << "const elapsed = (now - this.startTime) / this.timeProvider.ticksPerSecond();" << endl;
+	file << "// How many possible iterations?" << endl;
+	file << "const iterations = (elapsed - this.delay) / this.duration;" << endl;
+	file << "// Need to wait more?" << endl;
+	file << "if (iterations < 0.0) {" << endl;
+	file << "// Reset to 0" << endl;
+	file << "iterations = 0.0;" << endl;
+	file << "}" << endl;
+	file << "// Capture current iteration" << endl;
+	file << "const currentIteration = Math.floor(iterations);" << endl;
+	file << "// Iteration changed?" << endl;
+	file << "if (currentIteration != this.i) {" << endl;
+	file << "// Iterated event" << endl;
+	file << "this.iterated.fire(null, { message: this.iterated.eventName });" << endl;
+	file << "}" << endl;
+	file << "// How far \"into\" the iteration?" << endl;
+	file << "this.t = iterations - currentIteration;" << endl;
+	file << "// Is this finite?" << endl;
+	file << "if (this.iterations != 0) {" << endl;
+	file << "// Reached the limit?" << endl;
+	file << "if (currentIteration >= this.iterations) {" << endl;
+	file << "// Set to end of final iteration" << endl;
+	file << "currentIteration = this.iterations - 1;" << endl;
+	file << "this.t = 1.0;" << endl;
+	file << "// Stop clock" << endl;
+	file << "this.stop();" << endl;
+	file << "// This clock has finished" << endl;
+	file << "this.isFinished = true;" << endl;
+	file << "// Finished event" << endl;
+	file << "this.finished.fire(null, { message: this.finished.eventName });" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Track current iteration" << endl;
+	file << "this.i = currentIteration;" << endl;
+	file << "// Does direction ever change?" << endl;
+	file << "if (this.reverses) {" << endl;
+	file << "// Is this an even iteration? (0 is considered even)" << endl;
+	file << "if ((Math.floor(this.i) % 2) == 0) {" << endl;
+	file << "// Original direction" << endl;
+	file << "this.d = this.baseDirection;" << endl;
+	file << "}" << endl;
+	file << "else {" << endl;
+	file << "// Alternate direction" << endl;
+	file << "this.d = -this.baseDirection;" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "else {" << endl;
+	file << "// Direction doesn't change" << endl;
+	file << "this.d = this.baseDirection;" << endl;
+	file << "}" << endl;
+	file << "// Moving \"backwards\"?" << endl;
+	file << "if (this.d == -1) {" << endl;
+	file << "// Adjust \"t\"" << endl;
+	file << "this.t = (1.0 - this.t);" << endl;
+	file << "}" << endl;
+	file << "// Update current computed clock value" << endl;
+	file << "this.value = (this.timingFunction(this.t) * this.multiplier) + this.offset;" << endl;
+	file << "// Remember last time" << endl;
+	file << "this.lastTime = now;" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Update all animation clocks" << endl;
+	file << "function updateAllClocks() {" << endl;
+	file << "// Loop through clocks" << endl;
+	file << "const clockCount = clocks.length;" << endl;
+	file << "for (const i = 0; i < clockCount; i++) {" << endl;
+	file << "// Update clock" << endl;
+	file << "clocks[i].update();" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Standard clock" << endl;
+	file << "function standardClock() {" << endl;
+	file << "// Return current tick count" << endl;
+	file << "this.ticks = function() {" << endl;
+	file << "return new Date().getTime();" << endl;
+	file << "}" << endl;
+	file << "// Return number of ticks per second" << endl;
+	file << "this.ticksPerSecond = function() {" << endl;
+	file << "return 1000;" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Custom event" << endl;
+	file << "function customEvent() {" << endl;
+	file << "// Name of the event" << endl;
+	file << "this.eventName = arguments[0];" << endl;
+	file << "// Subscribers to notify on event fire" << endl;
+	file << "this.subscribers = new Array();" << endl;
+	file << "// Subscribe a function to the event" << endl;
+	file << "this.subscribe = function(fn) {" << endl;
+	file << "// Only add if the function doesn't already exist" << endl;
+	file << "if (this.subscribers.indexOf(fn) == -1) {" << endl;
+	file << "// Add the function" << endl;
+	file << "this.subscribers.push(fn);" << endl;
+	file << "}" << endl;
+	file << "};" << endl;
+	file << "// Fire the event" << endl;
+	file << "this.fire = function(sender, eventArgs) {" << endl;
+	file << "// Any subscribers?" << endl;
+	file << "if (this.subscribers.length > 0) {" << endl;
+	file << "// Loop through all subscribers" << endl;
+	file << "for (const i = 0; i < this.subscribers.length; i++) {" << endl;
+	file << "// Notify subscriber" << endl;
+	file << "this.subscribers[i](sender, eventArgs);" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "};" << endl;
+	file << "};" << endl;
 }
 
 void TypescriptDocument::OutputAnimationFunctions(ofstream& file)
 {
 	// Animation path support functions
-	file << "\n\n// Updates animation path";
-	file <<   "\nfunction updatePath() {";
-	file << "\n\n  // Reference the animation path clock";
-	file <<   "\n  const clock = this.pathClock;";
-	file << "\n\n  // Where is T in the linear animation?";
-	file <<   "\n  const t = clock.value;";
-	file << "\n\n  // Has the clock value changed?";
-	file <<   "\n  if (t != this.lastValue) {";
-	file << "\n\n    // Limit t";
-	file <<   "\n    if (t < 0.0 || t > (this.linear.length - 1)) {";
-	file << "\n\n      t = (t < 0.0) ? 0.0 : (this.linear.length - 1);";
-	file <<   "\n    }";
-	file <<   "\n    const tIndex = Math.floor(t);";
-	file << "\n\n    // Distance between index points";
-	file <<   "\n    const d = (t - tIndex);";
-	file << "\n\n    // Get segment indices";
-	file <<   "\n    const segment1Index = this.linear[tIndex][0];";
-	file <<   "\n    const segment2Index = segment1Index;";
-	file << "\n\n    // U values to interpolate between";
-	file <<   "\n    const u1 = this.linear[tIndex][1];";
-	file <<   "\n    const u2 = u1;";
-	file << "\n\n    // Get T values";
-	file <<   "\n    const t1 = this.linear[tIndex][2];";
-	file <<   "\n    const t2 = t1;";
-	file << "\n\n    // If in bounds, grab second segment";
-	file <<   "\n    if ((tIndex + 1) < (this.linear.length))";
-	file <<   "\n    {";
-	file <<   "\n      const segment2Index = this.linear[(tIndex + 1)][0];";
-	file <<   "\n      const u2 = this.linear[(tIndex + 1)][1];";
-	file <<   "\n      const t2 = this.linear[(tIndex + 1)][2];";
-	file <<   "\n    }";
-	file << "\n\n    // Segment index and U value";
-	file <<   "\n    const segmentIndex = segment1Index;";
-	file <<   "\n    const u = 0.0;";
-	file << "\n\n    // Interpolate";
-	file << "\n\n    // Same segment?";
-	file <<   "\n    if (segment1Index == segment2Index)";
-	file <<   "\n    {";
-	file <<   "\n      // Interpolate U value";
-	file <<   "\n      u = (d * (u2 - u1)) + u1;";
-	file <<   "\n    }";
-	file <<   "\n    else";
-	file <<   "\n    {";
-	file << "\n\n      // Difference in T";
-	file <<   "\n      const deltaT = t2 - t1;";
-	file << "\n\n      // Based on distance, how \"far\" are we along T?";
-	file <<   "\n      const tDistance = d * deltaT;";
-	file << "\n\n      // How much segment 1 T?";
-	file <<   "\n      const segment1T = (this.segmentT[segment1Index] - t1);";
-	file << "\n\n      // Part of the first segment (before the anchor point)?";
-	file <<   "\n      if ((t1 + tDistance) < this.segmentT[segment1Index])";
-	file <<   "\n      {";
-	file << "\n\n        // How far along?";
-	file <<   "\n        const p = (segment1T == 0 ? 0 : tDistance / segment1T);";
-	file << "\n\n        // Compute U";
-	file <<   "\n        u = ((1.0 - u1) * p) + u1;";
-	file <<   "\n      }";
-	file <<   "\n      else";
-	file <<   "\n      {";
-	file <<   "\n        // Beginning of second segment";
-	file <<   "\n        segmentIndex = segment2Index;";
-	file << "\n\n        // How much segment 2 T?";
-	file <<   "\n        const segment2T = (t2 - this.segmentT[segment1Index]);";
-	file << "\n\n        // How much T remains in this segment?";
-	file <<   "\n        const tRemaining = tDistance - segment1T;";
-	file << "\n\n        // How far along?";
-	file <<   "\n        const p = (segment2T == 0 ? 0 : tRemaining / segment2T);";
-	file << "\n\n        // Compute U";
-	file <<   "\n        u = p * u2;";
-	file <<   "\n      }";
-	file <<   "\n    }";
-	file << "\n\n    // Calculate bezier curve position";
-	file <<   "\n    this.x = bezier(u,";
-	file <<   "\n                    this.points[segmentIndex][0][0],";
-	file <<   "\n                    this.points[segmentIndex][1][0],";
-	file <<   "\n                    this.points[segmentIndex][2][0],";
-	file <<   "\n                    this.points[segmentIndex][3][0]);";
-	file << "\n\n    this.y = bezier(u,";
-	file <<   "\n                    this.points[segmentIndex][0][1],";
-	file <<   "\n                    this.points[segmentIndex][1][1],";
-	file <<   "\n                    this.points[segmentIndex][2][1],";
-	file <<   "\n                    this.points[segmentIndex][3][1]);";
-	file << "\n\n    // Determine follow orientation";
-	file <<   "\n    const qx = 0.0;";
-	file <<   "\n    const qy = 0.0;";
-	file << "\n\n    // At a 0.0 or 1.0 boundary?";
-	file <<   "\n    if (u == 0.0) {";
-	file << "\n\n      // Use control point";
-	file <<   "\n      qx = this.points[segmentIndex][1][0];";
-	file <<   "\n      qy = this.points[segmentIndex][1][1];";
-	file << "\n\n      this.orientation = followOrientation(this.x, this.y, qx, qy, clock.d);";
-	file <<   "\n    }";
-	file <<   "\n    else if (u == 1.0) {";
-	file << "\n\n      // Use control point";
-	file <<   "\n      qx = this.points[segmentIndex][1][0];";
-	file <<   "\n      qy = this.points[segmentIndex][1][1];";
-	file << "\n\n      this.orientation = followOrientation(qx, qy, this.x, this.y, clock.d);";
-	file <<   "\n    }";
-	file <<   "\n    else {";
-	file << "\n\n      // Calculate quadratic curve position";
-	file <<   "\n      qx = quadratic(u,";
-	file <<   "\n                     this.points[segmentIndex][0][0],";
-	file <<   "\n                     this.points[segmentIndex][1][0],";
-	file <<   "\n                     this.points[segmentIndex][2][0]);";
-	file << "\n\n      qy = quadratic(u,";
-	file <<   "\n                     this.points[segmentIndex][0][1],";
-	file <<   "\n                     this.points[segmentIndex][1][1],";
-	file <<   "\n                     this.points[segmentIndex][2][1]);";
-	file << "\n\n      this.orientation = followOrientation(qx, qy, this.x, this.y, clock.d);";
-	file <<   "\n    }";
-	file << "\n\n    // Remember this clock value";
-	file <<   "\n    this.lastValue = t;";
-	file <<   "\n  }";
-	file << "\n\n  // Update clock";
-	file <<   "\n  clock.update();";
-	file <<   "\n}";
-	file << "\n\n// Returns follow orientation";
-	file <<   "\nfunction followOrientation(x1, y1, x2, y2, direction) {";
-	file << "\n\n  // Forward?";
-	file <<   "\n  if (direction == 1) {";
-	file << "\n\n    return slope(x1, y1, x2, y2);";
-	file <<   "\n  }";
-	file <<   "\n  else {";
-	file << "\n\n    return slope(x2, y2, x1, y1);";
-	file <<   "\n  }";
-	file <<   "\n}";
-	file << "\n\n// Returns a position along a cubic Bezier curve";
-	file <<   "\nfunction bezier(u, p0, p1, p2, p3) {";
-	file << "\n\n  return Math.pow(u, 3) * (p3 + 3 * (p1 - p2) - p0)";
-	file <<   "\n         + 3 * Math.pow(u, 2) * (p0 - 2 * p1 + p2)";
-	file <<   "\n         + 3 * u * (p1 - p0) + p0;";
-	file <<   "\n}";
-	file << "\n\n// Returns a position along a quadratic curve";
-	file <<   "\nfunction quadratic(u, p0, p1, p2) {";
-	file << "\n\n  u = Math.max(Math.min(1.0, u), 0.0);";
-	file << "\n\n  return Math.pow((1.0 - u), 2) * p0 +";
-	file <<   "\n         2 * u * (1.0 - u) * p1 +";
-	file <<   "\n         u * u * p2;";
-	file <<   "\n}";
-	file << "\n\n// Returns the slope between two points";
-	file <<   "\nfunction slope(x1, y1, x2, y2) {";
-	file << "\n\n  const dx = (x2 - x1);";
-	file <<   "\n  const dy = (y2 - y1);";
-	file << "\n\n  return Math.atan2(dy, dx);";
-	file <<   "\n}";
+	file << "// Updates animation path" << endl;
+	file << "function updatePath() {" << endl;
+	file << "// Reference the animation path clock" << endl;
+	file << "const clock = this.pathClock;" << endl;
+	file << "// Where is T in the linear animation?" << endl;
+	file << "const t = clock.value;" << endl;
+	file << "// Has the clock value changed?" << endl;
+	file << "if (t != this.lastValue) {" << endl;
+	file << "// Limit t" << endl;
+	file << "if (t < 0.0 || t > (this.linear.length - 1)) {" << endl;
+	file << "t = (t < 0.0) ? 0.0 : (this.linear.length - 1);" << endl;
+	file << "}" << endl;
+	file << "const tIndex = Math.floor(t);" << endl;
+	file << "// Distance between index points" << endl;
+	file << "const d = (t - tIndex);" << endl;
+	file << "// Get segment indices" << endl;
+	file << "const segment1Index = this.linear[tIndex][0];" << endl;
+	file << "const segment2Index = segment1Index;" << endl;
+	file << "// U values to interpolate between" << endl;
+	file << "const u1 = this.linear[tIndex][1];" << endl;
+	file << "const u2 = u1;" << endl;
+	file << "// Get T values" << endl;
+	file << "const t1 = this.linear[tIndex][2];" << endl;
+	file << "const t2 = t1;" << endl;
+	file << "// If in bounds, grab second segment" << endl;
+	file << "if ((tIndex + 1) < (this.linear.length))" << endl;
+	file << "{" << endl;
+	file << "const segment2Index = this.linear[(tIndex + 1)][0];" << endl;
+	file << "const u2 = this.linear[(tIndex + 1)][1];" << endl;
+	file << "const t2 = this.linear[(tIndex + 1)][2];" << endl;
+	file << "}" << endl;
+	file << "// Segment index and U value" << endl;
+	file << "const segmentIndex = segment1Index;" << endl;
+	file << "const u = 0.0;" << endl;
+	file << "// Interpolate" << endl;
+	file << "// Same segment?" << endl;
+	file << "if (segment1Index == segment2Index)" << endl;
+	file << "{" << endl;
+	file << "// Interpolate U value" << endl;
+	file << "u = (d * (u2 - u1)) + u1;" << endl;
+	file << "}" << endl;
+	file << "else" << endl;
+	file << "{" << endl;
+	file << "// Difference in T" << endl;
+	file << "const deltaT = t2 - t1;" << endl;
+	file << "// Based on distance, how \"far\" are we along T?" << endl;
+	file << "const tDistance = d * deltaT;" << endl;
+	file << "// How much segment 1 T?" << endl;
+	file << "const segment1T = (this.segmentT[segment1Index] - t1);" << endl;
+	file << "// Part of the first segment (before the anchor point)?" << endl;
+	file << "if ((t1 + tDistance) < this.segmentT[segment1Index])" << endl;
+	file << "{" << endl;
+	file << "// How far along?" << endl;
+	file << "const p = (segment1T == 0 ? 0 : tDistance / segment1T);" << endl;
+	file << "// Compute U" << endl;
+	file << "u = ((1.0 - u1) * p) + u1;" << endl;
+	file << "}" << endl;
+	file << "else" << endl;
+	file << "{" << endl;
+	file << "// Beginning of second segment" << endl;
+	file << "segmentIndex = segment2Index;" << endl;
+	file << "// How much segment 2 T?" << endl;
+	file << "const segment2T = (t2 - this.segmentT[segment1Index]);" << endl;
+	file << "// How much T remains in this segment?" << endl;
+	file << "const tRemaining = tDistance - segment1T;" << endl;
+	file << "// How far along?" << endl;
+	file << "const p = (segment2T == 0 ? 0 : tRemaining / segment2T);" << endl;
+	file << "// Compute U" << endl;
+	file << "u = p * u2;" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Calculate bezier curve position" << endl;
+	file << "this.x = bezier(u," << endl;
+	file << "this.points[segmentIndex][0][0]," << endl;
+	file << "this.points[segmentIndex][1][0]," << endl;
+	file << "this.points[segmentIndex][2][0]," << endl;
+	file << "this.points[segmentIndex][3][0]);" << endl;
+	file << "this.y = bezier(u," << endl;
+	file << "this.points[segmentIndex][0][1]," << endl;
+	file << "this.points[segmentIndex][1][1]," << endl;
+	file << "this.points[segmentIndex][2][1]," << endl;
+	file << "this.points[segmentIndex][3][1]);" << endl;
+	file << "// Determine follow orientation" << endl;
+	file << "const qx = 0.0;" << endl;
+	file << "const qy = 0.0;" << endl;
+	file << "// At a 0.0 or 1.0 boundary?" << endl;
+	file << "if (u == 0.0) {" << endl;
+	file << "// Use control point" << endl;
+	file << "qx = this.points[segmentIndex][1][0];" << endl;
+	file << "qy = this.points[segmentIndex][1][1];" << endl;
+	file << "this.orientation = followOrientation(this.x, this.y, qx, qy, clock.d);" << endl;
+	file << "}" << endl;
+	file << "else if (u == 1.0) {" << endl;
+	file << "// Use control point" << endl;
+	file << "qx = this.points[segmentIndex][1][0];" << endl;
+	file << "qy = this.points[segmentIndex][1][1];" << endl;
+	file << "this.orientation = followOrientation(qx, qy, this.x, this.y, clock.d);" << endl;
+	file << "}" << endl;
+	file << "else {" << endl;
+	file << "// Calculate quadratic curve position" << endl;
+	file << "qx = quadratic(u," << endl;
+	file << "this.points[segmentIndex][0][0]," << endl;
+	file << "this.points[segmentIndex][1][0]," << endl;
+	file << "this.points[segmentIndex][2][0]);" << endl;
+	file << "qy = quadratic(u," << endl;
+	file << "this.points[segmentIndex][0][1]," << endl;
+	file << "this.points[segmentIndex][1][1]," << endl;
+	file << "this.points[segmentIndex][2][1]);" << endl;
+	file << "this.orientation = followOrientation(qx, qy, this.x, this.y, clock.d);" << endl;
+	file << "}" << endl;
+	file << "// Remember this clock value" << endl;
+	file << "this.lastValue = t;" << endl;
+	file << "}" << endl;
+	file << "// Update clock" << endl;
+	file << "clock.update();" << endl;
+	file << "}" << endl;
+	file << "// Returns follow orientation" << endl;
+	file << "function followOrientation(x1, y1, x2, y2, direction) {" << endl;
+	file << "// Forward?" << endl;
+	file << "if (direction == 1) {" << endl;
+	file << "return slope(x1, y1, x2, y2);" << endl;
+	file << "}" << endl;
+	file << "else {" << endl;
+	file << "return slope(x2, y2, x1, y1);" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Returns a position along a cubic Bezier curve" << endl;
+	file << "function bezier(u, p0, p1, p2, p3) {" << endl;
+	file << "return Math.pow(u, 3) * (p3 + 3 * (p1 - p2) - p0)" << endl;
+	file << "+ 3 * Math.pow(u, 2) * (p0 - 2 * p1 + p2)" << endl;
+	file << "+ 3 * u * (p1 - p0) + p0;" << endl;
+	file << "}" << endl;
+	file << "// Returns a position along a quadratic curve" << endl;
+	file << "function quadratic(u, p0, p1, p2) {" << endl;
+	file << "u = Math.max(Math.min(1.0, u), 0.0);" << endl;
+	file << "return Math.pow((1.0 - u), 2) * p0 +" << endl;
+	file << "2 * u * (1.0 - u) * p1 +" << endl;
+	file << "u * u * p2;" << endl;
+	file << "}" << endl;
+	file << "// Returns the slope between two points" << endl;
+	file << "function slope(x1, y1, x2, y2) {" << endl;
+	file << "const dx = (x2 - x1);" << endl;
+	file << "const dy = (y2 - y1);" << endl;
+	file << "return Math.atan2(dy, dx);" << endl;
+	file << "}" << endl;
 }
 
 void TypescriptDocument::OutputTimingFunctions(ofstream& file)
 {
 	// Timing functions
-	file << "\n\n// Penner timing functions";
-	file <<   "\n// Based on Robert Penner's easing equations: http://www.robertpenner.com/easing/";
-	file <<   "\nfunction linear(t) {";
-	file <<   "\n  return t;";
-	file <<   "\n}";
-	file << "\n\nfunction sineEaseIn(t) {";
-	file <<   "\n  return -Math.cos(t * (Math.PI/2)) + 1;";
-	file <<   "\n}";
-	file << "\n\nfunction sineEaseOut(t) {";
-	file <<   "\n  return Math.sin(t * (Math.PI/2));";
-	file <<   "\n}";
-	file << "\n\nfunction sineEaseInOut(t) {";
-	file <<   "\n  return -0.5 * (Math.cos(Math.PI * t) - 1);";
-	file <<   "\n}";
-	file << "\n\nfunction quintEaseIn(t) {";
-	file <<   "\n  return t * t * t * t * t;";
-	file <<   "\n}";
-	file << "\n\nfunction quintEaseOut(t) {";
-	file <<   "\n  t--;";
-	file <<   "\n  return t * t * t * t * t + 1;";
-	file <<   "\n}";
-	file << "\n\nfunction quintEaseInOut(t) {";
-	file <<   "\n  t /= 0.5;";
-	file <<   "\n  if (t < 1) { return 0.5 * t * t * t * t * t; }";
-	file <<   "\n  t -= 2;";
-	file <<   "\n  return 0.5 * (t * t * t * t * t + 2);";
-	file <<   "\n}";
-	file << "\n\nfunction quartEaseIn(t) {";
-	file <<   "\n  return t * t * t * t;";
-	file <<   "\n}";
-	file << "\n\nfunction quartEaseOut(t) {";
-	file <<   "\n  t--;";
-	file <<   "\n  return -(t * t * t * t - 1);";
-	file <<   "\n}";
-	file << "\n\nfunction quartEaseInOut(t) {";
-	file <<   "\n  t /= 0.5;";
-	file <<   "\n  if (t < 1) { return 0.5 * t * t * t * t; }";
-	file <<   "\n  t -= 2;";
-	file <<   "\n  return -0.5 * (t * t * t * t - 2);";
-	file <<   "\n}";
-	file << "\n\nfunction circEaseIn(t) {";
-	file <<   "\n  return -(Math.sqrt(1 - (t * t)) - 1);";
-	file <<   "\n}";
-	file << "\n\nfunction circEaseOut(t) {";
-	file <<   "\n  t--;";
-	file <<   "\n  return Math.sqrt(1 - (t * t));";
-	file <<   "\n}";
-	file << "\n\nfunction circEaseInOut(t) {";
-	file <<   "\n  t /= 0.5;";
-	file <<   "\n  if (t < 1) { return -0.5 * (Math.sqrt(1 - t * t) - 1); }";
-	file <<   "\n  t-= 2;";
-	file <<   "\n  return 0.5 * (Math.sqrt(1 - t * t) + 1);";
-	file <<   "\n}";
-	file << "\n\nfunction quadEaseIn(t) {";
-	file <<   "\n  return t * t;";
-	file <<   "\n}";
-	file << "\n\nfunction quadEaseOut(t) {";
-	file <<   "\n  return -1.0 * t * (t - 2.0);";
-	file <<   "\n}";
-	file << "\n\nfunction quadEaseInOut(t) {";
-	file <<   "\n  t /= 0.5;";
-	file <<   "\n  if (t < 1.0) {";
-	file <<   "\n    return 0.5 * t * t;";
-	file <<   "\n  }";
-	file <<   "\n  t--;";
-	file <<   "\n  return -0.5 * (t * (t - 2.0) - 1);";
-	file <<   "\n}";
-	file << "\n\nfunction cubicEaseIn(t) {";
-	file <<   "\n  return t * t * t;";
-	file <<   "\n}";
-	file << "\n\nfunction cubicEaseOut(t) {";
-	file <<   "\n  t--;";
-	file <<   "\n  return t * t * t + 1;";
-	file <<   "\n}";
-	file << "\n\nfunction cubicEaseInOut(t) {";
-	file <<   "\n  t /= 0.5;";
-	file <<   "\n  if (t < 1) { return 0.5 * t * t * t; }";
-	file <<   "\n  t -= 2;";
-	file <<   "\n  return 0.5 * (t * t * t + 2);";
-	file <<   "\n}";
-	file << "\n\nfunction bounceEaseOut(t) {";
-	file <<   "\n  if (t < (1.0 / 2.75)) {";
-	file <<   "\n    return (7.5625 * t * t);";
-	file <<   "\n  } else if (t < (2 / 2.75)) {";
-	file <<   "\n    t -= (1.5 / 2.75);";
-	file <<   "\n    return (7.5625 * t * t + 0.75);";
-	file <<   "\n  } else if (t < (2.5 / 2.75)) {";
-	file <<   "\n    t -= (2.25 / 2.75);";
-	file <<   "\n    return (7.5625 * t * t + 0.9375);";
-	file <<   "\n  } else {";
-	file <<   "\n    t -= (2.625 / 2.75);";
-	file <<   "\n    return (7.5625 * t * t + 0.984375);";
-	file <<   "\n  }";
-	file <<   "\n}";
-	file << "\n\nfunction bounceEaseIn(t) {";
-	file <<   "\n  return 1.0 - bounceEaseOut(1.0 - t);";
-	file <<   "\n}";
-	file << "\n\nfunction bounceEaseInOut(t) {";
-	file <<   "\n  if (t < 0.5) {";
-	file <<   "\n    return bounceEaseIn(t * 2.0) * 0.5;";
-	file <<   "\n  } else {";
-	file <<   "\n    return bounceEaseOut(t * 2.0 - 1.0) * 0.5 + 0.5;";
-	file <<   "\n  }";
-	file <<   "\n}";
-	file << "\n\nfunction expoEaseIn(t) {";
-	file <<   "\n  return (t == 0.0) ? 0.0 : Math.pow(2.0, 10.0 * (t - 1));";
-	file <<   "\n}";
-	file << "\n\nfunction expoEaseOut(t) {";
-	file <<   "\n  return (t == 1.0) ? 1.0 : -Math.pow(2.0, -10.0 * t) + 1.0;";
-	file <<   "\n}";
-	file << "\n\nfunction expoEaseInOut(t) {";
-	file <<   "\n  if (t == 0) {";
-	file <<   "\n    return 0.0;";
-	file <<   "\n  } else if (t == 1.0) {";
-	file <<   "\n    return 1.0;";
-	file <<   "\n  } else if ((t / 0.5) < 1.0) {";
-	file <<   "\n    t /= 0.5;";
-	file <<   "\n    return 0.5 * Math.pow(2.0, 10.0 * (t - 1));";
-	file <<   "\n  } else {";
-	file <<   "\n    t /= 0.5;";
-	file <<   "\n    return 0.5 * (-Math.pow(2.0, -10.0 * (t - 1)) + 2);";
-	file <<   "\n  }";
-	file <<   "\n}";
-	file << "\n\n// Other timing functions";
-	file << "\n\nfunction zeroStep(t) {";
-	file <<   "\n  return (t <= 0.0 ? 0.0 : 1.0);";
-	file << "\n\n}";
-	file << "\n\nfunction halfStep(t) {";
-	file <<   "\n  return (t < 0.5 ? 0.0 : 1.0);";
-	file << "\n\n}";
-	file << "\n\nfunction oneStep(t) {";
-	file <<   "\n  return (t >= 1.0 ? 1.0 : 0.0);";
-	file <<   "\n}";
-	file << "\n\nfunction random(t) {";
-	file <<   "\n  return Math.random();";
-	file <<   "\n}";
-	file << "\n\nfunction randomLimit(t) {";
-	file <<   "\n  return Math.random() * t;";
-	file <<   "\n}";
-	file << "\n\nfunction clockTick(t) {";
-	file <<   "\n  const steps = 60.0;";
-	file <<   "\n  return Math.floor(t * steps) / steps;";
-	file <<   "\n}";
+	file << "// Penner timing functions" << endl;
+	file << "// Based on Robert Penner's easing equations: http://www.robertpenner.com/easing/" << endl;
+	file << "function linear(t) {" << endl;
+	file << "return t;" << endl;
+	file << "}" << endl;
+	file << "function sineEaseIn(t) {" << endl;
+	file << "return -Math.cos(t * (Math.PI/2)) + 1;" << endl;
+	file << "}" << endl;
+	file << "function sineEaseOut(t) {" << endl;
+	file << "return Math.sin(t * (Math.PI/2));" << endl;
+	file << "}" << endl;
+	file << "function sineEaseInOut(t) {" << endl;
+	file << "return -0.5 * (Math.cos(Math.PI * t) - 1);" << endl;
+	file << "}" << endl;
+	file << "function quintEaseIn(t) {" << endl;
+	file << "return t * t * t * t * t;" << endl;
+	file << "}" << endl;
+	file << "function quintEaseOut(t) {" << endl;
+	file << "t--;" << endl;
+	file << "return t * t * t * t * t + 1;" << endl;
+	file << "}" << endl;
+	file << "function quintEaseInOut(t) {" << endl;
+	file << "t /= 0.5;" << endl;
+	file << "if (t < 1) { return 0.5 * t * t * t * t * t; }" << endl;
+	file << "t -= 2;" << endl;
+	file << "return 0.5 * (t * t * t * t * t + 2);" << endl;
+	file << "}" << endl;
+	file << "function quartEaseIn(t) {" << endl;
+	file << "return t * t * t * t;" << endl;
+	file << "}" << endl;
+	file << "function quartEaseOut(t) {" << endl;
+	file << "t--;" << endl;
+	file << "return -(t * t * t * t - 1);" << endl;
+	file << "}" << endl;
+	file << "function quartEaseInOut(t) {" << endl;
+	file << "t /= 0.5;" << endl;
+	file << "if (t < 1) { return 0.5 * t * t * t * t; }" << endl;
+	file << "t -= 2;" << endl;
+	file << "return -0.5 * (t * t * t * t - 2);" << endl;
+	file << "}" << endl;
+	file << "function circEaseIn(t) {" << endl;
+	file << "return -(Math.sqrt(1 - (t * t)) - 1);" << endl;
+	file << "}" << endl;
+	file << "function circEaseOut(t) {" << endl;
+	file << "t--;" << endl;
+	file << "return Math.sqrt(1 - (t * t));" << endl;
+	file << "}" << endl;
+	file << "function circEaseInOut(t) {" << endl;
+	file << "t /= 0.5;" << endl;
+	file << "if (t < 1) { return -0.5 * (Math.sqrt(1 - t * t) - 1); }" << endl;
+	file << "t-= 2;" << endl;
+	file << "return 0.5 * (Math.sqrt(1 - t * t) + 1);" << endl;
+	file << "}" << endl;
+	file << "function quadEaseIn(t) {" << endl;
+	file << "return t * t;" << endl;
+	file << "}" << endl;
+	file << "function quadEaseOut(t) {" << endl;
+	file << "return -1.0 * t * (t - 2.0);" << endl;
+	file << "}" << endl;
+	file << "function quadEaseInOut(t) {" << endl;
+	file << "t /= 0.5;" << endl;
+	file << "if (t < 1.0) {" << endl;
+	file << "return 0.5 * t * t;" << endl;
+	file << "}" << endl;
+	file << "t--;" << endl;
+	file << "return -0.5 * (t * (t - 2.0) - 1);" << endl;
+	file << "}" << endl;
+	file << "function cubicEaseIn(t) {" << endl;
+	file << "return t * t * t;" << endl;
+	file << "}" << endl;
+	file << "function cubicEaseOut(t) {" << endl;
+	file << "t--;" << endl;
+	file << "return t * t * t + 1;" << endl;
+	file << "}" << endl;
+	file << "function cubicEaseInOut(t) {" << endl;
+	file << "t /= 0.5;" << endl;
+	file << "if (t < 1) { return 0.5 * t * t * t; }" << endl;
+	file << "t -= 2;" << endl;
+	file << "return 0.5 * (t * t * t + 2);" << endl;
+	file << "}" << endl;
+	file << "function bounceEaseOut(t) {" << endl;
+	file << "if (t < (1.0 / 2.75)) {" << endl;
+	file << "return (7.5625 * t * t);" << endl;
+	file << "} else if (t < (2 / 2.75)) {" << endl;
+	file << "t -= (1.5 / 2.75);" << endl;
+	file << "return (7.5625 * t * t + 0.75);" << endl;
+	file << "} else if (t < (2.5 / 2.75)) {" << endl;
+	file << "t -= (2.25 / 2.75);" << endl;
+	file << "return (7.5625 * t * t + 0.9375);" << endl;
+	file << "} else {" << endl;
+	file << "t -= (2.625 / 2.75);" << endl;
+	file << "return (7.5625 * t * t + 0.984375);" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "function bounceEaseIn(t) {" << endl;
+	file << "return 1.0 - bounceEaseOut(1.0 - t);" << endl;
+	file << "}" << endl;
+	file << "function bounceEaseInOut(t) {" << endl;
+	file << "if (t < 0.5) {" << endl;
+	file << "return bounceEaseIn(t * 2.0) * 0.5;" << endl;
+	file << "} else {" << endl;
+	file << "return bounceEaseOut(t * 2.0 - 1.0) * 0.5 + 0.5;" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "function expoEaseIn(t) {" << endl;
+	file << "return (t == 0.0) ? 0.0 : Math.pow(2.0, 10.0 * (t - 1));" << endl;
+	file << "}" << endl;
+	file << "function expoEaseOut(t) {" << endl;
+	file << "return (t == 1.0) ? 1.0 : -Math.pow(2.0, -10.0 * t) + 1.0;" << endl;
+	file << "}" << endl;
+	file << "function expoEaseInOut(t) {" << endl;
+	file << "if (t == 0) {" << endl;
+	file << "return 0.0;" << endl;
+	file << "} else if (t == 1.0) {" << endl;
+	file << "return 1.0;" << endl;
+	file << "} else if ((t / 0.5) < 1.0) {" << endl;
+	file << "t /= 0.5;" << endl;
+	file << "return 0.5 * Math.pow(2.0, 10.0 * (t - 1));" << endl;
+	file << "} else {" << endl;
+	file << "t /= 0.5;" << endl;
+	file << "return 0.5 * (-Math.pow(2.0, -10.0 * (t - 1)) + 2);" << endl;
+	file << "}" << endl;
+	file << "}" << endl;
+	file << "// Other timing functions" << endl;
+	file << "function zeroStep(t) {" << endl;
+	file << "return (t <= 0.0 ? 0.0 : 1.0);" << endl;
+	file << "}" << endl;
+	file << "function halfStep(t) {" << endl;
+	file << "return (t < 0.5 ? 0.0 : 1.0);" << endl;
+	file << "}" << endl;
+	file << "function oneStep(t) {" << endl;
+	file << "return (t >= 1.0 ? 1.0 : 0.0);" << endl;
+	file << "}" << endl;
+	file << "function random(t) {" << endl;
+	file << "return Math.random();" << endl;
+	file << "}" << endl;
+	file << "function randomLimit(t) {" << endl;
+	file << "return Math.random() * t;" << endl;
+	file << "}" << endl;
+	file << "function clockTick(t) {" << endl;
+	file << "const steps = 60.0;" << endl;
+	file << "return Math.floor(t * steps) / steps;" << endl;
+	file << "}" << endl;
 }
 
 void TypescriptDocument::RenderSymbolFunctions()
@@ -1220,32 +1219,32 @@ void TypescriptDocument::RenderSymbolFunctions()
 				Pattern* pattern = canvas->documentResources->patterns.Patterns()[i];
 
 				// Begin symbol function block
-				outFile << "\n\n    function " << pattern->name << "(ctx) {";
+				outFile << "function " << pattern->name << "(ctx) {" << endl;
 
 				// Need a blank line?
 				if (pattern->hasAlpha || pattern->hasGradients || pattern->hasPatterns)
 				{
-					outFile << "\n";
+					outFile << endl;
 				}
 
 				// Does this draw function have alpha changes?
 				if (pattern->hasAlpha)
 				{
 					// Grab the alpha value (so we can use it to compute new globalAlpha values during this draw function)
-					outFile << "\n" << Indent(0) << "const alpha = ctx.globalAlpha;";
+					outFile << Indent(0) << "const alpha = ctx.globalAlpha;" << endl;
 				}
 
 				// Will we be encountering gradients?
 				if (pattern->hasGradients)
 				{
-					outFile << "\n" << Indent(0) << "const gradient;";
+					outFile << Indent(0) << "const gradient;" << endl;
 				}
 
 				// Will we be encountering patterns?
 				// TODO: Is this even possible?
 				if (pattern->hasPatterns)
 				{
-					outFile << "\n" << Indent(0) << "const pattern;";
+					outFile << Indent(0) << "const pattern;" << endl;
 				}
 
 				// Get a handle to the pattern art
@@ -1257,11 +1256,11 @@ void TypescriptDocument::RenderSymbolFunctions()
 				sAIArt->GetArtBounds(patternArtHandle, &bounds);
 				if (debug)
 				{
-					outFile << "\n\n" << Indent(0) << "// Symbol art bounds = " <<
+					outFile << Indent(0) << "// Symbol art bounds = " <<
 						"left:" << setiosflags(ios::fixed) << setprecision(1) << bounds.left <<
 						", top:" << bounds.top <<
 						", right:" << bounds.right <<
-						", bottom:" << bounds.bottom;
+						", bottom:" << bounds.bottom << endl;
 				}
 
 				// Create canvas and set size
@@ -1285,7 +1284,7 @@ void TypescriptDocument::RenderSymbolFunctions()
 				delete canvas;
 
 				// End function block
-				outFile << "\n    }";
+				outFile << "}" << endl;
 			}
 		}
 	}
@@ -1297,7 +1296,7 @@ void TypescriptDocument::RenderPatternFunction()
 	if (canvas->documentResources->patterns.HasPatterns())
 	{
 		// Begin pattern function block
-		outFile << "\n\n    function drawPatterns() {";
+		outFile << "function drawPatterns() {" << endl;
 
 		// Loop through patterns
 		for (unsigned int i = 0; i < canvas->documentResources->patterns.Patterns().size(); i++)
@@ -1315,7 +1314,7 @@ void TypescriptDocument::RenderPatternFunction()
 				sAIPattern->GetPatternName(pattern->patternHandle, patternName);
 				if (debug)
 				{
-					outFile << "\n//   Pattern name = " << patternName.as_Platform() << " (" << pattern->patternHandle << ")";
+					outFile << "//   Pattern name = " << patternName.as_Platform() << " (" << pattern->patternHandle << ")" << endl;
 				}
 
 				// Create canvas ID
@@ -1332,8 +1331,8 @@ void TypescriptDocument::RenderPatternFunction()
 				canvas->currentState->isProcessingSymbol = false;
 
 				// Render context commands
-				outFile << "\n\n" << Indent(1) << "const " << canvas->id << " = document.getElementById(\"" << canvas->id << "\");";
-				outFile << "\n" << Indent(1) << "const " << canvas->contextName << " = " << canvas->id << ".getContext(\"2d\");";
+				outFile << Indent(1) << "const " << canvas->id << " = document.getElementById(\"" << canvas->id << "\");" << endl;
+				outFile << Indent(1) << "const " << canvas->contextName << " = " << canvas->id << ".getContext(\"2d\");" << endl;
 
 				// Get a handle to the pattern art
 				AIArtHandle patternArtHandle = nil;
@@ -1344,11 +1343,11 @@ void TypescriptDocument::RenderPatternFunction()
 				sAIArt->GetArtBounds(patternArtHandle, &bounds);
 				if (debug)
 				{
-					outFile << "\n\n" << Indent(0) << "// Symbol art bounds = " <<
+					outFile << Indent(0) << "// Symbol art bounds = " <<
 						"left:" << setiosflags(ios::fixed) << setprecision(1) << bounds.left <<
 						", top:" << bounds.top <<
 						", right:" << bounds.right <<
-						", bottom:" << bounds.bottom;
+						", bottom:" << bounds.bottom << endl;
 				}
 
 				// Set canvas size
@@ -1361,10 +1360,10 @@ void TypescriptDocument::RenderPatternFunction()
 					// Set internal transform
 					// TODO: While this works, it seems awfully convoluted
 					sAIRealMath->AIRealMatrixSetIdentity(&canvas->currentState->internalTransform);
-					sAIRealMath->AIRealMatrixConcatScale(&canvas->currentState->internalTransform, 1,  - 1);
-					sAIRealMath->AIRealMatrixConcatTranslate(&canvas->currentState->internalTransform,  - 1 * bounds.left, bounds.top);
-					sAIRealMath->AIRealMatrixConcatScale(&canvas->currentState->internalTransform, 1,  - 1);
-					sAIRealMath->AIRealMatrixConcatTranslate(&canvas->currentState->internalTransform,  0, canvas->height);
+					sAIRealMath->AIRealMatrixConcatScale(&canvas->currentState->internalTransform, 1, -1);
+					sAIRealMath->AIRealMatrixConcatTranslate(&canvas->currentState->internalTransform, -1 * bounds.left, bounds.top);
+					sAIRealMath->AIRealMatrixConcatScale(&canvas->currentState->internalTransform, 1, -1);
+					sAIRealMath->AIRealMatrixConcatTranslate(&canvas->currentState->internalTransform, 0, canvas->height);
 				}
 
 				// This canvas shound be hidden, since it's only used for the pattern artwork
@@ -1383,17 +1382,17 @@ void TypescriptDocument::RenderPatternFunction()
 		}
 
 		// End function block
-		outFile << "\n    }";
+		outFile << "}" << endl;
 	}
 }
 
 void TypescriptDocument::DebugInfo()
 {
-	outFile << "\n\n<p>This document has been exported in debug mode.</p>";
+	outFile << "<p>This document has been exported in debug mode.</p>" << endl;
 
 	if (hasAnimation)
 	{
-		outFile <<   "\n<p>To scrub animations, click a Y location to set the time window, then move left/right to scrub.</p>";
+		outFile << "<p>To scrub animations, click a Y location to set the time window, then move left/right to scrub.</p>" << endl;
 	}
 
 	resources.images.DebugInfo();
@@ -1403,90 +1402,90 @@ void TypescriptDocument::DebugInfo()
 
 void TypescriptDocument::DebugClockJS()
 {
-	outFile << "\n\n    // Debug clock";
-	outFile <<   "\n    function debugClock() {";
-	outFile << "\n\n      // Mouse state";
-	outFile <<   "\n      this.mouseX = 0;";
-	outFile <<   "\n      this.mouseY = 0;";
-	outFile <<   "\n      this.resetMouse = true;";
-	outFile << "\n\n      // Y location on mouseDown";
-	outFile <<   "\n      this.y = 0.0;";
-	outFile << "\n\n      // Time range";
-	outFile <<   "\n      this.timeRange = 0.0;";
-	outFile << "\n\n      // Return current tick count";
-	outFile <<   "\n      this.ticks = function() {";
-	outFile << "\n\n        // Reset Y?    ";
-	outFile <<   "\n        if (this.resetMouse) {";
-	outFile << "\n\n          // Capture Y";
-	outFile <<   "\n          this.y = this.mouseY;";
-	outFile << "\n\n          // Update time range";
-	outFile <<   "\n          this.timeRange = (this.y / " << canvas->id << ".height) * 120;";
-	outFile <<   "\n          this.resetMouse = false;";
-	outFile <<   "\n        }";
-	outFile << "\n\n        return ((this.mouseX / " << canvas->id << ".width) * this.timeRange * 1000);";
-	outFile <<   "\n      }";
-	outFile << "\n\n      // Return number of ticks per second";
-	outFile <<   "\n      this.ticksPerSecond = function() {";
-	outFile << "\n\n        return 1000;";
-	outFile <<   "\n      }";
-	outFile <<   "\n    }";
+	outFile << "// Debug clock" << endl;
+	outFile << "function debugClock() {" << endl;
+	outFile << "// Mouse state" << endl;
+	outFile << "this.mouseX = 0;" << endl;
+	outFile << "this.mouseY = 0;" << endl;
+	outFile << "this.resetMouse = true;" << endl;
+	outFile << "// Y location on mouseDown" << endl;
+	outFile << "this.y = 0.0;" << endl;
+	outFile << "// Time range" << endl;
+	outFile << "this.timeRange = 0.0;" << endl;
+	outFile << "// Return current tick count" << endl;
+	outFile << "this.ticks = function() {" << endl;
+	outFile << "// Reset Y?    " << endl;
+	outFile << "if (this.resetMouse) {" << endl;
+	outFile << "// Capture Y" << endl;
+	outFile << "this.y = this.mouseY;" << endl;
+	outFile << "// Update time range" << endl;
+	outFile << "this.timeRange = (this.y / " << canvas->id << ".height) * 120;" << endl;
+	outFile << "this.resetMouse = false;" << endl;
+	outFile << "}" << endl;
+	outFile << "return ((this.mouseX / " << canvas->id << ".width) * this.timeRange * 1000);" << endl;
+	outFile << "}" << endl;
+	outFile << "// Return number of ticks per second" << endl;
+	outFile << "this.ticksPerSecond = function() {" << endl;
+	outFile << "return 1000;" << endl;
+	outFile << "}" << endl;
+	outFile << "}" << endl;
 
-	outFile << "\n\n    function setDebugClock() {";
-	outFile << "\n\n      debug.resetMouse = true;";
-    outFile <<   "\n    }";
+	outFile << "function setDebugClock() {" << endl;
+	outFile << "debug.resetMouse = true;" << endl;
+	outFile << "}" << endl;
 
-	outFile << "\n\n    function getMouseLocation(e) {";
-    outFile << "\n\n      debug.mouseX = e.clientX + document.body.scrollLeft +";
-	outFile <<   "\n                     document.documentElement.scrollLeft - canvas.offsetLeft;";
-    outFile <<   "\n      debug.mouseY = e.clientY + document.body.scrollTop +";
-	outFile <<   "\n                     document.documentElement.scrollTop - canvas.offsetTop;";
-    outFile <<   "\n    }";
+	outFile << "function getMouseLocation(e) {" << endl;
+	outFile << "debug.mouseX = e.clientX + document.body.scrollLeft +" << endl;
+	outFile << "document.documentElement.scrollLeft - canvas.offsetLeft;" << endl;
+	outFile << "debug.mouseY = e.clientY + document.body.scrollTop +" << endl;
+	outFile << "document.documentElement.scrollTop - canvas.offsetTop;" << endl;
+	outFile << "}" << endl;
 }
 
 void TypescriptDocument::DebugAnimationPathJS()
 {
-	outFile << "\n\n    function plotAnchorPoints(ctx) {";
+	outFile << "function plotAnchorPoints(ctx) {" << endl;
 
-	outFile << "\n\n      ctx.save();";
-    outFile <<   "\n      ctx.fillStyle = \"rgb(255, 0, 0)\";";
-    outFile << "\n\n      const animation;";
-	outFile <<   "\n      const animationCount = animations.length;";
-	outFile <<   "\n      for (const a = 0; a < animationCount; a++) {";
-	outFile << "\n\n        animation = animations[a];";
-	outFile << "\n\n        const pointCount = animation.points.length;";
-	outFile <<   "\n        for (const i = 0; i < pointCount; i++) {";
-	outFile << "\n\n          ctx.fillRect(animation.points[i][0][0] - 2, animation.points[i][0][1] - 2, 5, 5);";
-    outFile <<   "\n        }";
-    outFile <<   "\n      }";
-	outFile << "\n\n      // Final anchor point";
-	outFile <<   "\n      ctx.fillRect(animation.points[(animation.points.length - 1)][3][0] - 2,";
-	outFile <<   "\n                   animation.points[(animation.points.length - 1)][3][1] - 2, 5, 5);";
-	outFile << "\n\n      ctx.restore();";
-	outFile <<   "\n    }";
+	outFile << "ctx.save();" << endl;
+	outFile << "ctx.fillStyle = \"rgb(255, 0, 0)\";" << endl;
+	outFile << "const animation;" << endl;
+	outFile << "const animationCount = animations.length;" << endl;
+	outFile << "for (const a = 0; a < animationCount; a++) {" << endl;
+	outFile << "animation = animations[a];" << endl;
+	outFile << "const pointCount = animation.points.length;" << endl;
+	outFile << "for (const i = 0; i < pointCount; i++) {" << endl;
+	outFile << "ctx.fillRect(animation.points[i][0][0] - 2, animation.points[i][0][1] - 2, 5, 5);" << endl;
+	outFile << "}" << endl;
+	outFile << "}" << endl;
+	outFile << "// Final anchor point" << endl;
+	outFile << "ctx.fillRect(animation.points[(animation.points.length - 1)][3][0] - 2," << endl;
+	outFile << "animation.points[(animation.points.length - 1)][3][1] - 2, 5, 5);" << endl;
+	outFile << "ctx.restore();" << endl;
+	outFile << "}" << endl;
 
-	outFile << "\n\n    function plotLinearPoints(ctx) {";
-	outFile << "\n\n      ctx.save();";
-    outFile <<   "\n      ctx.fillStyle = \"rgb(0, 0, 255)\";";
-	outFile << "\n\n      const animationCount = animations.length;";
-	outFile <<   "\n      for (const a = 0; a < animationCount; a++) {";
-	outFile << "\n\n        const animation = animations[a];";
-	outFile << "\n\n        const linearCount = animation.linear.length;";
-	outFile <<   "\n        for (const i = 0; i < linearCount; i++) {";
-	outFile << "\n\n          const segmentIndex = animation.linear[i][0];";
-    outFile <<   "\n          const u = animation.linear[i][1];";
-	outFile << "\n\n          const x = bezier(u,";
-	outFile <<   "\n                         animation.points[segmentIndex][0][0],";
-    outFile <<   "\n                         animation.points[segmentIndex][1][0],";
-	outFile <<   "\n                         animation.points[segmentIndex][2][0],";
-	outFile <<   "\n                         animation.points[segmentIndex][3][0]);";
-	outFile << "\n\n          const y = bezier(u,";
-	outFile <<   "\n                         animation.points[segmentIndex][0][1],";
-	outFile <<   "\n                         animation.points[segmentIndex][1][1],";
-	outFile <<   "\n                         animation.points[segmentIndex][2][1],";
-	outFile <<   "\n                         animation.points[segmentIndex][3][1]);";
-	outFile << "\n\n          ctx.fillRect(x - 1, y - 1, 3, 3);";
-    outFile <<   "\n        }";
-    outFile <<   "\n      }";
-	outFile << "\n\n      ctx.restore();";
-	outFile <<   "\n    }";
+	outFile << "function plotLinearPoints(ctx) {" << endl;
+	outFile << "ctx.save();" << endl;
+	outFile << "ctx.fillStyle = \"rgb(0, 0, 255)\";" << endl;
+	outFile << "const animationCount = animations.length;" << endl;
+	outFile << "for (const a = 0; a < animationCount; a++) {" << endl;
+	outFile << "const animation = animations[a];" << endl;
+	outFile << "const linearCount = animation.linear.length;" << endl;
+	outFile << "for (const i = 0; i < linearCount; i++) {" << endl;
+	outFile << "const segmentIndex = animation.linear[i][0];" << endl;
+	outFile << "const u = animation.linear[i][1];" << endl;
+	outFile << "const x = bezier(u," << endl;
+	outFile << "animation.points[segmentIndex][0][0]," << endl;
+	outFile << "animation.points[segmentIndex][1][0]," << endl;
+	outFile << "animation.points[segmentIndex][2][0]," << endl;
+	outFile << "animation.points[segmentIndex][3][0]);" << endl;
+	outFile << "const y = bezier(u," << endl;
+	outFile << "animation.points[segmentIndex][0][1]," << endl;
+	outFile << "animation.points[segmentIndex][1][1]," << endl;
+	outFile << "animation.points[segmentIndex][2][1]," << endl;
+	outFile << "animation.points[segmentIndex][3][1]);" << endl;
+	outFile << "ctx.fillRect(x - 1, y - 1, 3, 3);" << endl;
+	outFile << "}" << endl;
+	outFile << "}" << endl;
+	outFile << "ctx.restore();" << endl;
+	outFile << "}" << endl;
 }

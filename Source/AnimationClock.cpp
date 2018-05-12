@@ -56,7 +56,7 @@ void AnimationClock::JSClockInit(const std::string& objectName)
 	// Only initialize if we have animation
 	if (direction != kNone)
 	{
-		outFile <<   "\n      " << objectName << "." << name << " = new clock(" <<
+		outFile  << objectName << "." << name << " = new clock(" <<
 			setiosflags(ios::fixed) << setprecision(2) << duration << ", " <<
 			delay << ", " <<
 			direction << ", " <<
@@ -67,12 +67,12 @@ void AnimationClock::JSClockInit(const std::string& objectName)
 			multiplier << ", " <<
 			setprecision(4) <<				// Increase precision to accomodate Firefox 3.x scaling issue
 			offset <<
-			");";
+			");" << endl;
 
 		if (debug)
 		{
 			// Debug animation clock
-			outFile <<   "\n      " << objectName << "." << name << ".timeProvider = debug; // Debug animation clock (comment out for normal animation)";
+			outFile  << objectName << "." << name << ".timeProvider = debug; // Debug animation clock (comment out for normal animation)" << endl;
 		}
 	}
 }
@@ -104,7 +104,7 @@ void AnimationClock::JSClockStart(const std::string& objectName)
 		// And only if we don't have another valid start trigger
 		if (!HasValidStartTrigger())
 		{
-			outFile <<   "\n      " << objectName << "." << name << ".start();";
+			outFile  << objectName << "." << name << ".start();" << endl;
 		}
 	}
 }
@@ -116,7 +116,7 @@ void AnimationClock::JSClockTick(const std::string& objectName)
 	if (direction != kNone)
 	{
 		// Output tick
-		outFile <<   "\n      " << objectName << "." << name << ".update();";
+		outFile  << objectName << "." << name << ".update();" << endl;
 	}
 }
 
@@ -169,7 +169,7 @@ void AnimationClock::SetParameter(const std::string& parameter, const std::strin
 	{
 		if (debug)
 		{
-			outFile << "\n//     Found animation duration parameter";
+			outFile << "//     Found animation duration parameter" << endl;
 		}
 
 		// Parse a float value for the duration parameter
@@ -177,8 +177,8 @@ void AnimationClock::SetParameter(const std::string& parameter, const std::strin
 
 		if (debug)
 		{
-			outFile << "\n//     duration = " << setiosflags(ios::fixed) << setprecision(2) <<
-				this->duration << " seconds";
+			outFile << "//     duration = " << setiosflags(ios::fixed) << setprecision(2) <<
+				this->duration << " seconds" << endl;
 		}
 	}
 
@@ -188,7 +188,7 @@ void AnimationClock::SetParameter(const std::string& parameter, const std::strin
 	{
 		if (debug)
 		{
-			outFile << "\n//     Found animation delay parameter";
+			outFile << "//     Found animation delay parameter" << endl;
 		}
 
 		// Parse a float value for the delay parameter
@@ -196,8 +196,8 @@ void AnimationClock::SetParameter(const std::string& parameter, const std::strin
 
 		if (debug)
 		{
-			outFile << "\n//     delay = " << setiosflags(ios::fixed) << setprecision(2) <<
-				this->delay << " seconds";
+			outFile << "//     delay = " << setiosflags(ios::fixed) << setprecision(2) <<
+				this->delay << " seconds" << endl;
 		}
 	}
 
@@ -207,7 +207,7 @@ void AnimationClock::SetParameter(const std::string& parameter, const std::strin
 	{
 		if (debug)
 		{
-			outFile << "\n//     Found animation direction parameter";
+			outFile << "//     Found animation direction parameter" << endl;
 		}
 
 		// Parse value
@@ -234,7 +234,7 @@ void AnimationClock::SetParameter(const std::string& parameter, const std::strin
 	{
 		if (debug)
 		{
-			outFile << "\n//     Found animation reverses parameter";
+			outFile << "//     Found animation reverses parameter" << endl;
 		}
 
 		if (value == "yes" ||
@@ -255,7 +255,7 @@ void AnimationClock::SetParameter(const std::string& parameter, const std::strin
 	{
 		if (debug)
 		{
-			outFile << "\n//     Found animation iterations parameter";
+			outFile << "//     Found animation iterations parameter" << endl;
 		}
 
 		// Infinite?
@@ -272,8 +272,8 @@ void AnimationClock::SetParameter(const std::string& parameter, const std::strin
 
 			if (debug)
 			{
-				outFile << "\n//     iterations = " << setiosflags(ios::fixed) << setprecision(2) <<
-					this->iterations;
+				outFile << "//     iterations = " << setiosflags(ios::fixed) << setprecision(2) <<
+					this->iterations << endl;
 			}
 		}
 	}
@@ -284,7 +284,7 @@ void AnimationClock::SetParameter(const std::string& parameter, const std::strin
 	{
 		if (debug)
 		{
-			outFile << "\n//     Found animation timing function parameter";
+			outFile << "//     Found animation timing function parameter" << endl;
 		}
 
 		// Short-cut value?
@@ -305,7 +305,7 @@ void AnimationClock::SetParameter(const std::string& parameter, const std::strin
 
 			if (debug)
 			{
-				outFile << "\n//     Timing function name = " << timingFunctionName;
+				outFile << "//     Timing function name = " << timingFunctionName << endl;
 			}
 
 			// Set function name
@@ -319,7 +319,7 @@ void AnimationClock::SetParameter(const std::string& parameter, const std::strin
 	{
 		if (debug)
 		{
-			outFile << "\n//     Found animation multiplier parameter";
+			outFile << "//     Found animation multiplier parameter" << endl;
 		}
 
 		// Parse a float value for the multiplier parameter
@@ -327,8 +327,8 @@ void AnimationClock::SetParameter(const std::string& parameter, const std::strin
 
 		if (debug)
 		{
-			outFile << "\n//     multiplier = " << setiosflags(ios::fixed) << setprecision(2) <<
-				this->multiplier;
+			outFile << "//     multiplier = " << setiosflags(ios::fixed) << setprecision(2) <<
+				this->multiplier << endl;
 		}
 	}
 
@@ -338,7 +338,7 @@ void AnimationClock::SetParameter(const std::string& parameter, const std::strin
 	{
 		if (debug)
 		{
-			outFile << "\n//     Found animation offset parameter";
+			outFile << "//     Found animation offset parameter" << endl;
 		}
 
 		// Parse a float value for the offset parameter
@@ -346,8 +346,8 @@ void AnimationClock::SetParameter(const std::string& parameter, const std::strin
 
 		if (debug)
 		{
-			outFile << "\n//     offset = " << setiosflags(ios::fixed) << setprecision(2) <<
-				this->offset;
+			outFile << "//     offset = " << setiosflags(ios::fixed) << setprecision(2) <<
+				this->offset << endl;
 		}
 	}
 
@@ -356,7 +356,7 @@ void AnimationClock::SetParameter(const std::string& parameter, const std::strin
 	{
 		if (debug)
 		{
-			outFile << "\n//     Found trigger parameter";
+			outFile << "//     Found trigger parameter" << endl;
 		}
 
 		// Create new trigger

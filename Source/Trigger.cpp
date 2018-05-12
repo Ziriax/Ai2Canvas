@@ -98,10 +98,10 @@ void Trigger::SetParameter(const std::string& parameter, const std::string& valu
 
 	if (debug)
 	{
-		outFile << "\n//     triggeredFunction = " << this->triggeredFunction;
-		outFile << "\n//     sourceObject = " << this->sourceObject;
-		outFile << "\n//     sourceClock = " << this->sourceClock;
-		outFile << "\n//     sourceEvent = " << this->sourceEvent;
+		outFile << "//     triggeredFunction = " << this->triggeredFunction << endl;
+		outFile << "//     sourceObject = " << this->sourceObject << endl;
+		outFile << "//     sourceClock = " << this->sourceClock << endl;
+		outFile << "//     sourceEvent = " << this->sourceEvent << endl;
 	}
 }
 
@@ -120,11 +120,11 @@ void Trigger::JSTriggerInit(const std::string& objectName, const std::string& cl
 	{
 		// Output JavaScript initialization
 		// animations[0].pathClock.finished.subscribe(function() { animations[0].pathClock.reset(); });
-		outFile <<   "\n      " << this->sourceObject <<
+		outFile  << this->sourceObject <<
 			"." << this->sourceClock <<
 			"." << this->sourceEvent << ".subscribe(function() { " << 
 			objectName << "." <<
 			clockName << "." <<
-			this->triggeredFunction << "(); });";
+			this->triggeredFunction << "(); });" << endl;
 	}
 }

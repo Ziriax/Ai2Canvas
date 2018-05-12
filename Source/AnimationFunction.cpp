@@ -49,10 +49,10 @@ AnimationFunction::~AnimationFunction()
 void AnimationFunction::RenderInit(const AIRealRect& documentBounds)
 {
 	// Begin function block
-	outFile << "\n\n    function " << name << "() {";
+	outFile << "function " << name << "() {" << endl;
 
-	outFile << "\n\n      // Control and anchor points";
-	outFile <<   "\n      this.points = [";
+	outFile << "// Control and anchor points" << endl;
+	outFile << "this.points = [" << endl;
 
 	// Re-set matrix based on document
 	// TODO: Need to make this more isolated/encapsulated
@@ -63,26 +63,26 @@ void AnimationFunction::RenderInit(const AIRealRect& documentBounds)
 	// Render animation
 	RenderArt(artHandle, 1);
 
-	outFile << "\n                    ];";
+	outFile << "];" << endl;
 
 	// Add arc-length data
 	ArcLength(1);
 
 	// Other values
-	outFile << "\n\n      this.lastValue = -1.0;";
-	outFile <<   "\n      this.x = 0;";
-	outFile <<   "\n      this.y = 0;";
-	outFile <<   "\n      this.orientation = 0.0;";
+	outFile << "this.lastValue = -1.0;" << endl;
+	outFile << "this.x = 0;" << endl;
+	outFile << "this.y = 0;" << endl;
+	outFile << "this.orientation = 0.0;" << endl;
 
 	RenderClockInit();
 
-	outFile << "\n\n      // Update function";
-	outFile <<   "\n      this.update = updatePath;";
-	//outFile << "\n\n      // Establish orientation";
-	//outFile <<   "\n      this.update();";
+	outFile << "// Update function" << endl;
+	outFile << "this.update = updatePath;" << endl;
+	//outFile << "// Establish orientation" << endl;
+	//outFile << "this.update();" << endl;
 
 	// End function block
-	outFile << "\n    }";
+	outFile << "}" << endl;
 }
 
 void AnimationFunction::RenderClockInit()
@@ -285,11 +285,11 @@ void AnimationFunction::RenderSegment(AIPathSegment& previousSegment, AIPathSegm
 	}
 
 	// Output Bezier segment
-	outFile << "\n" << Indent(depth) << "              [ " <<
+	outFile  << Indent(depth) << "              [ " <<
 		"[" << setiosflags(ios::fixed) << setprecision(1) << previousSegment.p.h << ", " << previousSegment.p.v << "]" <<
 		", [" << x1 << ", " << y1 << "]" <<
 		", [" << x2 << ", " << y2 << "]" <<
-		", [" << segment.p.h << ", " << segment.p.v << "] ]";
+		", [" << segment.p.h << ", " << segment.p.v << "] ]" << endl;
 
 	AIRealPoint p1;
 	AIRealPoint p2;
@@ -302,7 +302,7 @@ void AnimationFunction::RenderSegment(AIPathSegment& previousSegment, AIPathSegm
 	AIRealBezier b;
 	sAIRealBezier->Set(&b, &previousSegment.p, &p1, &p2, &segment.p);
 	AIReal segmentLength = sAIRealBezier->Length(&b, FLATNESS);
-	//outFile << "\n" << Indent(depth) << "              // Length = " << setiosflags(ios::fixed) << setprecision(2) << segmentLength;
+	//outFile  << Indent(depth) << "              // Length = " << setiosflags(ios::fixed) << setprecision(2) << segmentLength << endl;
 
 	// Remember for later
 	BezierInfo bi;
@@ -328,8 +328,8 @@ void AnimationFunction::ArcLength(unsigned int depth)
 		}
 	}
 
-	outFile << "\n\n      // Linear motion index";
-	outFile <<   "\n      this.linear = [";
+	outFile << "// Linear motion index" << endl;
+	outFile << "this.linear = [" << endl;
 
 	// Next, pick equally-spaced points along the total path that are at least shorter than the shortest segment
 	unsigned int spacing = ((shortestLength * 0.9f) < 50.0f) ? (unsigned int)(shortestLength * 0.9f) : 50;
@@ -372,7 +372,7 @@ void AnimationFunction::ArcLength(unsigned int depth)
 		{
 			// Now that we found the segment, find the t value within the segment
 			sAIRealBezier->TAtLength(&beziers[s].b, remainingSearchLength, beziers[s].length, FLATNESS, &t);
-			//outFile << "\n" << Indent(depth) << "                // t at length " << setiosflags(ios::fixed) << setprecision(2) << length << " = " << t;
+			//outFile  << Indent(depth) << "                // t at length " << setiosflags(ios::fixed) << setprecision(2) << length << " = " << t << endl;
 		}
 
 		// Separator
@@ -384,7 +384,7 @@ void AnimationFunction::ArcLength(unsigned int depth)
 		// New line every once and awhile
 		if (i % 4 == 0)
 		{
-			outFile << "\n" << Indent(depth) << "              ";
+			outFile  << Indent(depth) << "              " << endl;
 		}
 
 		outFile << "[" << setiosflags(ios::fixed) << setprecision(2) <<
@@ -392,10 +392,10 @@ void AnimationFunction::ArcLength(unsigned int depth)
 	}
 
 	// End function block
-	outFile << "\n                    ];";
+	outFile << "];" << endl;
 
-	outFile << "\n\n      // Segment T boundaries";
-	outFile <<   "\n      this.segmentT = [";
+	outFile << "// Segment T boundaries" << endl;
+	outFile << "this.segmentT = [" << endl;
 
 	AIReal runningLength = 0.0f;
 	for (unsigned int i = 0; i < beziers.size(); i++)

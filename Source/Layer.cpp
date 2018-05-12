@@ -59,7 +59,7 @@ Layer* CanvasExport::AddLayer(std::vector<Layer*>& layers, const AILayerHandle& 
 	sAILayer->GetLayerTitle(layerHandle, layerName);
 	if (debug)
 	{
-		outFile << "\n//   Layer name = " << layerName.as_Platform();
+		outFile << "//   Layer name = " << layerName.as_Platform() << endl;
 	}
 
 	// Create a new layer

@@ -353,7 +353,7 @@ void CanvasExport::WriteArtTree(AIArtHandle artHandle, int depth)
 		// Art type
 		short type = 0;
 		sAIArt->GetArtType(artHandle, &type);
-		outFile << "\n//" << Indent(depth) << std::string(artTypes[type]) << " (" << type << ")";
+		outFile << "//" << Indent(depth) << std::string(artTypes[type]) << " (" << type << ")" << endl;
 
 		// Get art name
 		ai::UnicodeString artName;

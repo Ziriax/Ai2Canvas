@@ -41,7 +41,7 @@ Image::~Image()
 void Image::Render()
 {
 	// Output image tag
-	outFile << "\n   <img alt=\"" << name << "\" id=\"" << id << "\" style=\"display: none\" src=\"" << Uri() << "\" />";
+	outFile << "<img alt=\"" << name << "\" id=\"" << id << "\" style=\"display: none\" src=\"" << Uri() << "\" />" << endl;
 }
 
 std::string Image::Uri()
@@ -71,9 +71,9 @@ std::string Image::Uri()
 void Image::RenderDrawImage(const std::string& contextName, const AIReal x, const AIReal y)
 {
 	// Draw image
-	outFile << "\n" << Indent(0) << contextName << ".drawImage(document.getElementById(\"" << id << "\"), " <<
+	outFile  << Indent(0) << contextName << ".drawImage(document.getElementById(\"" << id << "\"), " <<
 		setiosflags(ios::fixed) << setprecision(1) <<
-		x << ", " << y << ");";
+		x << ", " << y << ");" << endl;
 }
 
 void Image::DebugBounds(const std::string& contextName, const AIRealRect& bounds)
@@ -81,12 +81,12 @@ void Image::DebugBounds(const std::string& contextName, const AIRealRect& bounds
 	if (debug)
 	{
 		// Stroke bounds	
-		outFile << "\n" << Indent(0) << contextName << ".save();";
-		outFile << "\n" << Indent(0) << contextName << ".lineWidth = 1.0;";
-		outFile << "\n" << Indent(0) << contextName << ".strokeStyle = \"rgb(255, 0, 0)\";";
-		outFile << "\n" << Indent(0) << contextName << ".strokeRect(" <<
+		outFile  << Indent(0) << contextName << ".save();" << endl;
+		outFile  << Indent(0) << contextName << ".lineWidth = 1.0;" << endl;
+		outFile  << Indent(0) << contextName << ".strokeStyle = \"rgb(255, 0, 0)\";" << endl;
+		outFile  << Indent(0) << contextName << ".strokeRect(" <<
 			setiosflags(ios::fixed) << setprecision(1) <<
-			bounds.left << ", " << bounds.top << ", " << (bounds.right - bounds.left) << ", " << (bounds.bottom - bounds.top) << ");";
-		outFile << "\n" << Indent(0) << contextName << ".restore();";
+			bounds.left << ", " << bounds.top << ", " << (bounds.right - bounds.left) << ", " << (bounds.bottom - bounds.top) << ");" << endl;
+		outFile  << Indent(0) << contextName << ".restore();" << endl;
 	}
 }

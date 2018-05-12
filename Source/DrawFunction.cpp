@@ -89,8 +89,8 @@ void DrawFunction::RenderClockInit()
 	if (follow)
 	{
 		// Output follow orientation
-		outFile <<   "\n      " << name << ".followOrientation = " << setiosflags(ios::fixed) << setprecision(2) <<
-			followOrientation << " * Math.PI / 180.0;";
+		outFile  << name << ".followOrientation = " << setiosflags(ios::fixed) << setprecision(2) <<
+			followOrientation << " * Math.PI / 180.0;" << endl;
 	}
 }
 
@@ -134,7 +134,7 @@ void DrawFunction::RenderClockTick()
 void DrawFunction::RenderDrawFunctionCall(const AIRealRect& documentBounds)
 {
 	// New line
-	outFile << "\n";
+	outFile  << endl;
 
 	// Does this draw function have any animation?
 	if (animationFunction ||
@@ -143,22 +143,22 @@ void DrawFunction::RenderDrawFunctionCall(const AIRealRect& documentBounds)
 		alphaClock.direction != AnimationClock::kNone)
 	{
 		// Save drawing context state
-		outFile << "\n      " << canvas->contextName << ".save();";
+		outFile  << canvas->contextName << ".save();" << endl;
 
 		// Do we have an animation path?
 		if (animationFunction)
 		{
 			// Set transform for this animation path
-			outFile <<   "\n      " << canvas->contextName << ".translate(animations[" << 
+			outFile  << canvas->contextName << ".translate(animations[" << 
 				animationFunction->index << "].x, animations[" << 
-				animationFunction->index << "].y);";
+				animationFunction->index << "].y);" << endl;
 
 			// Does this draw function have a follow orientation?
 			if (follow)
 			{
-				outFile <<   "\n      " << canvas->contextName << ".rotate(" << name <<
+				outFile  << canvas->contextName << ".rotate(" << name <<
 							".followOrientation + animations[" << animationFunction->index <<
-							"].orientation);";
+							"].orientation);" << endl;
 			}
 		}
 		else
@@ -173,36 +173,36 @@ void DrawFunction::RenderDrawFunctionCall(const AIRealRect& documentBounds)
 		// Do we have any rotation on the draw function?
 		if (rotateClock.direction != AnimationClock::kNone)
 		{
-			outFile <<   "\n      " << canvas->contextName << ".rotate(" << name << "." << rotateClock.name << ".value);";
+			outFile  << canvas->contextName << ".rotate(" << name << "." << rotateClock.name << ".value);" << endl;
 		}
 
 		// Do we have any scale on the draw function?
 		if (scaleClock.direction != AnimationClock::kNone)
 		{
-			outFile <<   "\n      " << canvas->contextName << ".scale(" << name << "." << scaleClock.name << ".value, " <<
-				name << "." << scaleClock.name << ".value);";
+			outFile  << canvas->contextName << ".scale(" << name << "." << scaleClock.name << ".value, " <<
+				name << "." << scaleClock.name << ".value);" << endl;
 		}
 
 		// Do we have any alpha on the draw function?
 		if (alphaClock.direction != AnimationClock::kNone)
 		{
-			outFile <<   "\n      " << canvas->contextName << ".globalAlpha = " << name << "." << alphaClock.name << ".value;";
+			outFile  << canvas->contextName << ".globalAlpha = " << name << "." << alphaClock.name << ".value;" << endl;
 		}
 
 		// Call the draw function
-		outFile <<   "\n      " << name << "(" << canvas->contextName << ");";
+		outFile  << name << "(" << canvas->contextName << ");" << endl;
 
 		// Show origin
 		if (debug)
 		{
-			outFile <<   "\n      " << canvas->contextName << ".save();";
-			outFile <<   "\n      " << canvas->contextName << ".fillStyle = \"rgb(0, 0, 255)\";";
-			outFile <<   "\n      " << canvas->contextName << ".fillRect(-2.0, -2.0, 5, 5);";
-			outFile <<   "\n      " << canvas->contextName << ".restore();";
+			outFile  << canvas->contextName << ".save();" << endl;
+			outFile  << canvas->contextName << ".fillStyle = \"rgb(0, 0, 255)\";" << endl;
+			outFile  << canvas->contextName << ".fillRect(-2.0, -2.0, 5, 5);" << endl;
+			outFile  << canvas->contextName << ".restore();" << endl;
 		}
 
 		// Restore drawing context state
-		outFile <<   "\n      " << canvas->contextName << ".restore();";
+		outFile  << canvas->contextName << ".restore();" << endl;
 	}
 	else
 	{
@@ -212,28 +212,28 @@ void DrawFunction::RenderDrawFunctionCall(const AIRealRect& documentBounds)
 		if (translateOrigin)
 		{
 			// Save drawing context state
-			outFile << "\n      " << canvas->contextName << ".save();";
+			outFile  << canvas->contextName << ".save();" << endl;
 
 			Reposition(documentBounds);
 		}
 
 		// Just call the function
-		outFile <<   "\n      " << name << "(" << canvas->contextName << ");";
+		outFile  << name << "(" << canvas->contextName << ");" << endl;
 
 		// Show origin
 		if (debug)
 		{
-			outFile <<   "\n      " << canvas->contextName << ".save();";
-			outFile <<   "\n      " << canvas->contextName << ".fillStyle = \"rgb(0, 0, 255)\";";
-			outFile <<   "\n      " << canvas->contextName << ".fillRect(-2.0, -2.0, 5, 5);";
-			outFile <<   "\n      " << canvas->contextName << ".restore();";
+			outFile  << canvas->contextName << ".save();" << endl;
+			outFile  << canvas->contextName << ".fillStyle = \"rgb(0, 0, 255)\";" << endl;
+			outFile  << canvas->contextName << ".fillRect(-2.0, -2.0, 5, 5);" << endl;
+			outFile  << canvas->contextName << ".restore();" << endl;
 		}
 
 		// Do we need to restore?
 		if (translateOrigin)
 		{
 			// Restore drawing context state
-			outFile <<   "\n      " << canvas->contextName << ".restore();";
+			outFile  << canvas->contextName << ".restore();" << endl;
 		}
 	}
 }
@@ -334,7 +334,7 @@ void DrawFunction::Reposition(const AIRealRect& documentBounds)
 
 	// Render the repositioning translation for this function
 	// NOTE: This needs to happen, even if it's just "identity," since other functions may have already changed the transformation
-	outFile <<   "\n      " << canvas->contextName << ".translate(" << setiosflags(ios::fixed) << setprecision(1) << x << ", " << y << ");";
+	outFile  << canvas->contextName << ".translate(" << setiosflags(ios::fixed) << setprecision(1) << x << ", " << y << ");" << endl;
 }
 
 void DrawFunction::SetParameter(const std::string& parameter, const std::string& value)
@@ -345,7 +345,7 @@ void DrawFunction::SetParameter(const std::string& parameter, const std::string&
 	{
 		if (debug)
 		{
-			outFile << "\n//     Found origin parameter";
+			outFile << "//     Found origin parameter" << endl;
 		}
 
 		// Short-cut values?
@@ -412,8 +412,8 @@ void DrawFunction::SetParameter(const std::string& parameter, const std::string&
 
 				if (debug)
 				{
-					outFile << "\n//     translateH = " << setiosflags(ios::fixed) << setprecision(1) <<
-						this->translateOriginH << ", translateV = " << this->translateOriginV;
+					outFile << "//     translateH = " << setiosflags(ios::fixed) << setprecision(1) <<
+						this->translateOriginH << ", translateV = " << this->translateOriginV << endl;
 				}
 			}
 		}
@@ -425,7 +425,7 @@ void DrawFunction::SetParameter(const std::string& parameter, const std::string&
 	{
 		if (debug)
 		{
-			outFile << "\n//     Found animation parameter";
+			outFile << "//     Found animation parameter" << endl;
 		}
 
 		// Get the associated animation function name
@@ -436,7 +436,7 @@ void DrawFunction::SetParameter(const std::string& parameter, const std::string&
 
 		if (debug)
 		{
-			outFile << "\n//     Animation function name = " << animationFunctionName;
+			outFile << "//     Animation function name = " << animationFunctionName << endl;
 		}
 
 		// Store the function name as a string that we will bind after all layers have been defined
@@ -449,7 +449,7 @@ void DrawFunction::SetParameter(const std::string& parameter, const std::string&
 	{
 		if (debug)
 		{
-			outFile << "\n//     Found rotation parameters";
+			outFile << "//     Found rotation parameters" << endl;
 		}
 
 		// Replace with clock parameter
@@ -480,7 +480,7 @@ void DrawFunction::SetParameter(const std::string& parameter, const std::string&
 	{
 		if (debug)
 		{
-			outFile << "\n//     Found scale parameters";
+			outFile << "//     Found scale parameters" << endl;
 		}
 
 		// Replace with clock parameter
@@ -511,7 +511,7 @@ void DrawFunction::SetParameter(const std::string& parameter, const std::string&
 	{
 		if (debug)
 		{
-			outFile << "\n//     Found alpha parameters";
+			outFile << "//     Found alpha parameters" << endl;
 		}
 
 		// Replace with clock parameter
@@ -542,7 +542,7 @@ void DrawFunction::SetParameter(const std::string& parameter, const std::string&
 	{
 		if (debug)
 		{
-			outFile << "\n//     Found follow orientation parameter";
+			outFile << "//     Found follow orientation parameter" << endl;
 		}
 
 		// Is this disabling following?
@@ -562,8 +562,8 @@ void DrawFunction::SetParameter(const std::string& parameter, const std::string&
 
 			if (debug)
 			{
-				outFile << "\n//     Follow orientation = " << setiosflags(ios::fixed) << setprecision(2) <<
-					this->followOrientation << " degrees";
+				outFile << "//     Follow orientation = " << setiosflags(ios::fixed) << setprecision(2) <<
+					this->followOrientation << " degrees" << endl;
 			}
 		}
 	}
@@ -574,7 +574,7 @@ void DrawFunction::SetParameter(const std::string& parameter, const std::string&
 	{
 		if (debug)
 		{
-			outFile << "\n//     Found rasterize parameter";
+			outFile << "//     Found rasterize parameter" << endl;
 		}
 
 		if (value == "no" ||
@@ -606,7 +606,7 @@ void DrawFunction::SetParameter(const std::string& parameter, const std::string&
 
 				if (debug)
 				{
-					outFile << "\n//     Rasterize file name = " << fileName;
+					outFile << "//     Rasterize file name = " << fileName << endl;
 				}
 			}
 		}
@@ -618,7 +618,7 @@ void DrawFunction::SetParameter(const std::string& parameter, const std::string&
 	{
 		if (debug)
 		{
-			outFile << "\n//     Found crop parameter";
+			outFile << "//     Found crop parameter" << endl;
 		}
 
 		if (value == "yes" ||

@@ -53,18 +53,18 @@ State::~State()
 // Report state information
 void State::DebugInfo()
 {
-	outFile << "\n\n// State Info";
-	outFile << "\n//   globalAlpha = " << setiosflags(ios::fixed) << setprecision(2) << this->globalAlpha;
-	outFile << "\n//   fillStyle = " << this->fillStyle;
-	outFile << "\n//   strokeStyle = " << this->strokeStyle;
-	outFile << "\n//   lineWidth = " << setiosflags(ios::fixed) << setprecision(1) << this->lineWidth;
-	outFile << "\n//   lineCap = " << this->lineCap;
-	outFile << "\n//   lineJoin = " << this->lineJoin;
-	outFile << "\n//   miterLimit = " << setiosflags(ios::fixed) << setprecision(1) << this->miterLimit;
-	outFile << "\n//   fontSize = " << setiosflags(ios::fixed) << setprecision(1) << this->fontSize;
-	outFile << "\n//   fontName = " << this->fontName;
-	outFile << "\n//   fontStyleName = " << this->fontStyleName;
-	outFile << "\n//   isProcessingSymbol = " << this->isProcessingSymbol;
-	outFile << "\n//   internalTransform = ";
+	outFile << "// State Info" << endl;
+	outFile << "//   globalAlpha = " << setiosflags(ios::fixed) << setprecision(2) << this->globalAlpha << endl;
+	outFile << "//   fillStyle = " << this->fillStyle << endl;
+	outFile << "//   strokeStyle = " << this->strokeStyle << endl;
+	outFile << "//   lineWidth = " << setiosflags(ios::fixed) << setprecision(1) << this->lineWidth << endl;
+	outFile << "//   lineCap = " << this->lineCap << endl;
+	outFile << "//   lineJoin = " << this->lineJoin << endl;
+	outFile << "//   miterLimit = " << setiosflags(ios::fixed) << setprecision(1) << this->miterLimit << endl;
+	outFile << "//   fontSize = " << setiosflags(ios::fixed) << setprecision(1) << this->fontSize << endl;
+	outFile << "//   fontName = " << this->fontName << endl;
+	outFile << "//   fontStyleName = " << this->fontStyleName << endl;
+	outFile << "//   isProcessingSymbol = " << this->isProcessingSymbol << endl;
+	outFile << "//   internalTransform = " << endl;
 	//RenderTransform(state.internalTransform);
 }
