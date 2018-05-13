@@ -48,7 +48,7 @@ DrawFunction::~DrawFunction()
 void DrawFunction::RenderDrawFunctionCall(const AIRealRect& documentBounds)
 {
 	// New line
-	outFile  << endl;
+	outFile << endl;
 	{
 		// No animation
 
@@ -56,28 +56,28 @@ void DrawFunction::RenderDrawFunctionCall(const AIRealRect& documentBounds)
 		if (translateOrigin)
 		{
 			// Save drawing context state
-			outFile  << canvas->contextName << ".save();" << endl;
+			outFile << canvas->contextName << ".save();" << endl;
 
 			Reposition(documentBounds);
 		}
 
 		// Just call the function
-		outFile  << name << "(" << canvas->contextName << ");" << endl;
+		outFile << name << "(" << canvas->contextName << ");" << endl;
 
 		// Show origin
 		if (debug)
 		{
-			outFile  << canvas->contextName << ".save();" << endl;
-			outFile  << canvas->contextName << ".fillStyle = \"rgb(0, 0, 255)\";" << endl;
-			outFile  << canvas->contextName << ".fillRect(-2.0, -2.0, 5, 5);" << endl;
-			outFile  << canvas->contextName << ".restore();" << endl;
+			outFile << canvas->contextName << ".save();" << endl;
+			outFile << canvas->contextName << ".fillStyle = \"rgb(0, 0, 255)\";" << endl;
+			outFile << canvas->contextName << ".fillRect(-2.0, -2.0, 5, 5);" << endl;
+			outFile << canvas->contextName << ".restore();" << endl;
 		}
 
 		// Do we need to restore?
 		if (translateOrigin)
 		{
 			// Restore drawing context state
-			outFile  << canvas->contextName << ".restore();" << endl;
+			outFile << canvas->contextName << ".restore();" << endl;
 		}
 	}
 }
@@ -85,80 +85,96 @@ void DrawFunction::RenderDrawFunctionCall(const AIRealRect& documentBounds)
 // Render a drawing function
 void DrawFunction::RenderDrawFunction(const AIRealRect& documentBounds)
 {
-	// Begin function block
-	outFile << "export function " << name << "(ctx: CanvasRenderingContext2D) {" << endl << indent;
-
-	//// Need a blank line?
-	//if (hasAlpha || hasGradients || hasPatterns)
-	//{
-	//	outFile << endl;
-	//}
-
-	// Does this draw function have alpha changes?
-	if (hasAlpha)
+	outFile << "export const " << name << " = {" << endl;
 	{
-		// Grab the alpha value (so we can use it to compute new globalAlpha values during this draw function)
-		outFile << "var alpha = ctx.globalAlpha;" << endl;
-	}
+		Indentation export_indentation(outFile);
 
-	// Will we be encountering gradients?
-	if (hasGradients)
-	{
-		outFile << "var gradient: any;" << endl;
-	}
+		// Layer bounds
+		outFile << "bounds: "
+			<< "{ left: " << fixed << bounds.left
+			<< ", top: " << fixed << bounds.bottom
+			<< ", width: " << fixed << bounds.right - bounds.left
+			<< ", height: " << fixed << bounds.top - bounds.bottom
+			<< " }, " << endl;
 
-	// Will we be encountering patterns?
-	if (hasPatterns)
-	{
-		outFile << "var pattern: any;" << endl;
-	}
-
-	/// Re-set matrix based on document
-	sAIRealMath->AIRealMatrixSetIdentity(&canvas->currentState->internalTransform);
-	sAIRealMath->AIRealMatrixConcatScale(&canvas->currentState->internalTransform, 1, -1);
-	sAIRealMath->AIRealMatrixConcatTranslate(&canvas->currentState->internalTransform, - 1 * documentBounds.left, documentBounds.top);
-
-	// Do we need to move the origin?
-	if (translateOrigin)
-	{
-		// Calculate offsets to move function/layer to 0, 0 of document
-		AIReal offsetH = bounds.left - documentBounds.left;
-		AIReal offsetV = bounds.top - documentBounds.top;
-
-		// Calculate requested offsets based on percentages
-		AIReal translateH = (bounds.right - bounds.left) * translateOriginH;
-		AIReal translateV = (bounds.top - bounds.bottom) * translateOriginV;
-
-		// Modify transformation matrix for this function (and set of layers)
-		sAIRealMath->AIRealMatrixConcatTranslate(&canvas->currentState->internalTransform, (-1 * offsetH) - translateH, offsetV - translateV);
-	}
-
-	// Are we supposed to rasterize this function?
-	if (!rasterizeFileName.empty())
-	{
-		// Rasterize the first layer
-		// TODO: Note that this only rasterizes the first associated layer. What if this has multiple layers?
-
-		// Output layer name
-		outFile << "// " << name;
-
-		canvas->RenderUnsupportedArt(layers[0]->artHandle, rasterizeFileName, 1);
-	}
-	else
-	{
-		// Render each layer in the function block (they're already in the correct order)
-		for (unsigned int i = 0; i < layers.size(); i++)
+		// Painter function
+		outFile << "paint: (ctx: CanvasRenderingContext2D) => {" << endl;
 		{
-			// Render the art
-			canvas->RenderArt(layers[i]->artHandle, 1);
-	
-			// Restore remaining state
-			canvas->SetContextDrawingState(1);
+			Indentation paint_indentation(outFile);
+
+			//// Need a blank line?
+			//if (hasAlpha || hasGradients || hasPatterns)
+			//{
+			//	outFile << endl;
+			//}
+
+			// Does this draw function have alpha changes?
+			if (hasAlpha)
+			{
+				// Grab the alpha value (so we can use it to compute new globalAlpha values during this draw function)
+				outFile << "var alpha = ctx.globalAlpha;" << endl;
+			}
+
+			// Will we be encountering gradients?
+			if (hasGradients)
+			{
+				outFile << "var gradient: CanvasGradient;" << endl;
+			}
+
+			// Will we be encountering patterns?
+			if (hasPatterns)
+			{
+				outFile << "var pattern: CanvasPattern;" << endl;
+			}
+
+			/// Re-set matrix based on document
+			sAIRealMath->AIRealMatrixSetIdentity(&canvas->currentState->internalTransform);
+			sAIRealMath->AIRealMatrixConcatScale(&canvas->currentState->internalTransform, 1, -1);
+			sAIRealMath->AIRealMatrixConcatTranslate(&canvas->currentState->internalTransform, -1 * documentBounds.left, documentBounds.top);
+
+			// Do we need to move the origin?
+			if (translateOrigin)
+			{
+				// Calculate offsets to move function/layer to 0, 0 of document
+				AIReal offsetH = bounds.left - documentBounds.left;
+				AIReal offsetV = bounds.top - documentBounds.top;
+
+				// Calculate requested offsets based on percentages
+				AIReal translateH = (bounds.right - bounds.left) * translateOriginH;
+				AIReal translateV = (bounds.top - bounds.bottom) * translateOriginV;
+
+				// Modify transformation matrix for this function (and set of layers)
+				sAIRealMath->AIRealMatrixConcatTranslate(&canvas->currentState->internalTransform, (-1 * offsetH) - translateH, offsetV - translateV);
+			}
+
+			// Are we supposed to rasterize this function?
+			if (!rasterizeFileName.empty())
+			{
+				// Rasterize the first layer
+				// TODO: Note that this only rasterizes the first associated layer. What if this has multiple layers?
+
+				// Output layer name
+				outFile << "// " << name;
+
+				canvas->RenderUnsupportedArt(layers[0]->artHandle, rasterizeFileName, 1);
+			}
+			else
+			{
+				// Render each layer in the function block (they're already in the correct order)
+				for (unsigned int i = 0; i < layers.size(); i++)
+				{
+					// Render the art
+					canvas->RenderArt(layers[i]->artHandle, 1);
+
+					// Restore remaining state
+					canvas->SetContextDrawingState(1);
+				}
+			}
 		}
+		outFile << "}" << endl;
 	}
 
-	// End function block
-	outFile << endl << undent << "};" << endl;
+	outFile << "};" << endl;
 }
 
 // Output repositioning translation for a draw function
@@ -178,7 +194,7 @@ void DrawFunction::Reposition(const AIRealRect& documentBounds)
 
 	// Render the repositioning translation for this function
 	// NOTE: This needs to happen, even if it's just "identity," since other functions may have already changed the transformation
-	outFile  << canvas->contextName << ".translate(" << setiosflags(ios::fixed) << setprecision(1) << x << ", " << y << ");" << endl;
+	outFile << canvas->contextName << ".translate(" << setiosflags(ios::fixed) << setprecision(1) << x << ", " << y << ");" << endl;
 }
 
 void DrawFunction::SetParameter(const std::string& parameter, const std::string& value)
@@ -200,7 +216,7 @@ void DrawFunction::SetParameter(const std::string& parameter, const std::string&
 			this->translateOrigin = false;
 		}
 		else if (value == "center" ||
-				 value == "c")
+			value == "c")
 		{
 			// Center
 			this->translateOrigin = true;
@@ -208,7 +224,7 @@ void DrawFunction::SetParameter(const std::string& parameter, const std::string&
 			this->translateOriginV = 0.5f;
 		}
 		else if (value == "upper-left" ||
-				 value == "ul")
+			value == "ul")
 		{
 			// Upper left
 			this->translateOrigin = true;
@@ -216,7 +232,7 @@ void DrawFunction::SetParameter(const std::string& parameter, const std::string&
 			this->translateOriginV = 0.0f;
 		}
 		else if (value == "upper-right" ||
-				 value == "ur")
+			value == "ur")
 		{
 			// Upper right
 			this->translateOrigin = true;
@@ -224,7 +240,7 @@ void DrawFunction::SetParameter(const std::string& parameter, const std::string&
 			this->translateOriginV = 0.0f;
 		}
 		else if (value == "lower-right" ||
-				 value == "lr")
+			value == "lr")
 		{
 			// Lower right
 			this->translateOrigin = true;
@@ -232,7 +248,7 @@ void DrawFunction::SetParameter(const std::string& parameter, const std::string&
 			this->translateOriginV = 1.0f;
 		}
 		else if (value == "lower-left" ||
-				 value == "ll")
+			value == "ll")
 		{
 			// Lower left
 			this->translateOrigin = true;

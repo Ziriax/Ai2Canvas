@@ -32,11 +32,11 @@
 #include "Canvas.h"
 
 #ifdef MAC_ENV
-    #include <ApplicationServices/ApplicationServices.h>
+#include <ApplicationServices/ApplicationServices.h>
 #endif
 
 #ifdef WIN_ENV
-	#include "shellapi.h"
+#include "shellapi.h"
 #endif 
 
 using namespace CanvasExport;
@@ -58,12 +58,12 @@ Plugin* AllocatePlugin(SPPluginRef pluginRef)
 */
 void FixupReload(Plugin* plugin)
 {
-	Ai2CanvasPlugin::FixupVTable((Ai2CanvasPlugin*) plugin);
+	Ai2CanvasPlugin::FixupVTable((Ai2CanvasPlugin*)plugin);
 }
 
 /*
 */
-Ai2CanvasPlugin::Ai2CanvasPlugin(SPPluginRef pluginRef) 
+Ai2CanvasPlugin::Ai2CanvasPlugin(SPPluginRef pluginRef)
 	: Plugin(pluginRef)
 {
 	strncpy(fPluginName, kAi2CanvasPluginName, kMaxStringLength);
@@ -71,7 +71,7 @@ Ai2CanvasPlugin::Ai2CanvasPlugin(SPPluginRef pluginRef)
 
 /*
 */
-ASErr Ai2CanvasPlugin::Message(char* caller, char* selector, void *message) 
+ASErr Ai2CanvasPlugin::Message(char* caller, char* selector, void *message)
 {
 	ASErr error = kNoErr;
 
@@ -92,7 +92,7 @@ ASErr Ai2CanvasPlugin::Message(char* caller, char* selector, void *message)
 		else {
 			Plugin::ReportError(error, caller, selector, message);
 		}
-	}	
+	}
 	return error;
 }
 
@@ -103,11 +103,11 @@ ASErr Ai2CanvasPlugin::StartupPlugin(SPInterfaceMessage* message)
 {
 	ASErr error = kNoErr;
 	error = Plugin::StartupPlugin(message);
-    if (error) { return error;  }
+	if (error) { return error; }
 	error = this->AddMenus(message);
-    if (error) { return error;  }
+	if (error) { return error; }
 	error = this->AddFileFormats(message);
-	
+
 	return error;
 }
 
@@ -118,17 +118,17 @@ ASErr Ai2CanvasPlugin::GoMenuItem(AIMenuMessage* message)
 		// Pop this plug-in's about box.
 		SDKAboutPluginsHelper aboutPluginsHelper;
 
-		#ifdef MAC_ENV
-			aboutPluginsHelper.PopAboutBox(message, "Ai->Canvas Export Plug-In 1.3 (Mac)", "Copyright 2010-2014 Mike Swanson\nAll rights reserved\nhttp://blog.mikeswanson.com/");
-		#endif 
-		#ifdef WIN_ENV
-		#ifdef _WIN64
-			aboutPluginsHelper.PopAboutBox(message, "Ai->Canvas Export Plug-In 1.3 (PC/64)", "Copyright 2010-2014 Mike Swanson\nAll rights reserved\nhttp://blog.mikeswanson.com/");
-		#else
-			aboutPluginsHelper.PopAboutBox(message, "Ai->Canvas Export Plug-In 1.3 (PC/32)", "Copyright 2010-2014 Mike Swanson\nAll rights reserved\nhttp://blog.mikeswanson.com/");
-		#endif
-		#endif 
-	}	
+#ifdef MAC_ENV
+		aboutPluginsHelper.PopAboutBox(message, "Ai->Canvas Export Plug-In 1.3 (Mac)", "Copyright 2010-2014 Mike Swanson\nAll rights reserved\nhttp://blog.mikeswanson.com/");
+#endif 
+#ifdef WIN_ENV
+#ifdef _WIN64
+		aboutPluginsHelper.PopAboutBox(message, "Ai->Canvas Export Plug-In 1.3 (PC/64)", "Copyright 2010-2014 Mike Swanson\nAll rights reserved\nhttp://blog.mikeswanson.com/");
+#else
+		aboutPluginsHelper.PopAboutBox(message, "Ai->Canvas Export Plug-In 1.3 (PC/32)", "Copyright 2010-2014 Mike Swanson\nAll rights reserved\nhttp://blog.mikeswanson.com/");
+#endif
+#endif 
+	}
 	return error;
 }
 
@@ -137,67 +137,70 @@ ASErr Ai2CanvasPlugin::AddMenus(SPInterfaceMessage* message) {
 	ASErr error = kNoErr;
 	// Add a menu item to the About SDK Plug-ins menu group.
 	SDKAboutPluginsHelper aboutPluginsHelper;
-	error = aboutPluginsHelper.AddAboutPluginsMenuItem(message, 
-				"AboutMikeSwansonPluginsGroupName", 
-				ai::UnicodeString("About Mike Swanson Plug-Ins"),
-				"Ai->Canvas...", 
-				&this->fAboutPluginMenu);
+	error = aboutPluginsHelper.AddAboutPluginsMenuItem(message,
+		"AboutMikeSwansonPluginsGroupName",
+		ai::UnicodeString("About Mike Swanson Plug-Ins"),
+		"Ai->Canvas...",
+		&this->fAboutPluginMenu);
 	return error;
 }
 
-ASErr Ai2CanvasPlugin::AddFileFormats(SPInterfaceMessage* message) 
+ASErr Ai2CanvasPlugin::AddFileFormats(SPInterfaceMessage* message)
 {
 	ASErr error = kNoErr;
 
 	PlatformAddFileFormatData affd;
 	char pstrCanvas[kMaxStringLength] = "<Typescript canvas code>";
-	
+
 	this->CStrToPStr(pstrCanvas, kMaxStringLength);
 	affd.title = (unsigned char*)pstrCanvas;
 	affd.titleOrder = 0;
 	affd.extension = "ts";
-	
-	error = sAIFileFormat->AddFileFormat( message->d.self, "<Typescript canvas code>",
-				                          &affd, kFileFormatExport,
-										  &this->fFileFormatCanvas, kNoExtendedOptions );
+
+	error = sAIFileFormat->AddFileFormat(message->d.self, "<Typescript canvas code>",
+		&affd, kFileFormatExport,
+		&this->fFileFormatCanvas, kNoExtendedOptions);
 	return error;
 }
 
-ASErr Ai2CanvasPlugin::GoFileFormat(AIFileFormatMessage* message) 
+ASErr Ai2CanvasPlugin::GoFileFormat(AIFileFormatMessage* message)
 {
 	ASErr error = kNoErr;
-	char pathName[300];
 
-	message->GetFilePath().GetFullPath().as_Roman( pathName, 300);
-	
-	if ( message->option & kFileFormatExport ) 
+	const ai::FilePath& filePath = message->GetFilePath();
+	const std::string directory = filePath.GetDirectory().as_Roman();
+	const std::string extension = filePath.GetFileExtension().as_Roman();
+	auto fileName = std::string(filePath.GetFileNameNoExt().as_Roman());
+	CleanString(fileName, true);
+
+	if (message->option & kFileFormatExport)
 	{
 		// Export our HTM canvas file
-		error = WriteText(pathName);
+		error = WriteText((directory + fileName + "." + extension).c_str());
 	}
-	
+
 	return error;
 }
 
 ASErr Ai2CanvasPlugin::WriteText(const char* pathName)
 {
 	ASErr error = kNoErr;
-	
+
 	AIBoolean openFile = false;
 
-	#ifdef MAC_ENV
-		// Determine if shift key is being held down (can't distinguish between left/right shift keys using this method on OS X)
+#ifdef MAC_ENV
+	// Determine if shift key is being held down (can't distinguish between left/right shift keys using this method on OS X)
 //		bool debug = ((GetCurrentKeyModifiers() & (1 << shiftKeyBit)) != 0);
-    
-        bool debug = (CGEventSourceFlagsState(kCGEventSourceStateHIDSystemState) & kCGEventFlagMaskShift);
-    
-		openFile = true;
-	#endif 
-	#ifdef WIN_ENV
-		// Determine if the left shift key is being held down (to indicate previewing HTML file after export)
-		bool isDebugKeyDown = ((GetKeyState(VK_LSHIFT) &0x1000) != 0);
-		openFile = true;
-	#endif 
+
+	bool debug = (CGEventSourceFlagsState(kCGEventSourceStateHIDSystemState) & kCGEventFlagMaskShift);
+
+	openFile = true;
+#endif 
+#ifdef WIN_ENV
+	// Determine if the left shift key is being held down (to indicate previewing HTML file after export)
+	bool isDebugKeyDown = ((GetKeyState(VK_LSHIFT) & 0x1000) != 0);
+	openFile = true;
+#endif 
 
 	// Create file
 	std::string file = std::string(pathName);
@@ -220,26 +223,26 @@ ASErr Ai2CanvasPlugin::WriteText(const char* pathName)
 		delete document;
 	}
 
-	#ifdef MAC_ENV
-		// Create file URI
-		ai::UnicodeString usPath(file);
-		ai::FilePath aiFilePath(usPath);
-		std::string uri = aiFilePath.GetAsURL(false).as_Platform();
+#ifdef MAC_ENV
+	// Create file URI
+	ai::UnicodeString usPath(file);
+	ai::FilePath aiFilePath(usPath);
+	std::string uri = aiFilePath.GetAsURL(false).as_Platform();
 
-		// Launch the file
-		if (openFile)
-		{
-			std::string command = "open " + uri;
-			system(command.c_str());
-		}
-	#endif 
-	#ifdef WIN_ENV
-		// Launch the file
-		if (openFile)
-		{
-			ShellExecute(NULL, "open", pathName, NULL, NULL, SW_SHOWNORMAL);
-		}
-	#endif 
+	// Launch the file
+	if (openFile)
+	{
+		std::string command = "open " + uri;
+		system(command.c_str());
+	}
+#endif 
+#ifdef WIN_ENV
+	// Launch the file
+	if (openFile)
+	{
+		ShellExecute(NULL, "open", pathName, NULL, NULL, SW_SHOWNORMAL);
+	}
+#endif 
 
 	return error;
 }
@@ -255,8 +258,8 @@ ASErr Ai2CanvasPlugin::WriteText(const char* pathName)
 void Ai2CanvasPlugin::CStrToPStr(char *s, ai::UnicodeString::size_type len)
 {
 	const ai::UnicodeString sAsUnicode((const char*)s);
-	ai::PStr sAsPStr((unsigned char*) s);
-	sAsUnicode.getToBuffer(sAsPStr, len, kAIUTF8CharacterEncoding );
+	ai::PStr sAsPStr((unsigned char*)s);
+	sAsUnicode.getToBuffer(sAsPStr, len, kAIUTF8CharacterEncoding);
 }
 
 // End Ai2CanvasPlugin.cpp

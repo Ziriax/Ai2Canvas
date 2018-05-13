@@ -23,6 +23,6 @@
 #ifndef __AI2CANVASID_H__
 #define __AI2CANVASID_H__
 
-#define kAi2CanvasPluginName	"Ai2Canvas"
+#define kAi2CanvasPluginName	"Ai2CanvasTS"
 
 #endif // End Ai2CanvasID.h

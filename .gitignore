@@ -34,6 +34,8 @@ ipch/
 *.sdf
 *.cachefile
 *.exp
+*.TMP
+*.tmp
 
 # Xcode
 .DS_Store

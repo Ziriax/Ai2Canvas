@@ -208,13 +208,26 @@ void TypescriptDocument::ParseLayerName(const Layer& layer, std::string& name, s
 // Render the document
 void TypescriptDocument::RenderDocument()
 {
-	// Open asset namespace
-	std::string assetName = fileName;
-	CleanString(assetName, true);
-	outFile << "export namespace " << assetName << " {" << endl << indent;
-
 	// Set document bounds
 	SetDocumentBounds();
+
+	// Output document bounds
+	auto& bounds = documentBounds;
+	outFile << "export const bounds = "
+		<< "{ left: " << fixed << bounds.left
+		<< ", top: " << fixed << bounds.bottom
+		<< ", width: " << fixed << bounds.right - bounds.left
+		<< ", height: " << fixed << bounds.top - bounds.bottom
+		<< "  }; " << endl;
+
+	outFile << endl;
+
+	// Render the symbol functions
+	RenderSymbolFunctions();
+
+	// Render the pattern function
+	RenderPatternFunction();
+
 
 	// Do we need a pattern function?
 	if (mainCanvas->documentResources->patterns.HasPatterns())
@@ -224,15 +237,6 @@ void TypescriptDocument::RenderDocument()
 
 	// Render the functions/layers
 	functions.RenderDrawFunctions(documentBounds);
-
-	// Render the symbol functions
-	RenderSymbolFunctions();
-
-	// Render the pattern function
-	RenderPatternFunction();
-
-	// Close asset namespace
-	outFile << undent << "};" << endl;
 }
 
 // Set the options for a draw or animation function
