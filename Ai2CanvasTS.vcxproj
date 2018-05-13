@@ -338,6 +338,12 @@
     <ClInclude Include="Source\Utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\illustratorapi\illustrator\IAIArtboards.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Source\Ai2CanvasPlugin.cpp" />
     <ClCompile Include="Source\Ai2CanvasSuites.cpp" />
     <ClCompile Include="..\common\source\AppContext.cpp">

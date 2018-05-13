@@ -37,6 +37,7 @@
 #include "AIPattern.h"
 #include "AIPathStyle.h"
 #include "AIGradient.h"
+#include "AIArtboard.h"
 
 extern	"C"	AIUnicodeStringSuite*	sAIUnicodeString;
 extern  "C" SPBlocksSuite*			sSPBlocks;
@@ -75,5 +76,6 @@ extern "C" AIColorConversionSuite *sAIColorConversion;
 extern "C" AIBlendStyleSuite *sAIBlendStyle;
 extern "C" AILayerSuite *sAILayer;
 extern "C" AIRealBezierSuite *sAIRealBezier;
+extern "C" AIArtboardSuite  *sAIArtboard;
 
 #endif // End Ai2CanvasSuites.h

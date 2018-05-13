@@ -63,6 +63,7 @@ extern "C"
 	AIDictionaryIteratorSuite *sAIDictionaryIterator = NULL;
 	AIEntrySuite *sAIEntry = NULL;
 	AIRealBezierSuite *sAIRealBezier = NULL;
+	AIArtboardSuite  *sAIArtboard = NULL;
 };
 
 ImportSuite gImportSuites[] = 
@@ -104,6 +105,7 @@ ImportSuite gImportSuites[] =
 	kAIEntrySuite, kAIEntrySuiteVersion, &sAIEntry,
 	kAIImageOptSuite, kAIImageOptSuiteVersion, &sAIImageOpt,
 	kAIRealBezierSuite, kAIRealBezierSuiteVersion, &sAIRealBezier,
+	kAIArtboardSuite, kAIArtboardVersion, &sAIArtboard,
 
 	IMPORT_TEXT_SUITES
 	nil, 0, nil

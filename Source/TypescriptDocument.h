@@ -70,9 +70,9 @@ namespace CanvasExport
 		DocumentResources	resources;						// Document resources
 
 		std::vector<Layer*>	layers;							// Layers
-		Canvas*				mainCanvas;							// Main document canvas
+		Canvas*				mainCanvas;						// Main document canvas
 		std::string			fileName;						// Output file name
-		AIRealRect			documentBounds;					// Document bounds (for all visible layers that will be exported)
+		AIRealRect			artboardBounds;					// Main artboard bounds
 
 		void				Render();
 	

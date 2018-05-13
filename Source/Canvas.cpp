@@ -1504,11 +1504,26 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 			sAIRealMath->AIRealPointLengthAngle(gradientStyle.gradientLength, sAIRealMath->DegreeToRadian(gradientStyle.gradientAngle), &p2);
 			sAIRealMath->AIRealPointAdd(&p1, &p2, &p2);
 
+			// p1 are p2 use soft (page coordinates).
+			sAIHardSoft->AIRealPointHarden(&p1, &p1);
+			sAIHardSoft->AIRealPointHarden(&p2, &p2);
+
 			// If we aren't transforming with a matrix, simply transform the individual points
 			if (!isTransformed)
 			{
 				TransformPointWithMatrix(p1, matrix);
 				TransformPointWithMatrix(p2, matrix);
+				//// HACK: [PV] Not sure why this is needed, not understanding enough of AI, but seems to fix the wrong gradient-in-symbol bug
+				//if (currentState->isProcessingSymbol)
+				//{
+				//	p1.v = -p1.v;
+				//	p2.v = -p2.v;
+				//	sAIRealMath->AIRealMatrixXformPoint(&matrix, &p1, &p1);
+				//	sAIRealMath->AIRealMatrixXformPoint(&matrix, &p2, &p2);
+				//}
+				//else
+				//{
+				//}
 			}
 
 			outFile  << "gradient = " << contextName << ".createLinearGradient(" <<
@@ -2581,10 +2596,11 @@ void Canvas::TransformPoint(AIRealPoint& point)
 void Canvas::TransformPointWithMatrix(AIRealPoint& point, const AIRealMatrix& matrix)
 {
 	// Are we processing a symbol?
-	// If we're processing a symbol, we don't need to transform anything, since symbols are defined in their own coordinate space
+	// If we're processing a symbol, we don't need to transform anything, 
+	// since symbols are defined in their own coordinate space
 	if (currentState->isProcessingSymbol)
 	{
-		// Simply harden the matrix
+		// Simply harden the point
 		sAIHardSoft->AIRealPointHarden(&point, &point);
 	}
 	else

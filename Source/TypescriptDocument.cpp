@@ -68,35 +68,11 @@ void TypescriptDocument::Render()
 // Set the bounds for the primary document
 void TypescriptDocument::SetDocumentBounds()
 {
-	// Set default bounds
-	// Start with maximums and minimums, so any value will cause them to be set
-	documentBounds.left = FLT_MAX;
-	documentBounds.right = -FLT_MAX;
-	documentBounds.top = -FLT_MAX;
-	documentBounds.bottom = FLT_MAX;
-
-	// Loop through all layers
-	for (unsigned int i = 0; i < layers.size(); i++)
-	{
-		// Does this layer crop the entire canvas?
-		if (layers[i]->crop)
-		{
-			// This layer's bounds crop the entire canvas
-			documentBounds = layers[i]->bounds;
-
-			// No need to look through any more layers
-			break;
-		}
-		else
-		{
-			// Update with layer bounds
-			UpdateBounds(layers[i]->bounds, documentBounds);
-		}
-	}
+	ai::ArtboardUtils::GetActiveArtboardPosition(artboardBounds);
 
 	// Set canvas size
-	mainCanvas->width = documentBounds.right - documentBounds.left;
-	mainCanvas->height = documentBounds.top - documentBounds.bottom;
+	mainCanvas->width = artboardBounds.right - artboardBounds.left;
+	mainCanvas->height = artboardBounds.top - artboardBounds.bottom;
 }
 
 // Find the base folder path and filename
@@ -212,12 +188,11 @@ void TypescriptDocument::RenderDocument()
 	SetDocumentBounds();
 
 	// Output document bounds
-	auto& bounds = documentBounds;
 	outFile << "export const bounds = "
-		<< "{ left: " << fixed << bounds.left
-		<< ", top: " << fixed << bounds.bottom
-		<< ", width: " << fixed << bounds.right - bounds.left
-		<< ", height: " << fixed << bounds.top - bounds.bottom
+		<< "{ left: " << fixed << artboardBounds.left
+		<< ", top: " << fixed << artboardBounds.top
+		<< ", width: " << fixed << artboardBounds.right - artboardBounds.left
+		<< ", height: " << fixed << artboardBounds.top - artboardBounds.bottom
 		<< "  }; " << endl;
 
 	outFile << endl;
@@ -236,7 +211,7 @@ void TypescriptDocument::RenderDocument()
 	}
 
 	// Render the functions/layers
-	functions.RenderDrawFunctions(documentBounds);
+	functions.RenderDrawFunctions(artboardBounds);
 }
 
 // Set the options for a draw or animation function
