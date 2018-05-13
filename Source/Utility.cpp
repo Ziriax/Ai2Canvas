@@ -32,13 +32,6 @@ namespace CanvasExport
 	std::ostream& outFile = indentableStream;
 }
 
-// TODO: Consider something more like: fprintf(m_fp, "\n%*sIndented by 2", 2, "");
-// Or std::string(indent, ' ')
-std::string CanvasExport::Indent(size_t depth)
-{
-	return "";
-}
-
 bool CanvasExport::OpenFile(const std::string& filePath)
 {
 	// Open the files
@@ -353,7 +346,7 @@ void CanvasExport::WriteArtTree(AIArtHandle artHandle, int depth)
 		// Art type
 		short type = 0;
 		sAIArt->GetArtType(artHandle, &type);
-		outFile << "//" << Indent(depth) << std::string(artTypes[type]) << " (" << type << ")" << endl;
+		outFile << "//" << std::string(artTypes[type]) << " (" << type << ")" << endl;
 
 		// Get art name
 		ai::UnicodeString artName;

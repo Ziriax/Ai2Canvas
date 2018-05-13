@@ -38,7 +38,6 @@ namespace CanvasExport
 
 	bool OpenFile(const std::string& filePath);
 	void CloseFile();
-	std::string Indent(size_t depth);
 	void RenderTransform(const AIRealMatrix& matrix);
 	void Replace(std::string& s, char find, char replace);
 	void CleanString(std::string& s, AIBoolean camelCase);

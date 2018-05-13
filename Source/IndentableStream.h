@@ -70,15 +70,15 @@ namespace CanvasExport
 			return *this;
 		}
 
-		friend std::ostream& itemsPerLine(std::ostream& out, size_t ipl)
+		friend std::ostream& itemsPerLine(std::ostream& os, size_t ipl)
 		{
-			const auto is = dynamic_cast<IndentableStream*>(&out);
+			const auto is = dynamic_cast<IndentableStream*>(&os);
 			if (is)
 			{
 				is->m_itemsPerLine = ipl;
 			}
 
-			return out;
+			return os;
 		}
 
 		size_t itemsPerLine() const { return m_itemsPerLine; }

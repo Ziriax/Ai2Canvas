@@ -52,10 +52,3 @@ void SetParameter(const std::string& parameter, const std::string& value)
 	(void)parameter;
 	(void)value;
 }
-
-void Function::RenderClockInit() { }
-void Function::RenderTriggerInit() { }
-void Function::RenderClockStart() { }
-void Function::RenderClockTick() { }
-
-bool const Function::HasValidTriggers() { return false; }

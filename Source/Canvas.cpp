@@ -247,7 +247,7 @@ void Canvas::RenderArt(AIArtHandle artHandle, unsigned int depth)
 			if (mask != NULL)
 			{
 				// Output a warning
-				outFile  << Indent(depth) << "// This artwork uses an unsupported opacity mask" << endl;
+				outFile  << "// This artwork uses an unsupported opacity mask" << endl;
 
 				// Rasterize the art
 				rasterizeArt = true;
@@ -258,7 +258,7 @@ void Canvas::RenderArt(AIArtHandle artHandle, unsigned int depth)
 			AIBlendingMode blendingMode = 0;
 			AIBoolean hasDropShadow = false;
 			DropShadow dropShadow;
-			ParseArtStyle(artHandle, depth, postEffectCount, blendingMode, hasDropShadow, dropShadow);
+			ParseArtStyle(artHandle, postEffectCount, blendingMode, hasDropShadow, dropShadow);
 
 			// Anything we can't convert and should rasterize?
 			if (postEffectCount > 1)
@@ -283,7 +283,7 @@ void Canvas::RenderArt(AIArtHandle artHandle, unsigned int depth)
 			if (blendingMode != kAINormalBlendingMode)
 			{
 				// Output a warning
-				outFile  << Indent(depth) << "// This artwork uses an unsupported \"" << std::string(blendingModes[blendingMode]) << "\" blending mode" << endl;
+				outFile  << "// This artwork uses an unsupported \"" << std::string(blendingModes[blendingMode]) << "\" blending mode" << endl;
 			}
 
 			// Do we need to increase depth because of a drop shadow?
@@ -300,7 +300,7 @@ void Canvas::RenderArt(AIArtHandle artHandle, unsigned int depth)
 			// Render drop shadow info, if there is any
 			if (hasDropShadow)
 			{
-				RenderDropShadow(dropShadow, depth);
+				RenderDropShadow(dropShadow);
 			}
 
 			// Get opacity
@@ -311,7 +311,7 @@ void Canvas::RenderArt(AIArtHandle artHandle, unsigned int depth)
 			{
 				// Rasterize the art
 				std::string fileName = GetUniqueFileName(documentResources->folderPath, "image", ".png");
-				outFile  << Indent(depth) << "// This unsupported artwork has been rasterized" << endl;
+				outFile  << "// This unsupported artwork has been rasterized" << endl;
 				RenderUnsupportedArt(artHandle, fileName, depth);
 			}
 			else
@@ -323,7 +323,7 @@ void Canvas::RenderArt(AIArtHandle artHandle, unsigned int depth)
 					currentState->globalAlpha = opacity;
 
 					// Change global alpha (based on the "base" alpha value)
-					outFile  << Indent(depth) << contextName << ".globalAlpha = alpha * " <<
+					outFile  << contextName << ".globalAlpha = alpha * " <<
 						setiosflags(ios::fixed) << setprecision(2) << currentState->globalAlpha << ";" << endl;
 				}
 
@@ -332,7 +332,7 @@ void Canvas::RenderArt(AIArtHandle artHandle, unsigned int depth)
 				sAIArt->GetArtType(artHandle, &type);
 				if (debug)
 				{
-					outFile  << Indent(depth) << "// Art type = " << std::string(m_artTypes[type]) << " (" << type << ")" << endl;
+					outFile  << "// Art type = " << std::string(m_artTypes[type]) << " (" << type << ")" << endl;
 				}
 
 				// Process based on art type
@@ -376,7 +376,7 @@ void Canvas::RenderArt(AIArtHandle artHandle, unsigned int depth)
 					}
 					case kRasterArt:
 					{
-						RenderRasterArt(artHandle, depth);
+						RenderRasterArt(artHandle);
 						break;
 					}
 					case kMeshArt:
@@ -404,7 +404,7 @@ void Canvas::RenderArt(AIArtHandle artHandle, unsigned int depth)
 
 // Parse the art styles (including Live Effects) associated with this artwork
 // Returns the number of effects, the blending mode, and drop shadow information
-void Canvas::ParseArtStyle(AIArtHandle artHandle, unsigned int depth, ASInt32& postEffectCount, AIBlendingMode& blendingMode, AIBoolean& hasDropShadow, DropShadow& dropShadow)
+void Canvas::ParseArtStyle(AIArtHandle artHandle, ASInt32& postEffectCount, AIBlendingMode& blendingMode, AIBoolean& hasDropShadow, DropShadow& dropShadow)
 {
 	// Simple way to describe art types for debugging purposes
 //	static const char *dictTypes[] = 
@@ -457,7 +457,7 @@ void Canvas::ParseArtStyle(AIArtHandle artHandle, unsigned int depth, ASInt32& p
 		sAILiveEffect->GetLiveEffectName(liveEffectHandle, &liveEffectName);
 		if (debug)
 		{
-			outFile  << Indent(depth) << "// Live Effect name = " << liveEffectName << endl;
+			outFile  << "// Live Effect name = " << liveEffectName << endl;
 		}
 
         // Check to see if the name is �Adobe Drop Shadow�
@@ -547,7 +547,7 @@ void Canvas::ParseArtStyle(AIArtHandle artHandle, unsigned int depth, ASInt32& p
 			// A Live Effect we don't recognize
 			if (debug)
 			{
-				outFile  << Indent(depth) << "//     Unsupported Live Effect: \"" << liveEffectName << "\"" << endl;
+				outFile  << "//     Unsupported Live Effect: \"" << liveEffectName << "\"" << endl;
 			}
 		}
     }
@@ -569,7 +569,7 @@ void Canvas::SetContextDrawingState(unsigned int depth)
 			PopState();
 
 			// Restore canvas state
-			outFile  << Indent((states.size() + 1)) << contextName << ".restore();" << endl;
+			outFile  << contextName << ".restore();" << endl;
 		}
 	}
 	else if (depth > states.size())
@@ -581,28 +581,28 @@ void Canvas::SetContextDrawingState(unsigned int depth)
 			PushState();
 
 			// Save canvas state
-			outFile  << Indent((states.size() + 1)) << contextName << ".save();" << endl;
+			outFile  << contextName << ".save();" << endl;
 		}
 	}
 }
 
 // Render drop shadow information
-void Canvas::RenderDropShadow(const DropShadow& dropShadow, unsigned int depth)
+void Canvas::RenderDropShadow(const DropShadow& dropShadow)
 {
 	// Set the shadow paramters
 
 	// Allocate memory for shadow fill color value string
 	std::string shadowColor;
 	shadowColor = GetColor(dropShadow.shadowStyle.color, dropShadow.opac);
-	outFile  << Indent(depth) << contextName << ".shadowColor = " << shadowColor << ";" << endl;
+	outFile  << contextName << ".shadowColor = " << shadowColor << ";" << endl;
 
 	// Shadow offsets
-	outFile  << Indent(depth) << contextName << ".shadowOffsetX = " << setiosflags(ios::fixed) << setprecision(1) << dropShadow.horz << ";" << endl;
-	outFile  << Indent(depth) << contextName << ".shadowOffsetY = " << setiosflags(ios::fixed) << setprecision(1) << dropShadow.vert << ";" << endl;
+	outFile  << contextName << ".shadowOffsetX = " << setiosflags(ios::fixed) << setprecision(1) << dropShadow.horz << ";" << endl;
+	outFile  << contextName << ".shadowOffsetY = " << setiosflags(ios::fixed) << setprecision(1) << dropShadow.vert << ";" << endl;
 
 	// Shadow blur
 	// TODO: Note that it appears that we have to double the Illustrator value to achieve equivalent results with <canvas>
-	outFile  << Indent(depth) << contextName << ".shadowBlur = " << setiosflags(ios::fixed) << setprecision(1) << (dropShadow.blur * 2.0f) << ";" << endl;
+	outFile  << contextName << ".shadowBlur = " << setiosflags(ios::fixed) << setprecision(1) << (dropShadow.blur * 2.0f) << ";" << endl;
 }
 
 // There's no direct equivalent, so just rasterize to a bitmap
@@ -618,13 +618,13 @@ void Canvas::RenderUnsupportedArt(AIArtHandle artHandle, const std::string& file
 
 	// Get the actual dimensions of the rasterized PNG file
 	// Note that the AIArtOptSuite functions seems to rasterize to different sizes, which is why we do this step
-	unsigned int width = 0;
-	unsigned int height = 0;
-	GetPNGDimensions(fullPath, width, height);
+	unsigned int imgWidth = 0;
+	unsigned int imgHeight = 0;
+	GetPNGDimensions(fullPath, imgWidth, imgHeight);
 
 	if (debug)
 	{
-		outFile << "// Actual PNG file dimensions, width = " << width << ", height = " << height << endl;
+		outFile << "// Actual PNG file dimensions, width = " << imgWidth << ", height = " << imgHeight << endl;
 	}
 
 	// Add a new image
@@ -650,8 +650,8 @@ void Canvas::RenderUnsupportedArt(AIArtHandle artHandle, const std::string& file
 	TransformRect(bounds);
 
 	// Since the PNG rasterize process doesn't always create images of bounds size, center the image inside of the bounds
-	AIReal x = bounds.left + (((bounds.right - bounds.left) - width) / 2.0f);
-	AIReal y = bounds.top + (((bounds.bottom - bounds.top) - height) / 2.0f);
+	AIReal x = bounds.left + (((bounds.right - bounds.left) - imgWidth) / 2.0f);
+	AIReal y = bounds.top + (((bounds.bottom - bounds.top) - imgHeight) / 2.0f);
 
 	// Draw image
 	image->RenderDrawImage(contextName, x, y);
@@ -668,8 +668,8 @@ void Canvas::RasterizeArtToPNG(AIArtHandle artHandle, const std::string& path)
 
     AIRealRect bounds;
     sAIArt->GetArtBounds(artHandle, &bounds);
-    AIReal width = bounds.right - bounds.left;
-    AIReal height = bounds.top - bounds.bottom;
+    AIReal artWidth = bounds.right - bounds.left;
+    AIReal artHeight = bounds.top - bounds.bottom;
 
 	AIErr result = kNoErr;
 	AIDataFilter *dstFilter = NULL;
@@ -688,13 +688,13 @@ void Canvas::RasterizeArtToPNG(AIArtHandle artHandle, const std::string& path)
     params.versionOneSuiteParams.transparentIndex = 0;
     params.versionOneSuiteParams.resolution = 72.0f;
     params.versionOneSuiteParams.outAlpha = true;
-    params.versionOneSuiteParams.outWidth = (ASInt32)width;
-    params.versionOneSuiteParams.outHeight = (ASInt32)height;
+    params.versionOneSuiteParams.outWidth = (ASInt32)artWidth;
+    params.versionOneSuiteParams.outHeight = (ASInt32)artHeight;
 
     //We assume that the basic resolution of illustrator is 72 dpi
     AIReal resolutionRatio =  1.0f;
-    AIReal minDim = min(width,height) * resolutionRatio;
-    AIReal maxDim = max(width,height) * resolutionRatio;
+    AIReal minDim = std::min(artWidth,artHeight) * resolutionRatio;
+    AIReal maxDim = std::max(artWidth,artHeight) * resolutionRatio;
     AIReal ratio = 1;
 
     if (minDim < 1)
@@ -743,7 +743,7 @@ void Canvas::RasterizeArtToPNG(AIArtHandle artHandle, const std::string& path)
 // NOTE: Seems odd that we have to do this, but the rasterization suite in Illustrator doesn't seem to provide this information anywhere,
 //       and with the unreliability of the PNG generation sizes, we have to resort to this.
 // NOTE: PNG values are big endian, but we need little endian, so we have to reverse
-void Canvas::GetPNGDimensions(const std::string& path, unsigned int& width, unsigned int& height)
+void Canvas::GetPNGDimensions(const std::string& path, unsigned int& imgWidth, unsigned int& imgHeight)
 {
 	// Represents just enough of a PNG header for us to get its width and height
 	// TODO: Will this always work? Or will structure memory layouts cause issues?
@@ -803,8 +803,8 @@ void Canvas::GetPNGDimensions(const std::string& path, unsigned int& width, unsi
 					header.height = ReverseInt(header.height);
 
 					// Assign return values
-					width = (unsigned int)header.width;
-					height = (unsigned int)header.height;
+					imgWidth = (unsigned int)header.width;
+					imgHeight = (unsigned int)header.height;
 				}
 			}
 		}
@@ -978,7 +978,7 @@ void Canvas::RenderPluginArt(AIArtHandle artHandle, unsigned int depth)
 	sAIPluginGroup->GetPluginArtName(artHandle, pluginArtName);
 	if (debug)
 	{
-		outFile  << Indent(depth) << "// Plug-in art name = " << std::string(*pluginArtName) << endl;
+		outFile  << "// Plug-in art name = " << std::string(*pluginArtName) << endl;
 	}
 
 	// Is this the Pathfinder Suite? If so, we need to grab the style from this art handle
@@ -1035,7 +1035,7 @@ void Canvas::RenderSymbolArt(AIArtHandle artHandle, unsigned int depth)
 	sAIRealMath->AIRealMatrixConcat(&transform, &currentState->internalTransform, &transform);
 	
 	// Render symbol transformation
-	outFile  << Indent(depth) << contextName << ".transform(";
+	outFile  << contextName << ".transform(";
 	RenderTransform(transform);
 	outFile << ");" << endl;
 
@@ -1051,7 +1051,7 @@ void Canvas::RenderSymbolArt(AIArtHandle artHandle, unsigned int depth)
 	if (symbolPattern)
 	{
 		// Call the symbol function
-		outFile  << Indent(depth) << symbolPattern->name << "(" << contextName << ");" << endl;
+		outFile  << symbolPattern->name << "(" << contextName << ");" << endl;
 	}
 
 	// Restore canvas state
@@ -1065,7 +1065,7 @@ void Canvas::RenderCompoundPathArt(AIArtHandle artHandle, unsigned int depth)
 	AIArtHandle childArtHandle = NULL;
 	sAIArt->GetArtFirstChild(artHandle, &childArtHandle);
 
-	outFile  << Indent(depth) << contextName << ".beginPath();" << endl;
+	outFile  << contextName << ".beginPath();" << endl;
 
 	// Render this sub-group
 	RenderArt(childArtHandle, depth);
@@ -1095,7 +1095,7 @@ void Canvas::RenderPathArt(AIArtHandle artHandle, unsigned int depth)
 		isCompound = ((attr &kArtPartOfCompound) == kArtPartOfCompound);
 		if (debug)
 		{
-			outFile  << Indent(depth) << "// Art is compound = " << isCompound << endl;
+			outFile  << "// Art is compound = " << isCompound << endl;
 		}
 
 		// Get the "normal" style for this path
@@ -1105,11 +1105,11 @@ void Canvas::RenderPathArt(AIArtHandle artHandle, unsigned int depth)
 		// Begin path
 		if (!isCompound)
 		{
-			outFile  << Indent(depth) << contextName << ".beginPath();" << endl;
+			outFile  << contextName << ".beginPath();" << endl;
 		}
 
 		// Write each path as a figure
-		RenderPathFigure(artHandle, depth);
+		RenderPathFigure(artHandle);
 
 		// Only output if this isn't compound
 		if (!isCompound)
@@ -1133,7 +1133,7 @@ void Canvas::RenderPathArt(AIArtHandle artHandle, unsigned int depth)
 }
 
 // Output a single path and its segments (call multiple times for a compound path)
-void Canvas::RenderPathFigure(AIArtHandle artHandle, unsigned int depth)
+void Canvas::RenderPathFigure(AIArtHandle artHandle)
 {
 	// Is this a closed path?
 	AIBoolean pathClosed = false;
@@ -1152,7 +1152,7 @@ void Canvas::RenderPathFigure(AIArtHandle artHandle, unsigned int depth)
 	TransformPoint(segment.out);
 
 	// Move to the first point
-	outFile  << Indent(depth) << contextName << ".moveTo(" <<
+	outFile  << contextName << ".moveTo(" <<
 		setiosflags(ios::fixed) << setprecision(1) <<
 		segment.p.h << ", " << segment.p.v << ");" << endl;
 
@@ -1168,7 +1168,7 @@ void Canvas::RenderPathFigure(AIArtHandle artHandle, unsigned int depth)
 	{
 		sAIPath->GetPathSegments(artHandle, segmentIndex, 1, &segment);
 
-		RenderSegment(previousSegment, segment, depth);
+		RenderSegment(previousSegment, segment);
 
 		previousSegment = segment;
 	}
@@ -1177,14 +1177,14 @@ void Canvas::RenderPathFigure(AIArtHandle artHandle, unsigned int depth)
 	if (pathClosed)
 	{
 		// Create "phantom" extra segment to accomodate curve
-		RenderSegment(previousSegment, firstSegment, depth);
+		RenderSegment(previousSegment, firstSegment);
 
 		// Close the path
-		outFile  << Indent(depth) << contextName << ".closePath();" << endl;
+		outFile  << contextName << ".closePath();" << endl;
 	}
 }
 
-void Canvas::RenderSegment(AIPathSegment& previousSegment, AIPathSegment& segment, unsigned int depth)
+void Canvas::RenderSegment(AIPathSegment& previousSegment, AIPathSegment& segment)
 {
 	// Transform points
 	TransformPoint(segment.p);
@@ -1201,14 +1201,14 @@ void Canvas::RenderSegment(AIPathSegment& previousSegment, AIPathSegment& segmen
 	if (isLine)
 	{
 		// Draw straight line
-		outFile  << Indent(depth) << contextName << ".lineTo(" <<
+		outFile  << contextName << ".lineTo(" <<
 			setiosflags(ios::fixed) << setprecision(1) << 
 			segment.p.h << ", " << segment.p.v << ");" << endl;
 	}
 	else
 	{
 		// Output Bezier segment
-		outFile  << Indent(depth) << contextName << ".bezierCurveTo(" <<
+		outFile  << contextName << ".bezierCurveTo(" <<
 			setiosflags(ios::fixed) << setprecision(1)
 			<< previousSegment.out.h << ", " << previousSegment.out.v << ", "
 			<< segment.in.h << ", " << segment.in.v << ", "
@@ -1221,7 +1221,7 @@ void Canvas::RenderPathStyle(const AIPathStyle& style, unsigned int depth)
 	// Is this clipping?
 	if (style.clip)
 	{
-		outFile  << Indent(depth) << contextName << ".clip();" << endl;
+		outFile  << contextName << ".clip();" << endl;
 	}
 	else
 	{
@@ -1234,20 +1234,20 @@ void Canvas::RenderPathStyle(const AIPathStyle& style, unsigned int depth)
 			RenderFillInfo(style.fill.color, depth);
 			if (style.evenodd)
 			{
-				outFile  << Indent(depth) << contextName << ".fill(\"evenodd\");" << endl;
+				outFile  << contextName << ".fill(\"evenodd\");" << endl;
 			}
 			else
 			{
 				// Non-zero is the default, so no need to specify
-				outFile  << Indent(depth) << contextName << ".fill();" << endl;
+				outFile  << contextName << ".fill();" << endl;
 			}
 		}
 
 		// Output stroke information
 		if (style.strokePaint)
 		{
-			RenderStrokeInfo(style.stroke, depth);
-			outFile  << Indent(depth) << contextName << ".stroke();" << endl;
+			RenderStrokeInfo(style.stroke);
+			outFile  << contextName << ".stroke();" << endl;
 		}
 	}
 }
@@ -1259,7 +1259,7 @@ void Canvas::RenderPlacedArt(AIArtHandle artHandle, unsigned int depth)
 	sAIPlaced->GetPlacedType(artHandle, &placedType);
 	if (debug)
 	{
-		outFile  << Indent(depth) << "// Placed art type = " << placedType << endl;
+		outFile  << "// Placed art type = " << placedType << endl;
 	}
 
 	// Only bother if this isn't EPS art (should then be linked raster art)
@@ -1270,7 +1270,7 @@ void Canvas::RenderPlacedArt(AIArtHandle artHandle, unsigned int depth)
 		sAIPlaced->GetPlacedFilePathFromArt(artHandle, path);
 		if (debug)
 		{
-			outFile  << Indent(depth) << "// Placed art file path = " << path.as_Platform() << endl;
+			outFile  << "// Placed art file path = " << path.as_Platform() << endl;
 		}
 
 		// Add a new image
@@ -1332,7 +1332,7 @@ void Canvas::RenderPlacedArt(AIArtHandle artHandle, unsigned int depth)
 		SetContextDrawingState(depth);
 
 		// Render transform
-		outFile  << Indent(depth) << contextName << ".transform(" << endl;
+		outFile  << contextName << ".transform(";
 		RenderTransform(transform);
 		outFile << ");";
 
@@ -1351,7 +1351,7 @@ void Canvas::RenderPlacedArt(AIArtHandle artHandle, unsigned int depth)
 	}
 }
 
-void Canvas::RenderRasterArt(AIArtHandle artHandle, unsigned int depth)
+void Canvas::RenderRasterArt(AIArtHandle artHandle)
 {
 	// Get the raster record
 	AIRasterRecord rasterRecord;
@@ -1363,7 +1363,7 @@ void Canvas::RenderRasterArt(AIArtHandle artHandle, unsigned int depth)
 	sAIRaster->GetRasterFilePathFromArt(artHandle, path);
 	if (debug)
 	{
-		outFile  << Indent(depth) << "// Raster file path from art = " << path.as_Platform() << endl;
+		outFile  << "// Raster file path from art = " << path.as_Platform() << endl;
 	}
 
 	// Did we get a filename?
@@ -1488,7 +1488,7 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 		SetContextDrawingState(depth);
 
 		// Set gradient transform
-		outFile  << Indent(depth) << contextName << ".transform(" << endl;
+		outFile << contextName << ".transform(";
 		RenderTransform(matrix);
 		outFile << ");";
 	}
@@ -1511,11 +1511,11 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 				TransformPointWithMatrix(p2, matrix);
 			}
 
-			outFile  << Indent(depth) << "gradient = " << contextName << ".createLinearGradient(" <<
+			outFile  << "gradient = " << contextName << ".createLinearGradient(" <<
 				setiosflags(ios::fixed) << setprecision(1) <<
 				p1.h << ", " << p1.v << ", " << p2.h << ", " << p2.v << ");" << endl;
 
-			RenderGradientStops(gradientStyle, depth);
+			RenderGradientStops(gradientStyle);
 
 			break;
 		}
@@ -1533,11 +1533,11 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 			}
 
 			// Don't pre-transform any points, because our world transformation will do it for us
-			outFile  << Indent(depth) << "gradient = " << contextName << ".createRadialGradient(" <<
+			outFile  << "gradient = " << contextName << ".createRadialGradient(" <<
 				setiosflags(ios::fixed) << setprecision(1) <<
 				p2.h << ", " << p2.v << ", " << 0.0f << ", " << p1.h << ", " << p1.v << ", " << gradientStyle.gradientLength << ");" << endl;
 
-			RenderGradientStops(gradientStyle, depth);
+			RenderGradientStops(gradientStyle);
 
 			break;
 		}
@@ -1546,7 +1546,7 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 
 // NOTE: Gradient stop opacity was introduced after CS2, which is why we can't take advantage of it here
 // 10/11/2012: Added gradient stop support for CS6
-void Canvas::RenderGradientStops(const AIGradientStyle& gradientStyle, unsigned int depth)
+void Canvas::RenderGradientStops(const AIGradientStyle& gradientStyle)
 {
 	AIGradientStop gradientStop;
 	AIGradientStop gradientStopNext;
@@ -1559,7 +1559,7 @@ void Canvas::RenderGradientStops(const AIGradientStyle& gradientStyle, unsigned 
 	{
 		sAIGradient->GetNthGradientStop(gradientStyle.gradient, index, &gradientStop);
 		stopPoint = gradientStop.rampPoint / (float)100;
-		outFile  << Indent(depth) << "gradient.addColorStop(" <<
+		outFile  << "gradient.addColorStop(" <<
 			setiosflags(ios::fixed) << setprecision(2) <<
 			stopPoint << ", " << GetColor(gradientStop.color, gradientStop.opacity) << ");" << endl;
 
@@ -1568,7 +1568,7 @@ void Canvas::RenderGradientStops(const AIGradientStyle& gradientStyle, unsigned 
 		{
 			sAIGradient->GetNthGradientStop(gradientStyle.gradient, index + 1, &gradientStopNext);
 			stopPoint = (gradientStop.rampPoint + ((gradientStop.midPoint / (float)100)*(gradientStopNext.rampPoint - gradientStop.rampPoint))) / (float)100;
-			outFile  << Indent(depth) << "gradient.addColorStop(" <<
+			outFile  << "gradient.addColorStop(" <<
 				setiosflags(ios::fixed) << setprecision(2) <<
 				stopPoint << ", \"";
 			RenderMidPointColor(gradientStop.color, gradientStop.opacity, gradientStopNext.color, gradientStopNext.opacity);
@@ -1601,7 +1601,7 @@ void Canvas::RenderFillInfo(const AIColor& fillColor, unsigned int depth)
 				currentState->fillStyle = fillStyle;
 
 				// Change the fill style
-				outFile  << Indent(depth) << contextName << ".fillStyle = " << currentState->fillStyle << ";" << endl;
+				outFile  << contextName << ".fillStyle = " << currentState->fillStyle << ";" << endl;
 			}
 			break;
 		}
@@ -1623,18 +1623,18 @@ void Canvas::RenderFillInfo(const AIColor& fillColor, unsigned int depth)
 
 				// Create the pattern
 				// Don't save context, since this is a different/sub canvas
-				outFile  << Indent(depth) << "pattern = " << contextName << ".createPattern(" <<
+				outFile  << "pattern = " << contextName << ".createPattern(" <<
 					"document.getElementById(\"pattern" << pattern->canvasIndex << "\"), \"repeat\");" << endl;
 
 				// Set pattern fill transform
 				// TODO: Need to figure out how to determine proper X and Y offsets
 				// TODO: We should be able to avoid this, if the transform is identity
-				outFile  << Indent(depth) << contextName << ".transform(" << endl;
+				outFile  << contextName << ".transform(";
 				RenderTransform(fillColor.c.p.transform);
 				outFile << ");";
 
 				// Change fill style to pattern
-				outFile  << Indent(depth) << contextName << ".fillStyle = " << currentState->fillStyle << ";" << endl;
+				outFile  << contextName << ".fillStyle = " << currentState->fillStyle << ";" << endl;
 			}
 
 			break;
@@ -1660,7 +1660,7 @@ void Canvas::RenderFillInfo(const AIColor& fillColor, unsigned int depth)
 			//outFile << ");");
 
 			// Change the fill style
-			outFile  << Indent(depth) << contextName << ".fillStyle = " << currentState->fillStyle << ";" << endl;
+			outFile  << contextName << ".fillStyle = " << currentState->fillStyle << ";" << endl;
 			break;
 		}
         case kNoneColor:
@@ -1739,14 +1739,14 @@ void Canvas::ReportPatternStyleInfo(const AIPatternStyle& patternStyle)
 }
 
 // Output stroke information
-void Canvas::RenderStrokeInfo(const AIStrokeStyle& strokeStyle, unsigned int depth)
+void Canvas::RenderStrokeInfo(const AIStrokeStyle& strokeStyle)
 {
 	// Does this stroke use features that we can't convert?
 	// TODO: Check for some false positives here...seem to see it where there aren't custom dash styles on occasion
 	if (strokeStyle.dash.length != 0)
 	{
 		// Stroke uses a dash style that has no canvas equivalent
-		outFile  << Indent(depth) << "// This artwork uses an unsupported dash style" << endl;
+		outFile  << "// This artwork uses an unsupported dash style" << endl;
 	}
 
 	// Stroke thickness
@@ -1756,7 +1756,7 @@ void Canvas::RenderStrokeInfo(const AIStrokeStyle& strokeStyle, unsigned int dep
 		currentState->lineWidth = strokeStyle.width;
 
 		// Output line width change
-		outFile  << Indent(depth) << contextName << ".lineWidth = " <<
+		outFile  << contextName << ".lineWidth = " <<
 			setiosflags(ios::fixed) << setprecision(1) <<
 			currentState->lineWidth << ";" << endl;
 	}
@@ -1782,7 +1782,7 @@ void Canvas::RenderStrokeInfo(const AIStrokeStyle& strokeStyle, unsigned int dep
 				currentState->strokeStyle = strokeStyleValue;
 
 				// Change the stroke style
-				outFile  << Indent(depth) << contextName << ".strokeStyle = " << currentState->strokeStyle << ";" << endl;
+				outFile  << contextName << ".strokeStyle = " << currentState->strokeStyle << ";" << endl;
 			}
 			break;
 		}
@@ -1806,19 +1806,19 @@ void Canvas::RenderStrokeInfo(const AIStrokeStyle& strokeStyle, unsigned int dep
 			case (kAIButtCap): 
 			{
 				// Butt line caps
-				outFile  << Indent(depth) << contextName << ".lineCap = \"butt\";" << endl;
+				outFile  << contextName << ".lineCap = \"butt\";" << endl;
 				break;
 			}
 			case (kAIRoundCap): 
 			{
 				// Round line caps
-				outFile  << Indent(depth) << contextName << ".lineCap = \"round\";" << endl;
+				outFile  << contextName << ".lineCap = \"round\";" << endl;
 				break;
 			}
 			case (kAIProjectingCap): 
 			{
 				// Projecting/square line caps 
-				outFile  << Indent(depth) << contextName << ".lineCap = \"square\";" << endl;
+				outFile  << contextName << ".lineCap = \"square\";" << endl;
 				break;
 			}
 		}
@@ -1838,13 +1838,13 @@ void Canvas::RenderStrokeInfo(const AIStrokeStyle& strokeStyle, unsigned int dep
 			case (kAIMiterJoin): 
 			{
 				// Miter line joins (the default join type)
-				outFile  << Indent(depth) << contextName << ".lineJoin = \"miter\";" << endl;
+				outFile  << contextName << ".lineJoin = \"miter\";" << endl;
 
 				// Accomodate the miter limit (see NOTES to understand why this won't work) - set to "1" for now, which is basically the same as "Bevel"
 				// Although we don't include "Miter", since it's the default, we do need this hack ("10" is the canvas default)
 				// TODO: Report miter bug to IE9 team (Safari, Chrome, and Firefox work fine)
 				AIReal miterLimit = strokeStyle.miterLimit;
-				outFile  << Indent(depth) << contextName << ".miterLimit = " <<
+				outFile  << contextName << ".miterLimit = " <<
 					setiosflags(ios::fixed) << setprecision(1) <<
 					miterLimit << ";" << endl;
 
@@ -1856,13 +1856,13 @@ void Canvas::RenderStrokeInfo(const AIStrokeStyle& strokeStyle, unsigned int dep
 			case (kAIRoundJoin): 
 			{
 				// Round line joins
-				outFile  << Indent(depth) << contextName << ".lineJoin = \"round\";" << endl;
+				outFile  << contextName << ".lineJoin = \"round\";" << endl;
 				break;
 			}
 			case (kAIBevelJoin): 
 			{
 				// Bevel line joins
-				outFile  << Indent(depth) << contextName << ".lineJoin = \"bevel\";" << endl;
+				outFile  << contextName << ".lineJoin = \"bevel\";" << endl;
 				break;
 			}
 		}
@@ -1925,7 +1925,7 @@ void Canvas::RenderGlyphRuns(AIArtHandle textFrameArt, unsigned int depth)
 
 				// Get the state/style information for this glyph run
 				// TODO: Remember to clear the memory from this instance
-				GetGlyphState(glyphRun, glyphState, textFrameMatrix, depth);
+				GetGlyphState(glyphRun, glyphState, textFrameMatrix);
 
 				// We don't want to output every glyph run individually, so see if anything has changed that will force us to render
 				// TODO: We need a better way to handle this!
@@ -2002,7 +2002,7 @@ void Canvas::RenderGlyphRun(char *contents, const GlyphState& glyphState, unsign
 		glyphState.fontStyleName != currentState->fontStyleName)
 	{
 		// Output font and style information
-		outFile  << Indent(depth) << contextName << ".font = \"" << endl;
+		outFile  << contextName << ".font = \"" << endl;
 		if (glyphState.fontStyleName != "Regular")
 		{
 			outFile << glyphState.fontStyleName << " ";
@@ -2024,7 +2024,7 @@ void Canvas::RenderGlyphRun(char *contents, const GlyphState& glyphState, unsign
 		SetContextDrawingState(depth);
 
 		// Render transform
-		outFile  << Indent(depth) << contextName << ".transform(" << endl;
+		outFile  << contextName << ".transform(";
 		RenderTransform(glyphState.glyphMatrix);
 		outFile << ");";
 	}
@@ -2039,14 +2039,14 @@ void Canvas::RenderGlyphRun(char *contents, const GlyphState& glyphState, unsign
 		if (isTransformed)
 		{
 			// Allow transformation to position text
-			outFile  << Indent(depth) << contextName << ".fillText(\"" << contents << "\", " <<
+			outFile  << contextName << ".fillText(\"" << contents << "\", " <<
 				setiosflags(ios::fixed) << setprecision(1) <<
 				0 << ", " << 0 << ");" << endl;
 		}
 		else
 		{
 			// Since there's no transformation, simply output text at correct point
-			outFile  << Indent(depth) << contextName << ".fillText(\"" << contents << "\", " <<
+			outFile  << contextName << ".fillText(\"" << contents << "\", " <<
 				setiosflags(ios::fixed) << setprecision(1) <<
 				glyphState.glyphMatrix.tx << ", " << glyphState.glyphMatrix.ty << ");" << endl;
 		}
@@ -2056,20 +2056,20 @@ void Canvas::RenderGlyphRun(char *contents, const GlyphState& glyphState, unsign
 	if (glyphState.textStroked)
 	{
 		// Render stroke information
-		RenderStrokeInfo(glyphState.strokeStyleValue, depth);
+		RenderStrokeInfo(glyphState.strokeStyleValue);
 
 		// Output text
 		if (isTransformed)
 		{
 			// Allow transformation to position text
-			outFile  << Indent(depth) << contextName << ".strokeText(\"" << contents << "\", " <<
+			outFile  << contextName << ".strokeText(\"" << contents << "\", " <<
 				setiosflags(ios::fixed) << setprecision(1) <<
 				0 << ", " << 0 << ");" << endl;
 		}
 		else
 		{
 			// Since there's no transformation, simply output text at correct point
-			outFile  << Indent(depth) << contextName << ".strokeText(\"" << contents << "\", " <<
+			outFile  << contextName << ".strokeText(\"" << contents << "\", " <<
 				setiosflags(ios::fixed) << setprecision(1) <<
 				glyphState.glyphMatrix.tx << ", " << glyphState.glyphMatrix.ty << ");" << endl;
 		}
@@ -2111,7 +2111,7 @@ AIBoolean Canvas::GlyphStatesMatch(const GlyphState& state1, const GlyphState& s
 }
 
 // Gets all of the important state information for a glyph run
-void Canvas::GetGlyphState(const ATE::IGlyphRun& glyphRun, GlyphState& glyphState, const AIRealMatrix& textFrameMatrix, unsigned int depth)
+void Canvas::GetGlyphState(const ATE::IGlyphRun& glyphRun, GlyphState& glyphState, const AIRealMatrix& textFrameMatrix)
 {
 	// Get character features
 	ATE::ICharFeatures features = glyphRun.GetCharFeatures();
@@ -2141,14 +2141,14 @@ void Canvas::GetGlyphState(const ATE::IGlyphRun& glyphRun, GlyphState& glyphStat
 		sAIFont->GetSystemFontName(fontKey, systemFontName, 1024);
 		if (debug)
 		{
-			outFile  << Indent(depth) << "// Font system name: " << systemFontName << endl;
+			outFile  << "// Font system name: " << systemFontName << endl;
 		}
 
 		// Determine font variant
 		sAIFont->GetFontStyleName(fontKey, fontStyleName, 1024);
 		if (debug)
 		{
-			outFile  << Indent(depth) << "// Font style name: " << fontStyleName << endl;
+			outFile  << "// Font style name: " << fontStyleName << endl;
 		}
 
 		// Copy to glyph state
@@ -2620,7 +2620,7 @@ void Canvas::AddBreadcrumb(const std::string& artName, unsigned int depth)
 		// Output path and name
 		if (depth > 1)
 		{
-			outFile  << Indent(depth) << "// ";
+			outFile  << "// ";
 
 			// Loop through breadcrumbs
 			for (unsigned int i = 0; i < breadcrumbs.size(); i++)

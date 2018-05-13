@@ -35,7 +35,7 @@ namespace CanvasExport
 	std::basic_streambuf<char>::int_type IndentationBuffer::overflow(const int_type c)
 	{
 		if (traits_type::eq_int_type(c, traits_type::eof()))
-			return m_streamBuffer->sputc(c);
+			return m_streamBuffer->sputc(char(c));
 
 		if (m_shouldIndent)
 		{
@@ -43,7 +43,7 @@ namespace CanvasExport
 			m_shouldIndent = false;
 		}
 
-		if (traits_type::eq_int_type(m_streamBuffer->sputc(c), traits_type::eof()))
+		if (traits_type::eq_int_type(m_streamBuffer->sputc(char(c)), traits_type::eof()))
 			return traits_type::eof();
 
 		if (traits_type::eq_int_type(c, traits_type::to_char_type('\n')))

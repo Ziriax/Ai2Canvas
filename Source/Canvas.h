@@ -106,10 +106,10 @@ namespace CanvasExport
 		void				RenderImages();
 
 		void				RenderArt(AIArtHandle artHandle, unsigned int depth);
-		void				ParseArtStyle(AIArtHandle artHandle, unsigned int depth, ASInt32& postEffectCount, 
-										  AIBlendingMode& blendingMode, AIBoolean& hasDropShadow, DropShadow& dropShadow);
+		void				ParseArtStyle(AIArtHandle artHandle, ASInt32& postEffectCount,
+		    				              AIBlendingMode& blendingMode, AIBoolean& hasDropShadow, DropShadow& dropShadow);
 		void				SetContextDrawingState(unsigned int depth);
-		void				RenderDropShadow(const DropShadow& dropShadow, unsigned int depth);
+		void				RenderDropShadow(const DropShadow& dropShadow);
 		void				RenderUnsupportedArt(AIArtHandle artHandle, const std::string& fileName, unsigned int depth);
 		void				RasterizeArtToPNG(AIArtHandle artHandle, const std::string& path);
 		void				GetPNGDimensions(const std::string& path, unsigned int& width, unsigned int& height);
@@ -123,23 +123,23 @@ namespace CanvasExport
 		void				RenderSymbolArt(AIArtHandle artHandle, unsigned int depth);
 		void				RenderCompoundPathArt(AIArtHandle artHandle, unsigned int depth);
 		void				RenderPathArt(AIArtHandle artHandle, unsigned int depth);
-		void				RenderPathFigure(AIArtHandle artHandle, unsigned int depth);
-		void				RenderSegment(AIPathSegment& previousSegment, AIPathSegment& segment, unsigned int depth);
+		void				RenderPathFigure(AIArtHandle artHandle);
+		void				RenderSegment(AIPathSegment& previousSegment, AIPathSegment& segment);
 		void				RenderPathStyle(const AIPathStyle& style, unsigned int depth);
 		void				RenderPlacedArt(AIArtHandle artHandle, unsigned int depth);
-		void				RenderRasterArt(AIArtHandle artHandle, unsigned int depth);
+		void				RenderRasterArt(AIArtHandle artHandle);
 		void				RenderMidPointColor(const AIColor& color1, AIReal alpha1, const AIColor& color2, AIReal alpha2);
 		void				RenderGradient(const AIGradientStyle& gradientStyle, unsigned int depth);
-		void				RenderGradientStops(const AIGradientStyle& gradientStyle, unsigned int depth);
+		void				RenderGradientStops(const AIGradientStyle& gradientStyle);
 		void				RenderFillInfo(const AIColor& fillColor, unsigned int depth);
 		void				GetFillStyle(const AIColor& color, AIReal alpha, std::string& fillStyle);
 		void				ReportPatternStyleInfo(const AIPatternStyle& patternStyle);
-		void				RenderStrokeInfo(const AIStrokeStyle& strokeStyle, unsigned int depth);
+		void				RenderStrokeInfo(const AIStrokeStyle& strokeStyle);
 		void				RenderTextFrameArt(AIArtHandle artHandle, unsigned int depth);
 		void				RenderGlyphRuns(AIArtHandle textFrameArt, unsigned int depth);
 		void				RenderGlyphRun(char *contents, const GlyphState& glyphState, unsigned int depth);
 		AIBoolean			GlyphStatesMatch(const GlyphState& state1, const GlyphState& state2);
-		void				GetGlyphState(const ATE::IGlyphRun& glyphRun, GlyphState& glyphState, const AIRealMatrix& textFrameMatrix, unsigned int depth);
+		void				GetGlyphState(const ATE::IGlyphRun& glyphRun, GlyphState& glyphState, const AIRealMatrix& textFrameMatrix);
 		void				ReportGlyphRunInfo(const ATE::IGlyphRun& glyphRun);
 		void				ReportCharacterFeatures(const ATE::ICharFeatures& features);
 		std::string			GetColor(const AIColor& color, AIReal alpha);

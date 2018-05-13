@@ -57,16 +57,7 @@ namespace CanvasExport
 		void				ScanLayerArtwork(AIArtHandle artHandle, unsigned int depth, Layer& layer);
 		void				ParseLayers();
 		void				ParseLayerName(const Layer& layer, std::string& name, std::string& options);
-		bool				HasAnimationOption(const std::vector<std::string>& options);
-		void				RenderAnimations();
 		void				SetFunctionOptions(const std::vector<std::string>& options, Function& function);
-		void				DebugClockJS();
-		void				DebugAnimationPathJS();
-		void				CreateAnimationFile();
-		void				OutputScriptHeader(std::ofstream& file);
-		void				OutputAnimationFunctions(std::ofstream& file);
-		void				OutputClockFunctions(std::ofstream& file);
-		void				OutputTimingFunctions(std::ofstream& file);
 		void				RenderSymbolFunctions();
 		void				RenderPatternFunction();
 		void				DebugInfo();
@@ -79,10 +70,9 @@ namespace CanvasExport
 		DocumentResources	resources;						// Document resources
 
 		std::vector<Layer*>	layers;							// Layers
-		Canvas*				canvas;							// Main document canvas
+		Canvas*				mainCanvas;							// Main document canvas
 		std::string			fileName;						// Output file name
 		AIRealRect			documentBounds;					// Document bounds (for all visible layers that will be exported)
-		bool				hasAnimation;					// Does this document have any animation? Could be rotation on a draw function or animation paths.
 
 		void				Render();
 	

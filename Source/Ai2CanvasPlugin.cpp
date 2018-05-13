@@ -195,7 +195,7 @@ ASErr Ai2CanvasPlugin::WriteText(const char* pathName)
 	#endif 
 	#ifdef WIN_ENV
 		// Determine if the left shift key is being held down (to indicate previewing HTML file after export)
-		bool debug = ((GetKeyState(VK_LSHIFT) &0x1000) != 0);
+		bool isDebugKeyDown = ((GetKeyState(VK_LSHIFT) &0x1000) != 0);
 		openFile = true;
 	#endif 
 
@@ -205,7 +205,7 @@ ASErr Ai2CanvasPlugin::WriteText(const char* pathName)
 	{
 		// Set debug mode
 		//CanvasExport::debug = (openFile != 0);
-		CanvasExport::debug = debug;
+		CanvasExport::debug = isDebugKeyDown;
 
 		// Create a new document
 		TypescriptDocument* document = new TypescriptDocument(file);

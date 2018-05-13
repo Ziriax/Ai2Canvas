@@ -26,9 +26,7 @@
 #include "IllustratorSDK.h"
 #include "Function.h"
 #include "Canvas.h"
-#include "AnimationFunction.h"
 #include "Layer.h"
-#include "AnimationClock.h"
 
 namespace CanvasExport
 {
@@ -47,29 +45,15 @@ namespace CanvasExport
 		bool				hasGradients;			// Does this function use gradients?
 		bool				hasPatterns;			// Does this function use pattern fills?
 		bool				hasAlpha;				// Does this function have alpha changes?
-		AnimationFunction*	animationFunction;		// Associated animation function
-		std::string			animationFunctionName;	// Associated animation function name (capture as string so we can late-bind after all parsing is complete)
-		bool				follow;					// Does this function follow an orientation for an animation path?
 		AIReal				followOrientation;		// Follow orientation (in degrees)
 		std::string			rasterizeFileName;		// File name if this function is to be rasterized (empty if not)
 		bool				crop;					// Crop canvas to bounds of this drawing layer?
 
-		AnimationClock		rotateClock;			// Rotation animation clock
-		AnimationClock		scaleClock;				// Scale animation clock
-		AnimationClock		alphaClock;				// Alpha animation clock
-
-		virtual void		RenderClockInit();		// Initialize animation clocks
-		virtual void		RenderTriggerInit();	// Initialize animation clock triggers
-		virtual void		RenderClockStart();		// Start animation clocks
-		virtual void		RenderClockTick();		// Tick animation clocks
 		virtual void		SetParameter(const std::string& parameter, const std::string& value);
-		virtual bool const	HasValidTriggers();
 
 		void				RenderDrawFunctionCall(const AIRealRect& documentBounds);
 		void				RenderDrawFunction(const AIRealRect& documentBounds);
 		void				Reposition(const AIRealRect& documentBounds);
-		bool const			HasAnimation();			// Does this draw function have any animation?
-
 	};
 }
 #endif

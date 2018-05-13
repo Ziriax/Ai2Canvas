@@ -36,7 +36,7 @@ namespace CanvasExport
 
 	public:
 
-		enum FunctionType { kAnyFunction, kDrawFunction, kAnimationFunction };
+		enum FunctionType { kAnyFunction, kDrawFunction };
 
 		Function();
 		~Function();
@@ -51,13 +51,6 @@ namespace CanvasExport
 
 		// Set function parameters
 		virtual void		SetParameter(const std::string& parameter, const std::string& value) = 0;
-
-		virtual void		RenderClockInit() = 0;		// Initialize animation clocks
-		virtual void		RenderTriggerInit() = 0;	// Initialize animation clock triggers
-		virtual void		RenderClockStart() = 0;		// Start animation clocks
-		virtual void		RenderClockTick() = 0;		// Tick animation clocks
-
-		virtual bool const	HasValidTriggers() = 0;		// Does this function have any valid triggers defined?
 	};
 }
 #endif

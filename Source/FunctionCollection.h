@@ -25,7 +25,6 @@
 
 #include "IllustratorSDK.h"
 #include "Function.h"
-#include "AnimationFunction.h"
 #include "DrawFunction.h"
 #include "Utility.h"
 
@@ -39,9 +38,6 @@ namespace CanvasExport
 	class FunctionCollection
 	{
 	private:
-
-		unsigned int				animationIndex;			// Track JavaScript array index for animation functions
-		bool						hasAnimationFunctions;	// Does the collection include at least one animation function?
 		bool						hasDrawFunctions;		// Does the collection include at least one draw function?
 
 	public:
@@ -51,14 +47,11 @@ namespace CanvasExport
 
 		std::vector<Function*>		functions;				// Collection of functions
 
-		bool const					HasAnimationFunctions();
 		bool const					HasDrawFunctions();
-		bool const					HasDrawFunctionAnimation();
 		Function*					Find(const std::string& name, const Function::FunctionType& functionType);
 		std::string					CreateUniqueName(const std::string& name);
 		DrawFunction*				AddDrawFunction(const std::string& name);
 		DrawFunction*				FindDrawFunction(const std::string& name, bool& isLast);
-		AnimationFunction*			AddAnimationFunction(const std::string& name);
 		bool const					HasValidTriggers();
 
 		void						RenderClockInit();
@@ -66,12 +59,7 @@ namespace CanvasExport
 		void						RenderClockTick();
 		void						RenderDrawFunctionCalls(const AIRealRect& documentBounds);
 		void						RenderDrawFunctions(const AIRealRect& documentBounds);
-		void						RenderAnimationFunctionInits(const AIRealRect& documentBounds);
 
-		void						BindAnimationFunctions();
-		void						BindTriggers();
-		void						ResolveTriggers(std::vector<Trigger*>& triggers);
-		bool						ResolveTriggerFunction(Trigger& trigger, Function** function);
 		void						DebugInfo();
 
 	};

@@ -112,7 +112,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.\Source;.\Resources;..\common\includes;..\..\illustratorapi\adm;..\..\illustratorapi\ate;..\..\illustratorapi\illustrator;..\..\illustratorapi\illustrator\actions;..\..\illustratorapi\pica_sp;..\..\illustratorapi\illustrator\legacy;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;WIN_ENV;WINNT_ENV;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;_DEBUG;WIN32;_WINDOWS;WIN_ENV;WINNT_ENV;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <StructMemberAlignment>8Bytes</StructMemberAlignment>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -166,7 +166,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.\Source;.\Resources;..\common\includes;..\..\illustratorapi\adm;..\..\illustratorapi\ate;..\..\illustratorapi\illustrator;..\..\illustratorapi\illustrator\actions;..\..\illustratorapi\pica_sp;..\..\illustratorapi\illustrator\legacy;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;WIN_ENV;WINNT_ENV;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;_DEBUG;_WINDOWS;WIN_ENV;WINNT_ENV;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <StructMemberAlignment>8Bytes</StructMemberAlignment>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -220,7 +220,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.\Source;.\Resources;..\common\includes;..\..\illustratorapi\adm;..\..\illustratorapi\ate;..\..\illustratorapi\illustrator;..\..\illustratorapi\illustrator\actions;..\..\illustratorapi\pica_sp;..\..\illustratorapi\illustrator\legacy;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;WIN_ENV;WINNT_ENV;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;NDEBUG;WIN32;_WINDOWS;WIN_ENV;WINNT_ENV;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StructMemberAlignment>8Bytes</StructMemberAlignment>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -274,7 +274,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.\Source;.\Resources;..\common\includes;..\..\illustratorapi\adm;..\..\illustratorapi\ate;..\..\illustratorapi\illustrator;..\..\illustratorapi\illustrator\actions;..\..\illustratorapi\pica_sp;..\..\illustratorapi\illustrator\legacy;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;WIN_ENV;WINNT_ENV;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;NDEBUG;_WINDOWS;WIN_ENV;WINNT_ENV;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StructMemberAlignment>8Bytes</StructMemberAlignment>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -320,15 +320,12 @@
     <ClInclude Include="Source\Ai2CanvasID.h" />
     <ClInclude Include="Source\Ai2CanvasPlugin.h" />
     <ClInclude Include="Source\Ai2CanvasSuites.h" />
-    <ClInclude Include="Source\AnimationClock.h" />
-    <ClInclude Include="Source\AnimationFunction.h" />
     <ClInclude Include="Source\Canvas.h" />
     <ClInclude Include="Source\CanvasCollection.h" />
     <ClInclude Include="Source\DocumentResources.h" />
     <ClInclude Include="Source\DrawFunction.h" />
     <ClInclude Include="Source\Function.h" />
     <ClInclude Include="Source\FunctionCollection.h" />
-    <ClInclude Include="Source\HtmlDocument.h" />
     <ClInclude Include="Source\Image.h" />
     <ClInclude Include="Source\ImageCollection.h" />
     <ClInclude Include="Source\IndentableStream.h" />
@@ -430,15 +427,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\AnimationClock.cpp" />
-    <ClCompile Include="Source\AnimationFunction.cpp" />
     <ClCompile Include="Source\Canvas.cpp" />
     <ClCompile Include="Source\CanvasCollection.cpp" />
     <ClCompile Include="Source\DocumentResources.cpp" />
     <ClCompile Include="Source\DrawFunction.cpp" />
     <ClCompile Include="Source\Function.cpp" />
     <ClCompile Include="Source\FunctionCollection.cpp" />
-    <ClCompile Include="Source\HtmlDocument.cpp" />
     <ClCompile Include="Source\Image.cpp" />
     <ClCompile Include="Source\ImageCollection.cpp" />
     <ClCompile Include="Source\IndentableStream.cpp" />

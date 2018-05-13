@@ -33,14 +33,14 @@ using namespace CanvasExport;
 TypescriptDocument::TypescriptDocument(const std::string& pathName)
 {
 	// Initialize Document
-	this->mainCanvas = NULL;
+	this->canvas = NULL;
 	this->fileName = "";
 
 	// Parse the folder path
 	ParseFolderPath(pathName);
 
 	// Add a canvas for the primary document
-	this->mainCanvas = canvases.Add("canvas", "ctx", &resources);
+	this->canvas = canvases.Add("canvas", "ctx", &resources);
 }
 
 TypescriptDocument::~TypescriptDocument()
@@ -95,8 +95,8 @@ void TypescriptDocument::SetDocumentBounds()
 	}
 
 	// Set canvas size
-	mainCanvas->width = documentBounds.right - documentBounds.left;
-	mainCanvas->height = documentBounds.top - documentBounds.bottom;
+	canvas->width = documentBounds.right - documentBounds.left;
+	canvas->height = documentBounds.top - documentBounds.bottom;
 }
 
 // Find the base folder path and filename
@@ -140,7 +140,7 @@ void TypescriptDocument::ParseLayers()
 			drawFunction->hasPatterns |= layers[i]->hasPatterns;
 
 			// Set canvas
-			drawFunction->canvas = mainCanvas;
+			drawFunction->canvas = canvas;
 
 			// Set pointer
 			function = drawFunction;
@@ -217,7 +217,7 @@ void TypescriptDocument::RenderDocument()
 	SetDocumentBounds();
 
 	// Do we need a pattern function?
-	if (mainCanvas->documentResources->patterns.HasPatterns())
+	if (canvas->documentResources->patterns.HasPatterns())
 	{
 		outFile << "drawPatterns();";
 	}
@@ -363,7 +363,7 @@ void TypescriptDocument::ScanLayerArtwork(AIArtHandle artHandle, unsigned int de
 				sAISymbol->GetSymbolPatternOfSymbolArt(artHandle, &symbolPatternHandle);
 
 				// Add the symbol pattern
-				bool added = mainCanvas->documentResources->patterns.Add(symbolPatternHandle, true);
+				bool added = canvas->documentResources->patterns.Add(symbolPatternHandle, true);
 
 				// If we added a new pattern, scan its artwork
 				if (added)
@@ -376,7 +376,7 @@ void TypescriptDocument::ScanLayerArtwork(AIArtHandle artHandle, unsigned int de
 					ScanLayerArtwork(patternArtHandle, (depth + 1), symbolLayer);
 
 					// Capture features for pattern
-					Pattern* pattern = mainCanvas->documentResources->patterns.Find(symbolPatternHandle);
+					Pattern* pattern = canvas->documentResources->patterns.Find(symbolPatternHandle);
 					pattern->hasGradients = symbolLayer.hasGradients;
 					pattern->hasPatterns = symbolLayer.hasPatterns;		// Can this ever happen?
 					pattern->hasAlpha = symbolLayer.hasAlpha;
@@ -416,7 +416,7 @@ void TypescriptDocument::ScanLayerArtwork(AIArtHandle artHandle, unsigned int de
 				case kPattern:
 				{
 					// Add the pattern
-					mainCanvas->documentResources->patterns.Add(style.fill.color.c.p.pattern, false);
+					canvas->documentResources->patterns.Add(style.fill.color.c.p.pattern, false);
 
 					// Flag that this layer includes patterns
 					layer.hasPatterns = true;
@@ -447,7 +447,7 @@ void TypescriptDocument::ScanLayerArtwork(AIArtHandle artHandle, unsigned int de
 				case kPattern:
 				{
 					// Add the pattern
-					mainCanvas->documentResources->patterns.Add(style.stroke.color.c.p.pattern, false);
+					canvas->documentResources->patterns.Add(style.stroke.color.c.p.pattern, false);
 
 					// Flag that this layer includes patterns
 					layer.hasPatterns = true;
@@ -490,16 +490,16 @@ void TypescriptDocument::ScanLayerArtwork(AIArtHandle artHandle, unsigned int de
 void TypescriptDocument::RenderSymbolFunctions()
 {
 	// Do we have symbol functions to render?
-	if (mainCanvas->documentResources->patterns.HasSymbols())
+	if (canvas->documentResources->patterns.HasSymbols())
 	{
 		// Loop through symbols
-		for (unsigned int i = 0; i < mainCanvas->documentResources->patterns.Patterns().size(); i++)
+		for (unsigned int i = 0; i < canvas->documentResources->patterns.Patterns().size(); i++)
 		{
 			// Is this a symbol?
-			if (mainCanvas->documentResources->patterns.Patterns()[i]->isSymbol)
+			if (canvas->documentResources->patterns.Patterns()[i]->isSymbol)
 			{
 				// Pointer to pattern (for convenience)
-				Pattern* pattern = mainCanvas->documentResources->patterns.Patterns()[i];
+				Pattern* pattern = canvas->documentResources->patterns.Patterns()[i];
 
 				// Begin symbol function block
 				outFile << "function " << pattern->name << "(ctx: CanvasRenderingContext2D) {" << endl;
@@ -516,20 +516,20 @@ void TypescriptDocument::RenderSymbolFunctions()
 					if (pattern->hasAlpha)
 					{
 						// Grab the alpha value (so we can use it to compute new globalAlpha values during this draw function)
-						outFile << "const alpha = ctx.globalAlpha;" << endl;
+						outFile << Indent(0) << "const alpha = ctx.globalAlpha;" << endl;
 					}
 
 					// Will we be encountering gradients?
 					if (pattern->hasGradients)
 					{
-						outFile << "var gradient: CanvasGradient;" << endl;
+						outFile << Indent(0) << "var gradient: CanvasGradient;" << endl;
 					}
 
 					// Will we be encountering patterns?
 					// TODO: Is this even possible?
 					if (pattern->hasPatterns)
 					{
-						outFile << "var pattern: CanvasPattern;" << endl;
+						outFile << Indent(0) << "var pattern: CanvasPattern;" << endl;
 					}
 
 					// Get a handle to the pattern art
@@ -541,7 +541,7 @@ void TypescriptDocument::RenderSymbolFunctions()
 					sAIArt->GetArtBounds(patternArtHandle, &bounds);
 					if (debug)
 					{
-						outFile << "// Symbol art bounds = " <<
+						outFile << Indent(0) << "// Symbol art bounds = " <<
 							"left:" << setiosflags(ios::fixed) << setprecision(1) << bounds.left <<
 							", top:" << bounds.top <<
 							", right:" << bounds.right <<
@@ -579,94 +579,91 @@ void TypescriptDocument::RenderSymbolFunctions()
 void TypescriptDocument::RenderPatternFunction()
 {
 	// Do we have pattern functions to render?
-	if (mainCanvas->documentResources->patterns.HasPatterns())
+	if (canvas->documentResources->patterns.HasPatterns())
 	{
 		// Begin pattern function block
 		outFile << "function drawPatterns() {" << endl;
+
+		// Loop through patterns
+		for (unsigned int i = 0; i < canvas->documentResources->patterns.Patterns().size(); i++)
 		{
-			Indentation indentation(outFile);
-			 
-			// Loop through patterns
-			for (unsigned int i = 0; i < mainCanvas->documentResources->patterns.Patterns().size(); i++)
+			// Is this a pattern?
+			if (!canvas->documentResources->patterns.Patterns()[i]->isSymbol)
 			{
-				// Is this a pattern?
-				if (!mainCanvas->documentResources->patterns.Patterns()[i]->isSymbol)
+				// Allocate space for pattern name
+				ai::UnicodeString patternName;
+
+				// Pointer to pattern (for convenience)
+				Pattern* pattern = canvas->documentResources->patterns.Patterns()[i];
+
+				// Get pattern name
+				sAIPattern->GetPatternName(pattern->patternHandle, patternName);
+				if (debug)
 				{
-					// Allocate space for pattern name
-					ai::UnicodeString patternName;
-
-					// Pointer to pattern (for convenience)
-					Pattern* pattern = mainCanvas->documentResources->patterns.Patterns()[i];
-
-					// Get pattern name
-					sAIPattern->GetPatternName(pattern->patternHandle, patternName);
-					if (debug)
-					{
-						outFile << "//   Pattern name = " << patternName.as_Platform() << " (" << pattern->patternHandle << ")" << endl;
-					}
-
-					// Create canvas ID
-					std::ostringstream canvasID;
-					canvasID << "pattern" << pattern->canvasIndex;
-
-					// Create context name
-					std::ostringstream contextName;
-					contextName << "ctx" << pattern->canvasIndex;
-
-					// Create canvas for this pattern
-					Canvas* canvas = canvases.Add(canvasID.str(), contextName.str(), &resources);
-					canvas->isHidden = true;
-					canvas->currentState->isProcessingSymbol = false;
-
-					// Render context commands
-					outFile << "const " << canvas->id << " = document.getElementById(\"" << canvas->id << "\");" << endl;
-					outFile << "const " << canvas->contextName << " = " << canvas->id << ".getContext(\"2d\");" << endl;
-
-					// Get a handle to the pattern art
-					AIArtHandle patternArtHandle = nil;
-					sAIPattern->GetPatternArt(pattern->patternHandle, &patternArtHandle);
-
-					// While we're here, get the size of this canvas
-					AIRealRect bounds;
-					sAIArt->GetArtBounds(patternArtHandle, &bounds);
-					if (debug)
-					{
-						outFile << "// Symbol art bounds = " <<
-							"left:" << setiosflags(ios::fixed) << setprecision(1) << bounds.left <<
-							", top:" << bounds.top <<
-							", right:" << bounds.right <<
-							", bottom:" << bounds.bottom << endl;
-					}
-
-					// Set canvas size
-					canvas->width = bounds.right - bounds.left;
-					canvas->height = bounds.top - bounds.bottom;
-
-					// If this isn't a symbol, modify the transformation
-					if (!pattern->isSymbol)
-					{
-						// Set internal transform
-						// TODO: While this works, it seems awfully convoluted
-						sAIRealMath->AIRealMatrixSetIdentity(&canvas->currentState->internalTransform);
-						sAIRealMath->AIRealMatrixConcatScale(&canvas->currentState->internalTransform, 1, -1);
-						sAIRealMath->AIRealMatrixConcatTranslate(&canvas->currentState->internalTransform, -1 * bounds.left, bounds.top);
-						sAIRealMath->AIRealMatrixConcatScale(&canvas->currentState->internalTransform, 1, -1);
-						sAIRealMath->AIRealMatrixConcatTranslate(&canvas->currentState->internalTransform, 0, canvas->height);
-					}
-
-					// This canvas shound be hidden, since it's only used for the pattern artwork
-					canvas->isHidden = true;
-
-					// Get the first art element in the pattern
-					AIArtHandle childArtHandle = NULL;
-					sAIArt->GetArtFirstChild(patternArtHandle, &childArtHandle);
-
-					// Render this sub-group
-					canvas->RenderArt(childArtHandle, 1);
-
-					// Restore remaining state
-					canvas->SetContextDrawingState(1);
+					outFile << "//   Pattern name = " << patternName.as_Platform() << " (" << pattern->patternHandle << ")" << endl;
 				}
+
+				// Create canvas ID
+				std::ostringstream canvasID;
+				canvasID << "pattern" << pattern->canvasIndex;
+
+				// Create context name
+				std::ostringstream contextName;
+				contextName << "ctx" << pattern->canvasIndex;
+
+				// Create canvas for this pattern
+				Canvas* canvas = canvases.Add(canvasID.str(), contextName.str(), &resources);
+				canvas->isHidden = true;
+				canvas->currentState->isProcessingSymbol = false;
+
+				// Render context commands
+				outFile << Indent(1) << "const " << canvas->id << " = document.getElementById(\"" << canvas->id << "\");" << endl;
+				outFile << Indent(1) << "const " << canvas->contextName << " = " << canvas->id << ".getContext(\"2d\");" << endl;
+
+				// Get a handle to the pattern art
+				AIArtHandle patternArtHandle = nil;
+				sAIPattern->GetPatternArt(pattern->patternHandle, &patternArtHandle);
+
+				// While we're here, get the size of this canvas
+				AIRealRect bounds;
+				sAIArt->GetArtBounds(patternArtHandle, &bounds);
+				if (debug)
+				{
+					outFile << Indent(0) << "// Symbol art bounds = " <<
+						"left:" << setiosflags(ios::fixed) << setprecision(1) << bounds.left <<
+						", top:" << bounds.top <<
+						", right:" << bounds.right <<
+						", bottom:" << bounds.bottom << endl;
+				}
+
+				// Set canvas size
+				canvas->width = bounds.right - bounds.left;
+				canvas->height = bounds.top - bounds.bottom;
+
+				// If this isn't a symbol, modify the transformation
+				if (!pattern->isSymbol)
+				{
+					// Set internal transform
+					// TODO: While this works, it seems awfully convoluted
+					sAIRealMath->AIRealMatrixSetIdentity(&canvas->currentState->internalTransform);
+					sAIRealMath->AIRealMatrixConcatScale(&canvas->currentState->internalTransform, 1, -1);
+					sAIRealMath->AIRealMatrixConcatTranslate(&canvas->currentState->internalTransform, -1 * bounds.left, bounds.top);
+					sAIRealMath->AIRealMatrixConcatScale(&canvas->currentState->internalTransform, 1, -1);
+					sAIRealMath->AIRealMatrixConcatTranslate(&canvas->currentState->internalTransform, 0, canvas->height);
+				}
+
+				// This canvas shound be hidden, since it's only used for the pattern artwork
+				canvas->isHidden = true;
+
+				// Get the first art element in the pattern
+				AIArtHandle childArtHandle = NULL;
+				sAIArt->GetArtFirstChild(patternArtHandle, &childArtHandle);
+
+				// Render this sub-group
+				canvas->RenderArt(childArtHandle, 1);
+
+				// Restore remaining state
+				canvas->SetContextDrawingState(1);
 			}
 		}
 
@@ -679,7 +676,102 @@ void TypescriptDocument::DebugInfo()
 {
 	outFile << "<p>This document has been exported in debug mode.</p>" << endl;
 
+	if (hasAnimation)
+	{
+		outFile << "<p>To scrub animations, click a Y location to set the time window, then move left/right to scrub.</p>" << endl;
+	}
+
 	resources.images.DebugInfo();
 
 	functions.DebugInfo();
+}
+
+void TypescriptDocument::DebugClockJS()
+{
+	outFile << "// Debug clock" << endl;
+	outFile << "function debugClock() {" << endl;
+	outFile << "// Mouse state" << endl;
+	outFile << "this.mouseX = 0;" << endl;
+	outFile << "this.mouseY = 0;" << endl;
+	outFile << "this.resetMouse = true;" << endl;
+	outFile << "// Y location on mouseDown" << endl;
+	outFile << "this.y = 0.0;" << endl;
+	outFile << "// Time range" << endl;
+	outFile << "this.timeRange = 0.0;" << endl;
+	outFile << "// Return current tick count" << endl;
+	outFile << "this.ticks = function() {" << endl;
+	outFile << "// Reset Y?    " << endl;
+	outFile << "if (this.resetMouse) {" << endl;
+	outFile << "// Capture Y" << endl;
+	outFile << "this.y = this.mouseY;" << endl;
+	outFile << "// Update time range" << endl;
+	outFile << "this.timeRange = (this.y / " << canvas->id << ".height) * 120;" << endl;
+	outFile << "this.resetMouse = false;" << endl;
+	outFile << "}" << endl;
+	outFile << "return ((this.mouseX / " << canvas->id << ".width) * this.timeRange * 1000);" << endl;
+	outFile << "}" << endl;
+	outFile << "// Return number of ticks per second" << endl;
+	outFile << "this.ticksPerSecond = function() {" << endl;
+	outFile << "return 1000;" << endl;
+	outFile << "}" << endl;
+	outFile << "}" << endl;
+
+	outFile << "function setDebugClock() {" << endl;
+	outFile << "debug.resetMouse = true;" << endl;
+	outFile << "}" << endl;
+
+	outFile << "function getMouseLocation(e) {" << endl;
+	outFile << "debug.mouseX = e.clientX + document.body.scrollLeft +" << endl;
+	outFile << "document.documentElement.scrollLeft - canvas.offsetLeft;" << endl;
+	outFile << "debug.mouseY = e.clientY + document.body.scrollTop +" << endl;
+	outFile << "document.documentElement.scrollTop - canvas.offsetTop;" << endl;
+	outFile << "}" << endl;
+}
+
+void TypescriptDocument::DebugAnimationPathJS()
+{
+	outFile << "function plotAnchorPoints(ctx: CanvasRenderingContext2D) {" << endl;
+
+	outFile << "ctx.save();" << endl;
+	outFile << "ctx.fillStyle = \"rgb(255, 0, 0)\";" << endl;
+	outFile << "const animation;" << endl;
+	outFile << "const animationCount = animations.length;" << endl;
+	outFile << "for (const a = 0; a < animationCount; a++) {" << endl;
+	outFile << "animation = animations[a];" << endl;
+	outFile << "const pointCount = animation.points.length;" << endl;
+	outFile << "for (const i = 0; i < pointCount; i++) {" << endl;
+	outFile << "ctx.fillRect(animation.points[i][0][0] - 2, animation.points[i][0][1] - 2, 5, 5);" << endl;
+	outFile << "}" << endl;
+	outFile << "}" << endl;
+	outFile << "// Final anchor point" << endl;
+	outFile << "ctx.fillRect(animation.points[(animation.points.length - 1)][3][0] - 2," << endl;
+	outFile << "animation.points[(animation.points.length - 1)][3][1] - 2, 5, 5);" << endl;
+	outFile << "ctx.restore();" << endl;
+	outFile << "}" << endl;
+
+	outFile << "function plotLinearPoints(ctx: CanvasRenderingContext2D) {" << endl;
+	outFile << "ctx.save();" << endl;
+	outFile << "ctx.fillStyle = \"rgb(0, 0, 255)\";" << endl;
+	outFile << "const animationCount = animations.length;" << endl;
+	outFile << "for (const a = 0; a < animationCount; a++) {" << endl;
+	outFile << "const animation = animations[a];" << endl;
+	outFile << "const linearCount = animation.linear.length;" << endl;
+	outFile << "for (const i = 0; i < linearCount; i++) {" << endl;
+	outFile << "const segmentIndex = animation.linear[i][0];" << endl;
+	outFile << "const u = animation.linear[i][1];" << endl;
+	outFile << "const x = bezier(u," << endl;
+	outFile << "animation.points[segmentIndex][0][0]," << endl;
+	outFile << "animation.points[segmentIndex][1][0]," << endl;
+	outFile << "animation.points[segmentIndex][2][0]," << endl;
+	outFile << "animation.points[segmentIndex][3][0]);" << endl;
+	outFile << "const y = bezier(u," << endl;
+	outFile << "animation.points[segmentIndex][0][1]," << endl;
+	outFile << "animation.points[segmentIndex][1][1]," << endl;
+	outFile << "animation.points[segmentIndex][2][1]," << endl;
+	outFile << "animation.points[segmentIndex][3][1]);" << endl;
+	outFile << "ctx.fillRect(x - 1, y - 1, 3, 3);" << endl;
+	outFile << "}" << endl;
+	outFile << "}" << endl;
+	outFile << "ctx.restore();" << endl;
+	outFile << "}" << endl;
 }

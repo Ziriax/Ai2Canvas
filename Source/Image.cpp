@@ -71,7 +71,7 @@ std::string Image::Uri()
 void Image::RenderDrawImage(const std::string& contextName, const AIReal x, const AIReal y)
 {
 	// Draw image
-	outFile  << Indent(0) << contextName << ".drawImage(document.getElementById(\"" << id << "\"), " <<
+	outFile  << contextName << ".drawImage(document.getElementById(\"" << id << "\"), " <<
 		setiosflags(ios::fixed) << setprecision(1) <<
 		x << ", " << y << ");" << endl;
 }
@@ -81,12 +81,12 @@ void Image::DebugBounds(const std::string& contextName, const AIRealRect& bounds
 	if (debug)
 	{
 		// Stroke bounds	
-		outFile  << Indent(0) << contextName << ".save();" << endl;
-		outFile  << Indent(0) << contextName << ".lineWidth = 1.0;" << endl;
-		outFile  << Indent(0) << contextName << ".strokeStyle = \"rgb(255, 0, 0)\";" << endl;
-		outFile  << Indent(0) << contextName << ".strokeRect(" <<
+		outFile  << contextName << ".save();" << endl;
+		outFile  << contextName << ".lineWidth = 1.0;" << endl;
+		outFile  << contextName << ".strokeStyle = \"rgb(255, 0, 0)\";" << endl;
+		outFile  << contextName << ".strokeRect(" <<
 			setiosflags(ios::fixed) << setprecision(1) <<
 			bounds.left << ", " << bounds.top << ", " << (bounds.right - bounds.left) << ", " << (bounds.bottom - bounds.top) << ");" << endl;
-		outFile  << Indent(0) << contextName << ".restore();" << endl;
+		outFile  << contextName << ".restore();" << endl;
 	}
 }
