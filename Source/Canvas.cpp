@@ -1334,7 +1334,7 @@ void Canvas::RenderPlacedArt(AIArtHandle artHandle, unsigned int depth)
 		// Render transform
 		outFile  << contextName << ".transform(";
 		RenderTransform(transform);
-		outFile << ");";
+		outFile << ");" << endl;
 
 		// Get actual image dimensions (files that aren't 72 DPI don't report real sizes, so need to do this)
 		AIRasterRecord info;
@@ -1490,7 +1490,7 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 		// Set gradient transform
 		outFile << contextName << ".transform(";
 		RenderTransform(matrix);
-		outFile << ");";
+		outFile << ");" << endl;
 	}
 
 	// Grab the origin
@@ -1631,7 +1631,7 @@ void Canvas::RenderFillInfo(const AIColor& fillColor, unsigned int depth)
 				// TODO: We should be able to avoid this, if the transform is identity
 				outFile  << contextName << ".transform(";
 				RenderTransform(fillColor.c.p.transform);
-				outFile << ");";
+				outFile << ");" << endl;
 
 				// Change fill style to pattern
 				outFile  << contextName << ".fillStyle = " << currentState->fillStyle << ";" << endl;
@@ -2026,7 +2026,7 @@ void Canvas::RenderGlyphRun(char *contents, const GlyphState& glyphState, unsign
 		// Render transform
 		outFile  << contextName << ".transform(";
 		RenderTransform(glyphState.glyphMatrix);
-		outFile << ");";
+		outFile << ");" << endl;
 	}
 
 	// Fill the text?
