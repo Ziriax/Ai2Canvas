@@ -55,6 +55,8 @@ TypescriptDocument::~TypescriptDocument()
 
 void TypescriptDocument::Render()
 {
+	outFile << "/* tslint:disable */" << endl;
+
 	// Scan the document for layers and layer attributes
 	ScanDocument();
 

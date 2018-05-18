@@ -1461,11 +1461,22 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 	// Grab the transformation matrix
 	AIRealMatrix matrix = gradientStyle.matrix;
 
+	outFile << fixed << setprecision(3);
+
+	outFile << "// matrix: " <<
+		matrix.a << " " << matrix.b << " " <<
+		matrix.c << " " << matrix.d << " " <<
+		matrix.tx << " " << matrix.tx << " " << endl;
+
+	outFile << "// start: " <<
+		gradientStyle.gradientOrigin.h << " " <<
+		gradientStyle.gradientOrigin.v << endl;
+
 	// Apply current internal transform
 	if (currentState->isProcessingSymbol)
 	{
 		// If this is a symbol, we need to harden the matrix
-		sAIHardSoft->AIRealMatrixHarden(&matrix);
+		//sAIHardSoft->AIRealMatrixHarden(&matrix);
 	}
 	else
 	{
@@ -1473,12 +1484,12 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 	}
 
 	// Is there any transformation other than translation?
-	AIBoolean isTransformed = false;
-	if (fabsf((float)matrix.a) != 1.0f || matrix.b != 0.0f || matrix.c != 0.0f || fabsf((float)matrix.d) != 1.0f)
-	{
-		// Will need to apply transformation
-		isTransformed = true;
-	}
+	AIBoolean isTransformed = true;
+	//if (fabsf((float)matrix.a) != 1.0f || matrix.b != 0.0f || matrix.c != 0.0f || fabsf((float)matrix.d) != 1.0f)
+	//{
+	//	// Will need to apply transformation
+	//	isTransformed = true;
+	//}
 
 	// Do we have a transform to apply?
 	if (isTransformed)
@@ -1504,27 +1515,22 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 			sAIRealMath->AIRealPointLengthAngle(gradientStyle.gradientLength, sAIRealMath->DegreeToRadian(gradientStyle.gradientAngle), &p2);
 			sAIRealMath->AIRealPointAdd(&p1, &p2, &p2);
 
-			// p1 are p2 use soft (page coordinates).
 			sAIHardSoft->AIRealPointHarden(&p1, &p1);
-			sAIHardSoft->AIRealPointHarden(&p2, &p2);
+			sAIRealMath->AIRealMatrixXformPoint(&matrix, &p1, &p1);
 
 			// If we aren't transforming with a matrix, simply transform the individual points
-			if (!isTransformed)
+			//if (!isTransformed)
 			{
-				TransformPointWithMatrix(p1, matrix);
-				TransformPointWithMatrix(p2, matrix);
-				//// HACK: [PV] Not sure why this is needed, not understanding enough of AI, but seems to fix the wrong gradient-in-symbol bug
-				//if (currentState->isProcessingSymbol)
-				//{
-				//	p1.v = -p1.v;
-				//	p2.v = -p2.v;
-				//	sAIRealMath->AIRealMatrixXformPoint(&matrix, &p1, &p1);
-				//	sAIRealMath->AIRealMatrixXformPoint(&matrix, &p2, &p2);
-				//}
-				//else
-				//{
-				//}
+				//TransformPointWithMatrix(p1, matrix);
+				//TransformPointWithMatrix(p2, matrix);
 			}
+
+			outFile << "// start (transformed): " <<
+				p1.h << " " <<
+				p1.v << endl;
+
+			outFile << contextName << ".fillStyle = 'red';" << endl;
+			outFile << contextName << ".fillRect(" << p1.h << " - 2, " << p1.v << " - 2, 5, 5);" << endl;
 
 			outFile  << "gradient = " << contextName << ".createLinearGradient(" <<
 				setiosflags(ios::fixed) << setprecision(1) <<
@@ -1576,7 +1582,7 @@ void Canvas::RenderGradientStops(const AIGradientStyle& gradientStyle)
 		stopPoint = gradientStop.rampPoint / (float)100;
 		outFile  << "gradient.addColorStop(" <<
 			setiosflags(ios::fixed) << setprecision(2) <<
-			stopPoint << ", " << GetColor(gradientStop.color, gradientStop.opacity) << ");" << endl;
+			stopPoint << ", " << GetColor(gradientStop.color, gradientStop.opacity * 0.5) << ");" << endl;
 
 		// Handle midpoints that aren't exacly at 50% (ignore midpoint for last stop)
 		if (gradientStop.midPoint != 50.0f && index < (count - 1))
@@ -1586,7 +1592,7 @@ void Canvas::RenderGradientStops(const AIGradientStyle& gradientStyle)
 			outFile  << "gradient.addColorStop(" <<
 				setiosflags(ios::fixed) << setprecision(2) <<
 				stopPoint << ", \"";
-			RenderMidPointColor(gradientStop.color, gradientStop.opacity, gradientStopNext.color, gradientStopNext.opacity);
+			RenderMidPointColor(gradientStop.color, gradientStop.opacity * 0.5, gradientStopNext.color, gradientStopNext.opacity * 0.5);
 			outFile << "\");" << endl;
 		}
 	}
