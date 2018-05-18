@@ -1083,6 +1083,15 @@ void Canvas::RenderCompoundPathArt(AIArtHandle artHandle, unsigned int depth)
 
 void Canvas::RenderPathArt(AIArtHandle artHandle, unsigned int depth)
 {
+	if (debug)
+	{
+		ai::UnicodeString artName;
+		AIBoolean isDefaultName = false;
+		sAIArt->GetArtName(artHandle, artName, &isDefaultName);
+		outFile << "// art name: " << artName.as_UTF8() << endl;
+		cout << "// art name: " << artName.as_UTF8() << endl;
+	}
+
 	// Skip if this path is a "guide"
 	AIBoolean isGuide = false;
 	sAIPath->GetPathGuide(artHandle, &isGuide);
@@ -1146,6 +1155,18 @@ void Canvas::RenderPathFigure(AIArtHandle artHandle)
 	// Remember the first segment, in case we have to create an extra segment to close the figure
 	AIPathSegment firstSegment = segment;
 
+	if (debug)
+	{
+		outFile << "// raw: (" << segment.p.h << ", " << segment.p.v << ")" << endl;
+		cout << "// raw: (" << segment.p.h << ", " << segment.p.v << ")" << endl;
+
+		AIRealPoint p;
+		sAIHardSoft->AIRealPointHarden(&segment.p, &p);
+		outFile << "// hard: (" << p.h << ", " << p.v << ")" << endl;
+		cout << "// hard: (" << p.h << ", " << p.v << ")" << endl;
+
+	}
+
 	// Transform starting point
 	TransformPoint(segment.p);
 	TransformPoint(segment.in);
@@ -1186,6 +1207,11 @@ void Canvas::RenderPathFigure(AIArtHandle artHandle)
 
 void Canvas::RenderSegment(AIPathSegment& previousSegment, AIPathSegment& segment)
 {
+	if (debug)
+	{
+		outFile << "// raw: (" << segment.p.h << ", " << segment.p.v << ")" << endl;
+	}
+
 	// Transform points
 	TransformPoint(segment.p);
 	TransformPoint(segment.in);
@@ -1461,47 +1487,10 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 	// Grab the transformation matrix
 	AIRealMatrix matrix = gradientStyle.matrix;
 
-	outFile << fixed << setprecision(3);
-
-	outFile << "// matrix: " <<
-		matrix.a << " " << matrix.b << " " <<
-		matrix.c << " " << matrix.d << " " <<
-		matrix.tx << " " << matrix.tx << " " << endl;
-
-	outFile << "// start: " <<
-		gradientStyle.gradientOrigin.h << " " <<
-		gradientStyle.gradientOrigin.v << endl;
-
-	// Apply current internal transform
-	if (currentState->isProcessingSymbol)
-	{
-		// If this is a symbol, we need to harden the matrix
-		//sAIHardSoft->AIRealMatrixHarden(&matrix);
-	}
-	else
+	// Apply current internal transform (except for symbols, these are already transformed)
+	if (!currentState->isProcessingSymbol)
 	{
 		sAIRealMath->AIRealMatrixConcat(&matrix, &currentState->internalTransform, &matrix);
-	}
-
-	// Is there any transformation other than translation?
-	AIBoolean isTransformed = true;
-	//if (fabsf((float)matrix.a) != 1.0f || matrix.b != 0.0f || matrix.c != 0.0f || fabsf((float)matrix.d) != 1.0f)
-	//{
-	//	// Will need to apply transformation
-	//	isTransformed = true;
-	//}
-
-	// Do we have a transform to apply?
-	if (isTransformed)
-	{
-		// We need to fill *without* the current transform, so push an extra state (it will be automatically popped later);
-		depth++;
-		SetContextDrawingState(depth);
-
-		// Set gradient transform
-		outFile << contextName << ".transform(";
-		RenderTransform(matrix);
-		outFile << ");" << endl;
 	}
 
 	// Grab the origin
@@ -1512,25 +1501,19 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 		case (kLinearGradient): 
 		{
 			AIRealPoint p2;
-			sAIRealMath->AIRealPointLengthAngle(gradientStyle.gradientLength, sAIRealMath->DegreeToRadian(gradientStyle.gradientAngle), &p2);
+			sAIRealMath->AIRealPointLengthAngle(gradientStyle.gradientLength, 
+				sAIRealMath->DegreeToRadian(gradientStyle.gradientAngle), &p2);
+
 			sAIRealMath->AIRealPointAdd(&p1, &p2, &p2);
 
-			sAIHardSoft->AIRealPointHarden(&p1, &p1);
 			sAIRealMath->AIRealMatrixXformPoint(&matrix, &p1, &p1);
+			sAIRealMath->AIRealMatrixXformPoint(&matrix, &p2, &p2);
 
-			// If we aren't transforming with a matrix, simply transform the individual points
-			//if (!isTransformed)
+			if (currentState->isProcessingSymbol)
 			{
-				//TransformPointWithMatrix(p1, matrix);
-				//TransformPointWithMatrix(p2, matrix);
+				sAIHardSoft->AIRealPointHarden(&p1, &p1);
+				sAIHardSoft->AIRealPointHarden(&p2, &p2);
 			}
-
-			outFile << "// start (transformed): " <<
-				p1.h << " " <<
-				p1.v << endl;
-
-			outFile << contextName << ".fillStyle = 'red';" << endl;
-			outFile << contextName << ".fillRect(" << p1.h << " - 2, " << p1.v << " - 2, 5, 5);" << endl;
 
 			outFile  << "gradient = " << contextName << ".createLinearGradient(" <<
 				setiosflags(ios::fixed) << setprecision(1) <<
@@ -1543,14 +1526,17 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 		case (kRadialGradient): 
 		{
 			AIRealPoint p2;
-			sAIRealMath->AIRealPointLengthAngle((gradientStyle.hiliteLength * gradientStyle.gradientLength), sAIRealMath->DegreeToRadian(gradientStyle.hiliteAngle), &p2);
+			sAIRealMath->AIRealPointLengthAngle((gradientStyle.hiliteLength * gradientStyle.gradientLength), 
+				sAIRealMath->DegreeToRadian(gradientStyle.hiliteAngle + gradientStyle.gradientAngle), &p2);
 			sAIRealMath->AIRealPointAdd(&p1, &p2, &p2);
 
-			// If we aren't transforming with a matrix, simply transform the individual points
-			if (!isTransformed)
+			sAIRealMath->AIRealMatrixXformPoint(&matrix, &p1, &p1);
+			sAIRealMath->AIRealMatrixXformPoint(&matrix, &p2, &p2);
+
+			if (currentState->isProcessingSymbol)
 			{
-				TransformPointWithMatrix(p1, matrix);
-				TransformPointWithMatrix(p2, matrix);
+				sAIHardSoft->AIRealPointHarden(&p1, &p1);
+				sAIHardSoft->AIRealPointHarden(&p2, &p2);
 			}
 
 			// Don't pre-transform any points, because our world transformation will do it for us
@@ -1582,7 +1568,7 @@ void Canvas::RenderGradientStops(const AIGradientStyle& gradientStyle)
 		stopPoint = gradientStop.rampPoint / (float)100;
 		outFile  << "gradient.addColorStop(" <<
 			setiosflags(ios::fixed) << setprecision(2) <<
-			stopPoint << ", " << GetColor(gradientStop.color, gradientStop.opacity * 0.5) << ");" << endl;
+			stopPoint << ", " << GetColor(gradientStop.color, gradientStop.opacity) << ");" << endl;
 
 		// Handle midpoints that aren't exacly at 50% (ignore midpoint for last stop)
 		if (gradientStop.midPoint != 50.0f && index < (count - 1))
@@ -1592,7 +1578,7 @@ void Canvas::RenderGradientStops(const AIGradientStyle& gradientStyle)
 			outFile  << "gradient.addColorStop(" <<
 				setiosflags(ios::fixed) << setprecision(2) <<
 				stopPoint << ", \"";
-			RenderMidPointColor(gradientStop.color, gradientStop.opacity * 0.5, gradientStopNext.color, gradientStopNext.opacity * 0.5);
+			RenderMidPointColor(gradientStop.color, gradientStop.opacity, gradientStopNext.color, gradientStopNext.opacity);
 			outFile << "\");" << endl;
 		}
 	}

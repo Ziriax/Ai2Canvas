@@ -66,6 +66,11 @@ void FixupReload(Plugin* plugin)
 Ai2CanvasPlugin::Ai2CanvasPlugin(SPPluginRef pluginRef)
 	: Plugin(pluginRef)
 {
+	if (AllocConsole())
+	{
+		freopen("CONOUT$", "w", stdout);
+	}
+
 	strncpy(fPluginName, kAi2CanvasPluginName, kMaxStringLength);
 }
 
