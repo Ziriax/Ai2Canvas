@@ -33,8 +33,8 @@ State::State()
 	// Initialize State
 	// NOTE: These are the HTML5 canvas defaults: http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#2dcontext
 	this->globalAlpha = 1.0f;
-	this->fillStyle = defaultColor;
-	this->strokeStyle = defaultColor;
+	this->fillStyle = "";
+	this->strokeStyle = "";
 	this->lineWidth = 1.0f;
 	this->lineCap = kAIButtCap;
 	this->lineJoin = kAIMiterJoin;

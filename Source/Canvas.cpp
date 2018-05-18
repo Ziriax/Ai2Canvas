@@ -233,6 +233,11 @@ void Canvas::RenderArt(AIArtHandle artHandle, unsigned int depth)
 			AIBoolean isDefaultName = false;
 			sAIArt->GetArtName(artHandle, artName, &isDefaultName);
 
+			if (debug)
+			{
+				outFile << "// art name: " << artName.as_UTF8() << endl;
+			}
+
 			// Add name to breadcrumbs
 			AddBreadcrumb(artName.as_UTF8(), depth);
 
@@ -1146,6 +1151,11 @@ void Canvas::RenderPathFigure(AIArtHandle artHandle)
 	// Remember the first segment, in case we have to create an extra segment to close the figure
 	AIPathSegment firstSegment = segment;
 
+	if (debug)
+	{
+		outFile << "// raw: (" << segment.p.h << ", " << segment.p.v << ")" << endl;
+	}
+
 	// Transform starting point
 	TransformPoint(segment.p);
 	TransformPoint(segment.in);
@@ -1186,6 +1196,11 @@ void Canvas::RenderPathFigure(AIArtHandle artHandle)
 
 void Canvas::RenderSegment(AIPathSegment& previousSegment, AIPathSegment& segment)
 {
+	if (debug)
+	{
+		outFile << "// raw: (" << segment.p.h << ", " << segment.p.v << ")" << endl;
+	}
+
 	// Transform points
 	TransformPoint(segment.p);
 	TransformPoint(segment.in);
@@ -1454,6 +1469,11 @@ void Canvas::RenderMidPointColor(const AIColor& color1, AIReal alpha1, const AIC
 
 void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int depth)
 {
+	if (AllocConsole())
+	{
+		freopen("CONOUT$", "w", stdout);
+	}
+
 	// What kind of gradient is it?
 	short type;
 	sAIGradient->GetGradientType(gradientStyle.gradient, &type);
@@ -1461,8 +1481,16 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 	// Grab the transformation matrix
 	AIRealMatrix matrix = gradientStyle.matrix;
 
-	outFile << "// start ( " << gradientStyle.gradientOrigin.h << ", " << gradientStyle.gradientOrigin.h << " )" << endl;
-	outFile << "// matrix [ " << matrix.a << ", " << matrix.b << ", " << matrix.c << ", " << matrix.d << ", " << matrix.tx << ", " << matrix.ty << " ]" << endl;
+	cout << fixed << setprecision(0);
+
+	AIGradientStop gradientStop;
+	sAIGradient->GetNthGradientStop(gradientStyle.gradient, 0, &gradientStop);
+
+	auto color = gradientStop.color.c.rgb;
+	cout << "// color ( " << color.red << ", " << color.green << ", " << color.blue << " )" << endl;
+	cout << "// start ( " << gradientStyle.gradientOrigin.h << ", " << gradientStyle.gradientOrigin.v << " )" << endl;
+	cout << "// matrix [ " << matrix.a << ", " << matrix.b << ", " << matrix.c << ", " << matrix.d << ", " << matrix.tx << ", " << matrix.ty << " ]" << endl;
+	cout << endl;
 
 	// Apply current internal transform
 	if (currentState->isProcessingSymbol)

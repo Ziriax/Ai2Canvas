@@ -184,6 +184,8 @@ void TypescriptDocument::ParseLayerName(const Layer& layer, std::string& name, s
 // Render the document
 void TypescriptDocument::RenderDocument()
 {
+	outFile << "/* tslint:disable */" << endl;
+
 	// Set document bounds
 	SetDocumentBounds();
 
