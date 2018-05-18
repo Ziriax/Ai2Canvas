@@ -1461,6 +1461,9 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 	// Grab the transformation matrix
 	AIRealMatrix matrix = gradientStyle.matrix;
 
+	outFile << "// start ( " << gradientStyle.gradientOrigin.h << ", " << gradientStyle.gradientOrigin.h << " )" << endl;
+	outFile << "// matrix [ " << matrix.a << ", " << matrix.b << ", " << matrix.c << ", " << matrix.d << ", " << matrix.tx << ", " << matrix.ty << " ]" << endl;
+
 	// Apply current internal transform
 	if (currentState->isProcessingSymbol)
 	{
@@ -1473,12 +1476,12 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 	}
 
 	// Is there any transformation other than translation?
-	AIBoolean isTransformed = false;
-	if (fabsf((float)matrix.a) != 1.0f || matrix.b != 0.0f || matrix.c != 0.0f || fabsf((float)matrix.d) != 1.0f)
-	{
-		// Will need to apply transformation
-		isTransformed = true;
-	}
+	AIBoolean isTransformed = true;
+	//if (fabsf((float)matrix.a) != 1.0f || matrix.b != 0.0f || matrix.c != 0.0f || fabsf((float)matrix.d) != 1.0f)
+	//{
+	//	// Will need to apply transformation
+	//	isTransformed = true;
+	//}
 
 	// Do we have a transform to apply?
 	if (isTransformed)
@@ -1504,26 +1507,11 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 			sAIRealMath->AIRealPointLengthAngle(gradientStyle.gradientLength, sAIRealMath->DegreeToRadian(gradientStyle.gradientAngle), &p2);
 			sAIRealMath->AIRealPointAdd(&p1, &p2, &p2);
 
-			// p1 are p2 use soft (page coordinates).
-			sAIHardSoft->AIRealPointHarden(&p1, &p1);
-			sAIHardSoft->AIRealPointHarden(&p2, &p2);
-
 			// If we aren't transforming with a matrix, simply transform the individual points
 			if (!isTransformed)
 			{
 				TransformPointWithMatrix(p1, matrix);
 				TransformPointWithMatrix(p2, matrix);
-				//// HACK: [PV] Not sure why this is needed, not understanding enough of AI, but seems to fix the wrong gradient-in-symbol bug
-				//if (currentState->isProcessingSymbol)
-				//{
-				//	p1.v = -p1.v;
-				//	p2.v = -p2.v;
-				//	sAIRealMath->AIRealMatrixXformPoint(&matrix, &p1, &p1);
-				//	sAIRealMath->AIRealMatrixXformPoint(&matrix, &p2, &p2);
-				//}
-				//else
-				//{
-				//}
 			}
 
 			outFile  << "gradient = " << contextName << ".createLinearGradient(" <<
