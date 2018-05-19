@@ -1546,13 +1546,26 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 
 			if (currentState->isProcessingSymbol)
 			{
-				sAIHardSoft->AIRealPointHarden(&p1, &p1);
-			}
+				AIRealMatrix originTransform = matrix;
+				originTransform.c = -originTransform.b;
+				originTransform.d = +originTransform.a;
+				sAIRealMath->AIRealMatrixXformPoint(&originTransform, &p1, &p1);
 
-			AIRealMatrix originTransform = matrix;
-			originTransform.c = +originTransform.b;
-			originTransform.d = -originTransform.a;
-			sAIRealMath->AIRealMatrixXformPoint(&originTransform, &p1, &p1);
+				sAIHardSoft->AIRealPointHarden(&p1, &p1);
+
+				AIRealMatrix flipY =
+				{
+					1, 0, 0,  -1, 0, 0
+				};
+				sAIRealMath->AIRealMatrixConcat(&matrix, &flipY, &matrix);
+			}
+			else
+			{
+				AIRealMatrix originTransform = matrix;
+				originTransform.c = +originTransform.b;
+				originTransform.d = -originTransform.a;
+				sAIRealMath->AIRealMatrixXformPoint(&originTransform, &p1, &p1);
+			}
 
 			// Do we have a transform to apply?
 			// We need to fill *without* the current transform, so push an extra state (it will be automatically popped later);
