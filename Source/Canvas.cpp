@@ -1487,14 +1487,27 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 	// Grab the transformation matrix
 	AIRealMatrix matrix = gradientStyle.matrix;
 
+	// Grab the origin
+	AIRealPoint p1 = gradientStyle.gradientOrigin;
+
+	cout << fixed << setprecision(1);
+	cout << "origin: " << p1.h << " " << p1.v << endl;
+	cout << "angle: " << gradientStyle.gradientAngle << endl;
+	cout << "length: " << gradientStyle.gradientLength << endl;
+	cout << "hilite-angle: " << gradientStyle.hiliteAngle<< endl;
+	cout << "hilite-length: " << gradientStyle.hiliteLength<< endl;
+	cout << "matrix: " << matrix.a << " " << matrix.b << " " << matrix.c << " " << matrix.d << " " << matrix.tx << " " << matrix.ty << endl;
+
+	const auto& cxform = currentState->internalTransform;
+	cout << "cxform: " << cxform.a << " " << cxform.b << " " << cxform.c << " " << cxform.d << " " << cxform.tx << " " << cxform.ty << endl;
+
 	// Apply current internal transform (except for symbols, these are already transformed)
 	if (!currentState->isProcessingSymbol)
 	{
 		sAIRealMath->AIRealMatrixConcat(&matrix, &currentState->internalTransform, &matrix);
 	}
 
-	// Grab the origin
-	AIRealPoint p1 = gradientStyle.gradientOrigin;
+	cout << "mxform: " << matrix.a << " " << matrix.b << " " << matrix.c << " " << matrix.d << " " << matrix.tx << " " << matrix.ty << endl;
 
 	switch (type)
 	{
@@ -1523,26 +1536,42 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 
 			break;
 		}
+
+
 		case (kRadialGradient): 
 		{
-			AIRealPoint p2;
+			AIRealPoint v;
 			sAIRealMath->AIRealPointLengthAngle((gradientStyle.hiliteLength * gradientStyle.gradientLength), 
-				sAIRealMath->DegreeToRadian(gradientStyle.hiliteAngle + gradientStyle.gradientAngle), &p2);
-			sAIRealMath->AIRealPointAdd(&p1, &p2, &p2);
-
-			sAIRealMath->AIRealMatrixXformPoint(&matrix, &p1, &p1);
-			sAIRealMath->AIRealMatrixXformPoint(&matrix, &p2, &p2);
+				sAIRealMath->DegreeToRadian(gradientStyle.hiliteAngle + gradientStyle.gradientAngle), &v);
 
 			if (currentState->isProcessingSymbol)
 			{
 				sAIHardSoft->AIRealPointHarden(&p1, &p1);
-				sAIHardSoft->AIRealPointHarden(&p2, &p2);
 			}
+
+			AIRealMatrix originTransform = matrix;
+			originTransform.c = +originTransform.b;
+			originTransform.d = -originTransform.a;
+			sAIRealMath->AIRealMatrixXformPoint(&originTransform, &p1, &p1);
+
+			// Do we have a transform to apply?
+			// We need to fill *without* the current transform, so push an extra state (it will be automatically popped later);
+			depth++;
+			SetContextDrawingState(depth);
+
+			AIRealMatrix gradientTransform = matrix;
+			gradientTransform.tx = p1.h;
+			gradientTransform.ty = p1.v;
+
+			// Set gradient transform
+			outFile << contextName << ".transform(";
+			RenderTransform(gradientTransform);
+			outFile << ");" << endl;
 
 			// Don't pre-transform any points, because our world transformation will do it for us
 			outFile  << "gradient = " << contextName << ".createRadialGradient(" <<
 				setiosflags(ios::fixed) << setprecision(1) <<
-				p2.h << ", " << p2.v << ", " << 0.0f << ", " << p1.h << ", " << p1.v << ", " << gradientStyle.gradientLength << ");" << endl;
+				v.h << ", " << v.v << ", " << 0.0f << ", " << 0 << ", " << 0 << ", " << gradientStyle.gradientLength << ");" << endl;
 
 			RenderGradientStops(gradientStyle);
 
