@@ -22,6 +22,7 @@
 
 #include "IllustratorSDK.h"
 #include "Canvas.h"
+#include <string>
 
 #define MAX_BREADCRUMB_DEPTH 256
 
@@ -1490,16 +1491,31 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 	// Grab the origin
 	AIRealPoint p1 = gradientStyle.gradientOrigin;
 
-	cout << fixed << setprecision(1);
-	cout << "origin: " << p1.h << " " << p1.v << endl;
-	cout << "angle: " << gradientStyle.gradientAngle << endl;
-	cout << "length: " << gradientStyle.gradientLength << endl;
-	cout << "hilite-angle: " << gradientStyle.hiliteAngle<< endl;
-	cout << "hilite-length: " << gradientStyle.hiliteLength<< endl;
-	cout << "matrix: " << matrix.a << " " << matrix.b << " " << matrix.c << " " << matrix.d << " " << matrix.tx << " " << matrix.ty << endl;
+	std::stringstream ss;
+	ss << fixed << setprecision(1);
+	ss << "origin:        (" << p1.h << ", " << p1.v << ")" << endl;
+	ss << "matrix:        [" << matrix.a << ", " << matrix.b << ", " << matrix.c << ", " << matrix.d << ", " << matrix.tx << ", " << matrix.ty << "]" << endl;
+	ss << "angle:         " << gradientStyle.gradientAngle << endl;
+	ss << "length:        " << gradientStyle.gradientLength << endl;
+	ss << "hilite-angle:  " << gradientStyle.hiliteAngle<< endl;
+	ss << "hilite-length: " << gradientStyle.hiliteLength<< endl;
 
-	const auto& cxform = currentState->internalTransform;
-	cout << "cxform: " << cxform.a << " " << cxform.b << " " << cxform.c << " " << cxform.d << " " << cxform.tx << " " << cxform.ty << endl;
+	std::string text = ss.str();
+
+	cout << text;
+
+	const char* output = text.c_str();
+	const size_t len = strlen(output) + 1;
+	HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, len);
+	memcpy(GlobalLock(hMem), output, len);
+	GlobalUnlock(hMem);
+	OpenClipboard(0);
+	EmptyClipboard();
+	SetClipboardData(CF_TEXT, hMem);
+	CloseClipboard();
+
+	//const auto& cxform = currentState->internalTransform;
+	//cout << "cxform: " << cxform.a << " " << cxform.b << " " << cxform.c << " " << cxform.d << " " << cxform.tx << " " << cxform.ty << endl;
 
 	// Apply current internal transform (except for symbols, these are already transformed)
 	if (!currentState->isProcessingSymbol)
@@ -1507,7 +1523,7 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 		sAIRealMath->AIRealMatrixConcat(&matrix, &currentState->internalTransform, &matrix);
 	}
 
-	cout << "mxform: " << matrix.a << " " << matrix.b << " " << matrix.c << " " << matrix.d << " " << matrix.tx << " " << matrix.ty << endl;
+	//cout << "mxform: " << matrix.a << " " << matrix.b << " " << matrix.c << " " << matrix.d << " " << matrix.tx << " " << matrix.ty << endl;
 
 	switch (type)
 	{
@@ -1540,10 +1556,6 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 
 		case (kRadialGradient): 
 		{
-			AIRealPoint v;
-			sAIRealMath->AIRealPointLengthAngle((gradientStyle.hiliteLength * gradientStyle.gradientLength), 
-				sAIRealMath->DegreeToRadian(gradientStyle.hiliteAngle + gradientStyle.gradientAngle), &v);
-
 			if (currentState->isProcessingSymbol)
 			{
 				AIRealMatrix originTransform = matrix;
@@ -1553,11 +1565,7 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 
 				sAIHardSoft->AIRealPointHarden(&p1, &p1);
 
-				AIRealMatrix flipY =
-				{
-					1, 0, 0,  -1, 0, 0
-				};
-				sAIRealMath->AIRealMatrixConcat(&matrix, &flipY, &matrix);
+				sAIRealMath->AIRealMatrixConcatScale(&matrix, 1, -1);
 			}
 			else
 			{
@@ -1572,19 +1580,27 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 			depth++;
 			SetContextDrawingState(depth);
 
-			AIRealMatrix gradientTransform = matrix;
-			gradientTransform.tx = p1.h;
-			gradientTransform.ty = p1.v;
+			AIRealMatrix stretchTransform = matrix;
+			stretchTransform.tx = 0;
+			stretchTransform.ty = 0;
 
-			// Set gradient transform
+			AIRealMatrix transform;
+			sAIRealMath->AIRealMatrixSetIdentity(&transform);
+			sAIRealMath->AIRealMatrixConcat(&transform, &stretchTransform, &transform);
+			//sAIRealMath->AIRealMatrixConcatRotate(&transform, -sAIRealMath->DegreeToRadian(gradientStyle.hiliteAngle + gradientStyle.gradientAngle));
+			sAIRealMath->AIRealMatrixConcatRotate(&transform, -sAIRealMath->DegreeToRadian(gradientStyle.gradientAngle));
+			sAIRealMath->AIRealMatrixConcatTranslate(&transform, p1.h, p1.v);
+
+				// Set gradient transform
 			outFile << contextName << ".transform(";
-			RenderTransform(gradientTransform);
+			RenderTransform(transform);
 			outFile << ");" << endl;
 
 			// Don't pre-transform any points, because our world transformation will do it for us
 			outFile  << "gradient = " << contextName << ".createRadialGradient(" <<
 				setiosflags(ios::fixed) << setprecision(1) <<
-				v.h << ", " << v.v << ", " << 0.0f << ", " << 0 << ", " << 0 << ", " << gradientStyle.gradientLength << ");" << endl;
+				gradientStyle.hiliteLength * gradientStyle.gradientLength << ", " << 0 << ", " << 0 << ", " 
+				<< 0 << ", " << 0 << ", " << gradientStyle.gradientLength << ");" << endl;
 
 			RenderGradientStops(gradientStyle);
 
@@ -2051,12 +2067,12 @@ void Canvas::RenderGlyphRun(char *contents, const GlyphState& glyphState, unsign
 		glyphState.fontStyleName != currentState->fontStyleName)
 	{
 		// Output font and style information
-		outFile  << contextName << ".font = \"" << endl;
+		outFile  << contextName << ".font = \"";
 		if (glyphState.fontStyleName != "Regular")
 		{
 			outFile << glyphState.fontStyleName << " ";
 		}
-		outFile << setiosflags(ios::fixed) << setprecision(1) << glyphState.fontSize << "px '" << glyphState.fontName << "'\";";
+		outFile << setiosflags(ios::fixed) << setprecision(1) << glyphState.fontSize << "px '" << glyphState.fontName << "'\";" << endl;
 
 		// Remember current font state
 		currentState->fontSize = glyphState.fontSize;
