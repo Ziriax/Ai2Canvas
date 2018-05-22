@@ -40,7 +40,7 @@ AIBoolean ProgressProc(ai::int32 current, ai::int32 total)
 }
 
 // Simple way to describe art types for debugging purposes
-static const char *m_artTypes[] = 
+static const char *m_artTypes[] =
 {
 	"kUnknownArt", "kGroupArt", "kPathArt", "kCompoundPathArt", "kTextArtUnsupported", "kTextPathArtUnsupported", "kTextRunArtUnsupported", "kPlacedArt", "kMysteryPathArt", "kRasterArt", "kPluginArt", "kMeshArt", "kTextFrameArt", "kSymbolArt", "kForeignArt", "kLegacyTextArt"
 };
@@ -118,7 +118,7 @@ void Canvas::Render()
 {
 	// Start canvas tag
 	outFile << "<canvas id=\"" << id << "\" " << endl;
-			
+
 	// Is this canvas hidden?
 	if (isHidden)
 	{
@@ -127,7 +127,7 @@ void Canvas::Render()
 			outFile << "style=\"display: none\" ";
 		}
 	}
-			
+
 	// Output ID and dimensions
 	outFile << "width=\"" << (int)ceil(width) << "\" height=\"" << (int)ceil(height) << "\"></canvas>";
 }
@@ -195,8 +195,7 @@ void Canvas::RenderArt(AIArtHandle artHandle, unsigned int depth)
 
 		// Find the next sibling
 		sAIArt->GetArtSibling(artHandle, &artHandle);
-	}
-	while (artHandle != nil);
+	} while (artHandle != nil);
 
 	// Did we find a clipping path?
 	if (hasClipIndex)
@@ -248,7 +247,7 @@ void Canvas::RenderArt(AIArtHandle artHandle, unsigned int depth)
 			if (mask != NULL)
 			{
 				// Output a warning
-				outFile  << "// This artwork uses an unsupported opacity mask" << endl;
+				outFile << "// This artwork uses an unsupported opacity mask" << endl;
 
 				// Rasterize the art
 				rasterizeArt = true;
@@ -284,7 +283,7 @@ void Canvas::RenderArt(AIArtHandle artHandle, unsigned int depth)
 			if (blendingMode != kAINormalBlendingMode)
 			{
 				// Output a warning
-				outFile  << "// This artwork uses an unsupported \"" << std::string(blendingModes[blendingMode]) << "\" blending mode" << endl;
+				outFile << "// This artwork uses an unsupported \"" << std::string(blendingModes[blendingMode]) << "\" blending mode" << endl;
 			}
 
 			// Do we need to increase depth because of a drop shadow?
@@ -312,7 +311,7 @@ void Canvas::RenderArt(AIArtHandle artHandle, unsigned int depth)
 			{
 				// Rasterize the art
 				std::string fileName = GetUniqueFileName(documentResources->folderPath, "image", ".png");
-				outFile  << "// This unsupported artwork has been rasterized" << endl;
+				outFile << "// This unsupported artwork has been rasterized" << endl;
 				RenderUnsupportedArt(artHandle, fileName, depth);
 			}
 			else
@@ -324,7 +323,7 @@ void Canvas::RenderArt(AIArtHandle artHandle, unsigned int depth)
 					currentState->globalAlpha = opacity;
 
 					// Change global alpha (based on the "base" alpha value)
-					outFile  << contextName << ".globalAlpha = alpha * " <<
+					outFile << contextName << ".globalAlpha = alpha * " <<
 						setiosflags(ios::fixed) << setprecision(2) << currentState->globalAlpha << ";" << endl;
 				}
 
@@ -333,60 +332,60 @@ void Canvas::RenderArt(AIArtHandle artHandle, unsigned int depth)
 				sAIArt->GetArtType(artHandle, &type);
 				if (debug)
 				{
-					outFile  << "// Art type = " << std::string(m_artTypes[type]) << " (" << type << ")" << endl;
+					outFile << "// Art type = " << std::string(m_artTypes[type]) << " (" << type << ")" << endl;
 				}
 
 				// Process based on art type
 				switch (type)
 				{
-					case kGroupArt:
-					{
-						// Render this sub-group
-						RenderGroupArt(artHandle, depth);
-						break;
-					}
-					case kPluginArt:
-					{
-						RenderPluginArt(artHandle, depth);
-						break;
-					}
-					case kSymbolArt:
-					{
-						RenderSymbolArt(artHandle, depth);
-						break;
-					}
-					case kCompoundPathArt:
-					{
-						RenderCompoundPathArt(artHandle, depth);
-						break;
-					}
-					case kPathArt:
-					{
-						RenderPathArt(artHandle, depth);
-						break;
-					}
-					case kTextFrameArt:
-					{
-						RenderTextFrameArt(artHandle, depth);
-						break;
-					}
-					case kPlacedArt:
-					{
-						RenderPlacedArt(artHandle, depth);
-						break;
-					}
-					case kRasterArt:
-					{
-						RenderRasterArt(artHandle);
-						break;
-					}
-					case kMeshArt:
-					{
-						// Get a unique file name
-						std::string fileName = GetUniqueFileName(documentResources->folderPath, "image", ".png");
-						RenderUnsupportedArt(artHandle, fileName, depth);
-						break;
-					}
+				case kGroupArt:
+				{
+					// Render this sub-group
+					RenderGroupArt(artHandle, depth);
+					break;
+				}
+				case kPluginArt:
+				{
+					RenderPluginArt(artHandle, depth);
+					break;
+				}
+				case kSymbolArt:
+				{
+					RenderSymbolArt(artHandle, depth);
+					break;
+				}
+				case kCompoundPathArt:
+				{
+					RenderCompoundPathArt(artHandle, depth);
+					break;
+				}
+				case kPathArt:
+				{
+					RenderPathArt(artHandle, depth);
+					break;
+				}
+				case kTextFrameArt:
+				{
+					RenderTextFrameArt(artHandle, depth);
+					break;
+				}
+				case kPlacedArt:
+				{
+					RenderPlacedArt(artHandle, depth);
+					break;
+				}
+				case kRasterArt:
+				{
+					RenderRasterArt(artHandle);
+					break;
+				}
+				case kMeshArt:
+				{
+					// Get a unique file name
+					std::string fileName = GetUniqueFileName(documentResources->folderPath, "image", ".png");
+					RenderUnsupportedArt(artHandle, fileName, depth);
+					break;
+				}
 				}
 			}
 
@@ -421,19 +420,19 @@ void Canvas::ParseArtStyle(AIArtHandle artHandle, ASInt32& postEffectCount, AIBl
 
 	// Get the style for this art handle
 	AIArtStyleHandle artStyle = NULL;
-    sAIArtStyle->GetArtStyle(artHandle, &artStyle);
+	sAIArtStyle->GetArtStyle(artHandle, &artStyle);
 
 	// Create a new style parser 
 	AIStyleParser parser(NULL);
-    sAIArtStyleParser->NewParser(&parser);
-    
+	sAIArtStyleParser->NewParser(&parser);
+
 	// Parse the art style
-    sAIArtStyleParser->ParseStyle(parser, artStyle);
+	sAIArtStyleParser->ParseStyle(parser, artStyle);
 
 	// Get blend field
 	AIParserBlendField blendField;
-	sAIArtStyleParser->GetStyleBlendField(parser, &blendField); 
-	
+	sAIArtStyleParser->GetStyleBlendField(parser, &blendField);
+
 	// Get the blending mode
 	blendingMode = sAIBlendStyle->GetBlendingMode(artHandle);
 
@@ -441,16 +440,16 @@ void Canvas::ParseArtStyle(AIArtHandle artHandle, ASInt32& postEffectCount, AIBl
 	postEffectCount = sAIArtStyleParser->CountPostEffects(parser);
 
 	// Loop through all post-effect art styles
-    for (ASInt32 postIndex = 0; (postIndex < postEffectCount); ++postIndex)
-    {
+	for (ASInt32 postIndex = 0; (postIndex < postEffectCount); ++postIndex)
+	{
 		// Parse the Live Effects
-        AIParserLiveEffect liveEffect;
-        sAIArtStyleParser->GetNthPostEffect(parser, postIndex, &liveEffect);
+		AIParserLiveEffect liveEffect;
+		sAIArtStyleParser->GetNthPostEffect(parser, postIndex, &liveEffect);
 
 		// Get the Live Effect handle
 		AILiveEffectHandle liveEffectHandle;
 		sAIArtStyleParser->GetLiveEffectHandle(liveEffect, &liveEffectHandle);
-		
+
 		// Get the name of the effect (function appears to allocate its own memory???)
 		const char *liveEffectName = NULL;
 		// TODO: Do we need to release this memory somewhere? Or does the fact that we retrieved the handle via the AIArtStyleParser do the trick
@@ -458,10 +457,10 @@ void Canvas::ParseArtStyle(AIArtHandle artHandle, ASInt32& postEffectCount, AIBl
 		sAILiveEffect->GetLiveEffectName(liveEffectHandle, &liveEffectName);
 		if (debug)
 		{
-			outFile  << "// Live Effect name = " << liveEffectName << endl;
+			outFile << "// Live Effect name = " << liveEffectName << endl;
 		}
 
-        // Check to see if the name is �Adobe Drop Shadow�
+		// Check to see if the name is �Adobe Drop Shadow�
 		if (strcmp(liveEffectName, "Adobe Drop Shadow") == 0)
 		{
 			// Set default drop shadow values
@@ -486,7 +485,7 @@ void Canvas::ParseArtStyle(AIArtHandle artHandle, ASInt32& postEffectCount, AIBl
 
 				// Iterate through the parameter dictionary entries
 				int a = 0;
-				while ( !sAIDictionaryIterator->AtEnd(dictionaryIter) )
+				while (!sAIDictionaryIterator->AtEnd(dictionaryIter))
 				{
 					// Get the dictionary key
 					AIDictKey dictKey = sAIDictionaryIterator->GetKey(dictionaryIter);
@@ -497,12 +496,12 @@ void Canvas::ParseArtStyle(AIArtHandle artHandle, ASInt32& postEffectCount, AIBl
 
 					// Clean-up key string
 					char betterKeyString[256];
-					#ifdef MAC_ENV
+#ifdef MAC_ENV
 					strcpy(betterKeyString, keyString);
-					#endif
-					#ifdef WIN_ENV
+#endif
+#ifdef WIN_ENV
 					strcpy_s(betterKeyString, keyString);
-					#endif
+#endif
 					if (betterKeyString[0] == '-')
 						betterKeyString[0] = ' ';
 
@@ -548,10 +547,10 @@ void Canvas::ParseArtStyle(AIArtHandle artHandle, ASInt32& postEffectCount, AIBl
 			// A Live Effect we don't recognize
 			if (debug)
 			{
-				outFile  << "//     Unsupported Live Effect: \"" << liveEffectName << "\"" << endl;
+				outFile << "//     Unsupported Live Effect: \"" << liveEffectName << "\"" << endl;
 			}
 		}
-    }
+	}
 
 	// Dispose the art style parser
 	sAIArtStyleParser->DisposeParser(parser);
@@ -570,7 +569,7 @@ void Canvas::SetContextDrawingState(unsigned int depth)
 			PopState();
 
 			// Restore canvas state
-			outFile  << contextName << ".restore();" << endl;
+			outFile << contextName << ".restore();" << endl;
 		}
 	}
 	else if (depth > states.size())
@@ -582,7 +581,7 @@ void Canvas::SetContextDrawingState(unsigned int depth)
 			PushState();
 
 			// Save canvas state
-			outFile  << contextName << ".save();" << endl;
+			outFile << contextName << ".save();" << endl;
 		}
 	}
 }
@@ -595,15 +594,15 @@ void Canvas::RenderDropShadow(const DropShadow& dropShadow)
 	// Allocate memory for shadow fill color value string
 	std::string shadowColor;
 	shadowColor = GetColor(dropShadow.shadowStyle.color, dropShadow.opac);
-	outFile  << contextName << ".shadowColor = " << shadowColor << ";" << endl;
+	outFile << contextName << ".shadowColor = " << shadowColor << ";" << endl;
 
 	// Shadow offsets
-	outFile  << contextName << ".shadowOffsetX = " << setiosflags(ios::fixed) << setprecision(1) << dropShadow.horz << ";" << endl;
-	outFile  << contextName << ".shadowOffsetY = " << setiosflags(ios::fixed) << setprecision(1) << dropShadow.vert << ";" << endl;
+	outFile << contextName << ".shadowOffsetX = " << setiosflags(ios::fixed) << setprecision(1) << dropShadow.horz << ";" << endl;
+	outFile << contextName << ".shadowOffsetY = " << setiosflags(ios::fixed) << setprecision(1) << dropShadow.vert << ";" << endl;
 
 	// Shadow blur
 	// TODO: Note that it appears that we have to double the Illustrator value to achieve equivalent results with <canvas>
-	outFile  << contextName << ".shadowBlur = " << setiosflags(ios::fixed) << setprecision(1) << (dropShadow.blur * 2.0f) << ";" << endl;
+	outFile << contextName << ".shadowBlur = " << setiosflags(ios::fixed) << setprecision(1) << (dropShadow.blur * 2.0f) << ";" << endl;
 }
 
 // There's no direct equivalent, so just rasterize to a bitmap
@@ -667,76 +666,76 @@ void Canvas::RasterizeArtToPNG(AIArtHandle artHandle, const std::string& path)
 	ai::FilePath filePath;
 	filePath.Set(ai::UnicodeString(path));
 
-    AIRealRect bounds;
-    sAIArt->GetArtBounds(artHandle, &bounds);
-    AIReal artWidth = bounds.right - bounds.left;
-    AIReal artHeight = bounds.top - bounds.bottom;
+	AIRealRect bounds;
+	sAIArt->GetArtBounds(artHandle, &bounds);
+	AIReal artWidth = bounds.right - bounds.left;
+	AIReal artHeight = bounds.top - bounds.bottom;
 
 	AIErr result = kNoErr;
 	AIDataFilter *dstFilter = NULL;
 	AIDataFilter *filter = NULL;
 	if (!result)
-			result = sAIDataFilter->NewFileDataFilter(filePath, "write", 'prw', 'PNGf', &filter);
+		result = sAIDataFilter->NewFileDataFilter(filePath, "write", 'prw', 'PNGf', &filter);
 	if (!result) {
-			result = sAIDataFilter->LinkDataFilter(dstFilter, filter);
-			dstFilter = filter;
+		result = sAIDataFilter->LinkDataFilter(dstFilter, filter);
+		dstFilter = filter;
 	}
 
 	// Set PNG parameters
 	AIImageOptPNGParams2 params;
-    params.versionOneSuiteParams.interlaced = false;
-    params.versionOneSuiteParams.numberOfColors = 16777216;
-    params.versionOneSuiteParams.transparentIndex = 0;
-    params.versionOneSuiteParams.resolution = 72.0f;
-    params.versionOneSuiteParams.outAlpha = true;
-    params.versionOneSuiteParams.outWidth = (ASInt32)artWidth;
-    params.versionOneSuiteParams.outHeight = (ASInt32)artHeight;
+	params.versionOneSuiteParams.interlaced = false;
+	params.versionOneSuiteParams.numberOfColors = 16777216;
+	params.versionOneSuiteParams.transparentIndex = 0;
+	params.versionOneSuiteParams.resolution = 72.0f;
+	params.versionOneSuiteParams.outAlpha = true;
+	params.versionOneSuiteParams.outWidth = (ASInt32)artWidth;
+	params.versionOneSuiteParams.outHeight = (ASInt32)artHeight;
 
-    //We assume that the basic resolution of illustrator is 72 dpi
-    AIReal resolutionRatio =  1.0f;
-    AIReal minDim = std::min(artWidth,artHeight) * resolutionRatio;
-    AIReal maxDim = std::max(artWidth,artHeight) * resolutionRatio;
-    AIReal ratio = 1;
+	//We assume that the basic resolution of illustrator is 72 dpi
+	AIReal resolutionRatio = 1.0f;
+	AIReal minDim = std::min(artWidth, artHeight) * resolutionRatio;
+	AIReal maxDim = std::max(artWidth, artHeight) * resolutionRatio;
+	AIReal ratio = 1;
 
-    if (minDim < 1)
-    {
-            ratio = 1 / minDim;
-            minDim *= ratio;
-            maxDim *= ratio;
-    }
+	if (minDim < 1)
+	{
+		ratio = 1 / minDim;
+		minDim *= ratio;
+		maxDim *= ratio;
+	}
 
-    if (maxDim > 65535)
-    {
-            ratio *= 65535 / maxDim;
-    }
+	if (maxDim > 65535)
+	{
+		ratio *= 65535 / maxDim;
+	}
 
-    //Here we tune the resolution parameter to comply to minRasterizationDimension and
-    //maxRasterizationDimension constraints
-    //We assume that the basic resolution of illustrator is 72 dpi
-    params.versionOneSuiteParams.resolution *= (AIFloat)ratio;
+	//Here we tune the resolution parameter to comply to minRasterizationDimension and
+	//maxRasterizationDimension constraints
+	//We assume that the basic resolution of illustrator is 72 dpi
+	params.versionOneSuiteParams.resolution *= (AIFloat)ratio;
 
-    params.antialias = true;
-    /* A cropping box for the art. If empty or degenerate, do not crop. */
+	params.antialias = true;
+	/* A cropping box for the art. If empty or degenerate, do not crop. */
 	AIRealRect crop;
 	crop.left = 0.0f;
 	crop.top = 0.0f;
 	crop.right = 0.0f;
 	crop.bottom = 0.0f;
-    params.cropBox = crop;
-    params.backgroundIsTransparent = true;
-    /* When backgroundIsTransparent is false, rasterize against this matte color. */
-    /*params.matteColor.red = 1.0f;
-    params.matteColor.green = 1.0f;
-    params.matteColor.blue = 1.0f; */
+	params.cropBox = crop;
+	params.backgroundIsTransparent = true;
+	/* When backgroundIsTransparent is false, rasterize against this matte color. */
+	/*params.matteColor.red = 1.0f;
+	params.matteColor.green = 1.0f;
+	params.matteColor.blue = 1.0f; */
 
 	// Make PNG
-    result = sAIImageOpt->MakePNG24 (artHandle, dstFilter, params, ProgressProc);
+	result = sAIImageOpt->MakePNG24(artHandle, dstFilter, params, ProgressProc);
 
-    if (dstFilter)
+	if (dstFilter)
 	{
 		AIErr tmpresult = sAIDataFilter->UnlinkDataFilter(dstFilter, &dstFilter);
 		if (!result)
-				result = tmpresult;
+			result = tmpresult;
 	}
 }
 
@@ -760,14 +759,14 @@ void Canvas::GetPNGDimensions(const std::string& path, unsigned int& imgWidth, u
 #ifdef MAC_ENV
 	// PNG file handle
 	FILE *pngFile = NULL;
-	
+
 	// Open the PNG file for binary reading
 	pngFile = fopen(path.c_str(), "rb");
 #endif
 #ifdef WIN_ENV
 	// PNG file handle
 	FILE *pngFile = NULL;
-	
+
 	// Open the PNG file for binary reading
 	fopen_s(&pngFile, path.c_str(), "rb");
 #endif
@@ -818,14 +817,14 @@ void Canvas::GetPNGDimensions(const std::string& path, unsigned int& imgWidth, u
 // Flip "endianness" (for PNG files)
 uint32_t Canvas::ReverseInt(uint32_t i)
 {
-    uint32_t c1, c2, c3, c4;
+	uint32_t c1, c2, c3, c4;
 
-    c1 = i & 255;
-    c2 = (i >> 8) & 255;
-    c3 = (i >> 16) & 255;
-    c4 = (i >> 24) & 255;
+	c1 = i & 255;
+	c2 = (i >> 8) & 255;
+	c3 = (i >> 16) & 255;
+	c4 = (i >> 24) & 255;
 
-    return (c1 << 24) + (c2 << 16) + (c3 << 8) + c4;
+	return (c1 << 24) + (c2 << 16) + (c3 << 8) + c4;
 }
 
 // Get JPG DPI
@@ -852,14 +851,14 @@ AIReal Canvas::GetJPGDPI(const std::string& path)
 #ifdef MAC_ENV
 	// JPG file handle
 	FILE *jpgFile = NULL;
-	
+
 	// Open the JPG file for binary reading
 	jpgFile = fopen(path.c_str(), "rb");
 #endif
 #ifdef WIN_ENV
 	// JPG file handle
 	FILE *jpgFile = NULL;
-	
+
 	// Open the JPG file for binary reading
 	fopen_s(&jpgFile, path.c_str(), "rb");
 #endif
@@ -909,12 +908,12 @@ AIReal Canvas::GetJPGDPI(const std::string& path)
 // Flip "endianness" (for JPG files)
 uint16_t Canvas::ReverseInt(uint16_t i)
 {
-    uint16_t c1, c2;
+	uint16_t c1, c2;
 
-    c1 = i & 255;
-    c2 = (i >> 8) & 255;
+	c1 = i & 255;
+	c2 = (i >> 8) & 255;
 
-    return (c1 << 8) + c2;
+	return (c1 << 8) + c2;
 }
 
 void Canvas::ReportRasterRecordInfo(const AIRasterRecord& rasterRecord)
@@ -943,7 +942,7 @@ void Canvas::ReportRasterRecordInfo(const AIRasterRecord& rasterRecord)
 void Canvas::ReportColorSpaceInfo(ai::int16 colorSpace)
 {
 	// Simple way to describe color space types for debugging purposes
-	static const char *colorSpaces[] = 
+	static const char *colorSpaces[] =
 	{
 		"kGrayColorSpace", "kRGBColorSpace", "kCMYKColorSpace"
 	};
@@ -979,7 +978,7 @@ void Canvas::RenderPluginArt(AIArtHandle artHandle, unsigned int depth)
 	sAIPluginGroup->GetPluginArtName(artHandle, pluginArtName);
 	if (debug)
 	{
-		outFile  << "// Plug-in art name = " << std::string(*pluginArtName) << endl;
+		outFile << "// Plug-in art name = " << std::string(*pluginArtName) << endl;
 	}
 
 	// Is this the Pathfinder Suite? If so, we need to grab the style from this art handle
@@ -1026,17 +1025,17 @@ void Canvas::RenderSymbolArt(AIArtHandle artHandle, unsigned int depth)
 	sAISymbol->GetSoftTransformOfSymbolArt(artHandle, &transform);
 
 	// Concat by [1 0 0 -1 0 0] as coordinates are going positive the other direction.
-	AIRealMatrix flipY = 
+	AIRealMatrix flipY =
 	{
-		1, 0, 0,  - 1, 0, 0
+		1, 0, 0,  -1, 0, 0
 	};
 	sAIRealMath->AIRealMatrixConcat(&flipY, &transform, &transform);
 
 	// Concatenate symbol matrix with current internal transform
 	sAIRealMath->AIRealMatrixConcat(&transform, &currentState->internalTransform, &transform);
-	
+
 	// Render symbol transformation
-	outFile  << contextName << ".transform(";
+	outFile << contextName << ".transform(";
 	RenderTransform(transform);
 	outFile << ");" << endl;
 
@@ -1052,7 +1051,7 @@ void Canvas::RenderSymbolArt(AIArtHandle artHandle, unsigned int depth)
 	if (symbolPattern)
 	{
 		// Call the symbol function
-		outFile  << symbolPattern->name << "(" << contextName << ");" << endl;
+		outFile << symbolPattern->name << "(" << contextName << ");" << endl;
 	}
 
 	// Restore canvas state
@@ -1066,7 +1065,7 @@ void Canvas::RenderCompoundPathArt(AIArtHandle artHandle, unsigned int depth)
 	AIArtHandle childArtHandle = NULL;
 	sAIArt->GetArtFirstChild(artHandle, &childArtHandle);
 
-	outFile  << contextName << ".beginPath();" << endl;
+	outFile << contextName << ".beginPath();" << endl;
 
 	// Render this sub-group
 	RenderArt(childArtHandle, depth);
@@ -1105,7 +1104,7 @@ void Canvas::RenderPathArt(AIArtHandle artHandle, unsigned int depth)
 		isCompound = ((attr &kArtPartOfCompound) == kArtPartOfCompound);
 		if (debug)
 		{
-			outFile  << "// Art is compound = " << isCompound << endl;
+			outFile << "// Art is compound = " << isCompound << endl;
 		}
 
 		// Get the "normal" style for this path
@@ -1115,7 +1114,7 @@ void Canvas::RenderPathArt(AIArtHandle artHandle, unsigned int depth)
 		// Begin path
 		if (!isCompound)
 		{
-			outFile  << contextName << ".beginPath();" << endl;
+			outFile << contextName << ".beginPath();" << endl;
 		}
 
 		// Write each path as a figure
@@ -1174,7 +1173,7 @@ void Canvas::RenderPathFigure(AIArtHandle artHandle)
 	TransformPoint(segment.out);
 
 	// Move to the first point
-	outFile  << contextName << ".moveTo(" <<
+	outFile << contextName << ".moveTo(" <<
 		setiosflags(ios::fixed) << setprecision(1) <<
 		segment.p.h << ", " << segment.p.v << ");" << endl;
 
@@ -1202,7 +1201,7 @@ void Canvas::RenderPathFigure(AIArtHandle artHandle)
 		RenderSegment(previousSegment, firstSegment);
 
 		// Close the path
-		outFile  << contextName << ".closePath();" << endl;
+		outFile << contextName << ".closePath();" << endl;
 	}
 }
 
@@ -1220,7 +1219,7 @@ void Canvas::RenderSegment(AIPathSegment& previousSegment, AIPathSegment& segmen
 
 	// Is this a straight line segment?
 	AIBoolean isLine = ((previousSegment.p.h == previousSegment.out.h && previousSegment.p.v == previousSegment.out.v) &&
-						(segment.p.h == segment.in.h && segment.p.v == segment.in.v));
+		(segment.p.h == segment.in.h && segment.p.v == segment.in.v));
 
 	// Draw a segment
 
@@ -1228,14 +1227,14 @@ void Canvas::RenderSegment(AIPathSegment& previousSegment, AIPathSegment& segmen
 	if (isLine)
 	{
 		// Draw straight line
-		outFile  << contextName << ".lineTo(" <<
-			setiosflags(ios::fixed) << setprecision(1) << 
+		outFile << contextName << ".lineTo(" <<
+			setiosflags(ios::fixed) << setprecision(1) <<
 			segment.p.h << ", " << segment.p.v << ");" << endl;
 	}
 	else
 	{
 		// Output Bezier segment
-		outFile  << contextName << ".bezierCurveTo(" <<
+		outFile << contextName << ".bezierCurveTo(" <<
 			setiosflags(ios::fixed) << setprecision(1)
 			<< previousSegment.out.h << ", " << previousSegment.out.v << ", "
 			<< segment.in.h << ", " << segment.in.v << ", "
@@ -1248,7 +1247,7 @@ void Canvas::RenderPathStyle(const AIPathStyle& style, unsigned int depth)
 	// Is this clipping?
 	if (style.clip)
 	{
-		outFile  << contextName << ".clip();" << endl;
+		outFile << contextName << ".clip();" << endl;
 	}
 	else
 	{
@@ -1261,12 +1260,12 @@ void Canvas::RenderPathStyle(const AIPathStyle& style, unsigned int depth)
 			RenderFillInfo(style.fill.color, depth);
 			if (style.evenodd)
 			{
-				outFile  << contextName << ".fill(\"evenodd\");" << endl;
+				outFile << contextName << ".fill(\"evenodd\");" << endl;
 			}
 			else
 			{
 				// Non-zero is the default, so no need to specify
-				outFile  << contextName << ".fill();" << endl;
+				outFile << contextName << ".fill();" << endl;
 			}
 		}
 
@@ -1274,7 +1273,7 @@ void Canvas::RenderPathStyle(const AIPathStyle& style, unsigned int depth)
 		if (style.strokePaint)
 		{
 			RenderStrokeInfo(style.stroke);
-			outFile  << contextName << ".stroke();" << endl;
+			outFile << contextName << ".stroke();" << endl;
 		}
 	}
 }
@@ -1286,7 +1285,7 @@ void Canvas::RenderPlacedArt(AIArtHandle artHandle, unsigned int depth)
 	sAIPlaced->GetPlacedType(artHandle, &placedType);
 	if (debug)
 	{
-		outFile  << "// Placed art type = " << placedType << endl;
+		outFile << "// Placed art type = " << placedType << endl;
 	}
 
 	// Only bother if this isn't EPS art (should then be linked raster art)
@@ -1297,7 +1296,7 @@ void Canvas::RenderPlacedArt(AIArtHandle artHandle, unsigned int depth)
 		sAIPlaced->GetPlacedFilePathFromArt(artHandle, path);
 		if (debug)
 		{
-			outFile  << "// Placed art file path = " << path.as_Platform() << endl;
+			outFile << "// Placed art file path = " << path.as_Platform() << endl;
 		}
 
 		// Add a new image
@@ -1359,7 +1358,7 @@ void Canvas::RenderPlacedArt(AIArtHandle artHandle, unsigned int depth)
 		SetContextDrawingState(depth);
 
 		// Render transform
-		outFile  << contextName << ".transform(";
+		outFile << contextName << ".transform(";
 		RenderTransform(transform);
 		outFile << ");" << endl;
 
@@ -1390,7 +1389,7 @@ void Canvas::RenderRasterArt(AIArtHandle artHandle)
 	sAIRaster->GetRasterFilePathFromArt(artHandle, path);
 	if (debug)
 	{
-		outFile  << "// Raster file path from art = " << path.as_Platform() << endl;
+		outFile << "// Raster file path from art = " << path.as_Platform() << endl;
 	}
 
 	// Did we get a filename?
@@ -1459,23 +1458,23 @@ void Canvas::RenderMidPointColor(const AIColor& color1, AIReal alpha1, const AIC
 	// Calculate mid-point
 	AIReal percentage = 0.5;
 
-    // Output color values
+	// Output color values
 	if (alpha1 != 1.0f ||
-        alpha2 != 1.0f)
+		alpha2 != 1.0f)
 	{
 		// Include alpha
-        outFile << "rgba(" <<
-		(int)((rgbColor1.c.rgb.red + (percentage *(rgbColor2.c.rgb.red - rgbColor1.c.rgb.red)))*(float)255) << ", " <<
-		(int)((rgbColor1.c.rgb.green + (percentage *(rgbColor2.c.rgb.green - rgbColor1.c.rgb.green)))*(float)255) << ", " <<
-		(int)((rgbColor1.c.rgb.blue + (percentage *(rgbColor2.c.rgb.blue - rgbColor1.c.rgb.blue)))*(float)255) << ", " <<
-        setiosflags(ios::fixed) << setprecision(2) << (alpha1 + (percentage * (alpha2 - alpha1))) << ")";
+		outFile << "rgba(" <<
+			(int)((rgbColor1.c.rgb.red + (percentage *(rgbColor2.c.rgb.red - rgbColor1.c.rgb.red)))*(float)255) << ", " <<
+			(int)((rgbColor1.c.rgb.green + (percentage *(rgbColor2.c.rgb.green - rgbColor1.c.rgb.green)))*(float)255) << ", " <<
+			(int)((rgbColor1.c.rgb.blue + (percentage *(rgbColor2.c.rgb.blue - rgbColor1.c.rgb.blue)))*(float)255) << ", " <<
+			setiosflags(ios::fixed) << setprecision(2) << (alpha1 + (percentage * (alpha2 - alpha1))) << ")";
 	}
 	else
 	{
-        outFile << "rgb(" <<
-		(int)((rgbColor1.c.rgb.red + (percentage *(rgbColor2.c.rgb.red - rgbColor1.c.rgb.red)))*(float)255) << ", " <<
-		(int)((rgbColor1.c.rgb.green + (percentage *(rgbColor2.c.rgb.green - rgbColor1.c.rgb.green)))*(float)255) << ", " <<
-		(int)((rgbColor1.c.rgb.blue + (percentage *(rgbColor2.c.rgb.blue - rgbColor1.c.rgb.blue)))*(float)255) << ")";
+		outFile << "rgb(" <<
+			(int)((rgbColor1.c.rgb.red + (percentage *(rgbColor2.c.rgb.red - rgbColor1.c.rgb.red)))*(float)255) << ", " <<
+			(int)((rgbColor1.c.rgb.green + (percentage *(rgbColor2.c.rgb.green - rgbColor1.c.rgb.green)))*(float)255) << ", " <<
+			(int)((rgbColor1.c.rgb.blue + (percentage *(rgbColor2.c.rgb.blue - rgbColor1.c.rgb.blue)))*(float)255) << ")";
 	}
 }
 
@@ -1491,28 +1490,31 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 	// Grab the origin
 	AIRealPoint p1 = gradientStyle.gradientOrigin;
 
-	std::stringstream ss;
-	ss << fixed << setprecision(1);
-	ss << "origin:        (" << p1.h << ", " << p1.v << ")" << endl;
-	ss << "matrix:        [" << matrix.a << ", " << matrix.b << ", " << matrix.c << ", " << matrix.d << ", " << matrix.tx << ", " << matrix.ty << "]" << endl;
-	ss << "angle:         " << gradientStyle.gradientAngle << endl;
-	ss << "length:        " << gradientStyle.gradientLength << endl;
-	ss << "hilite-angle:  " << gradientStyle.hiliteAngle<< endl;
-	ss << "hilite-length: " << gradientStyle.hiliteLength<< endl;
+	//std::stringstream tss;
+	//tss << fixed << setprecision(1);
+	//tss << "origin:        (" << p1.h << ", " << p1.v << ")" << endl;
+	//tss << "angle:         " << gradientStyle.gradientAngle << endl;
+	//tss << "length:        " << gradientStyle.gradientLength << endl;
+	//tss << "hilite-angle:  " << gradientStyle.hiliteAngle << endl;
+	//tss << "hilite-length: " << gradientStyle.hiliteLength << endl;
+	//tss << fixed << setprecision(3);
+	//tss << "matrix:        [" << matrix.a << ", " << matrix.b << ", " << endl
+	//	<< "                " << matrix.c << ", " << matrix.d << ", " << endl
+	//	<< "                " << matrix.tx << ", " << matrix.ty << "]" << endl;
 
-	std::string text = ss.str();
+	//std::string text = tss.str();
 
-	cout << text;
+	//cout << text;
 
-	const char* output = text.c_str();
-	const size_t len = strlen(output) + 1;
-	HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, len);
-	memcpy(GlobalLock(hMem), output, len);
-	GlobalUnlock(hMem);
-	OpenClipboard(0);
-	EmptyClipboard();
-	SetClipboardData(CF_TEXT, hMem);
-	CloseClipboard();
+	//const char* output = text.c_str();
+	//const size_t len = strlen(output) + 1;
+	//HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, len);
+	//memcpy(GlobalLock(hMem), output, len);
+	//GlobalUnlock(hMem);
+	//OpenClipboard(0);
+	//EmptyClipboard();
+	//SetClipboardData(CF_TEXT, hMem);
+	//CloseClipboard();
 
 	//const auto& cxform = currentState->internalTransform;
 	//cout << "cxform: " << cxform.a << " " << cxform.b << " " << cxform.c << " " << cxform.d << " " << cxform.tx << " " << cxform.ty << endl;
@@ -1527,85 +1529,86 @@ void Canvas::RenderGradient(const AIGradientStyle& gradientStyle, unsigned int d
 
 	switch (type)
 	{
-		case (kLinearGradient): 
+	case (kLinearGradient):
+	{
+		AIRealPoint p2;
+		sAIRealMath->AIRealPointLengthAngle(gradientStyle.gradientLength,
+			sAIRealMath->DegreeToRadian(gradientStyle.gradientAngle), &p2);
+
+		sAIRealMath->AIRealPointAdd(&p1, &p2, &p2);
+
+		sAIRealMath->AIRealMatrixXformPoint(&matrix, &p1, &p1);
+		sAIRealMath->AIRealMatrixXformPoint(&matrix, &p2, &p2);
+
+		if (currentState->isProcessingSymbol)
 		{
-			AIRealPoint p2;
-			sAIRealMath->AIRealPointLengthAngle(gradientStyle.gradientLength, 
-				sAIRealMath->DegreeToRadian(gradientStyle.gradientAngle), &p2);
-
-			sAIRealMath->AIRealPointAdd(&p1, &p2, &p2);
-
-			sAIRealMath->AIRealMatrixXformPoint(&matrix, &p1, &p1);
-			sAIRealMath->AIRealMatrixXformPoint(&matrix, &p2, &p2);
-
-			if (currentState->isProcessingSymbol)
-			{
-				sAIHardSoft->AIRealPointHarden(&p1, &p1);
-				sAIHardSoft->AIRealPointHarden(&p2, &p2);
-			}
-
-			outFile  << "gradient = " << contextName << ".createLinearGradient(" <<
-				setiosflags(ios::fixed) << setprecision(1) <<
-				p1.h << ", " << p1.v << ", " << p2.h << ", " << p2.v << ");" << endl;
-
-			RenderGradientStops(gradientStyle);
-
-			break;
+			sAIHardSoft->AIRealPointHarden(&p1, &p1);
+			sAIHardSoft->AIRealPointHarden(&p2, &p2);
 		}
 
+		outFile << "gradient = " << contextName << ".createLinearGradient(" <<
+			setiosflags(ios::fixed) << setprecision(1) <<
+			p1.h << ", " << p1.v << ", " << p2.h << ", " << p2.v << ");" << endl;
 
-		case (kRadialGradient): 
+		RenderGradientStops(gradientStyle);
+
+		break;
+	}
+
+
+	case (kRadialGradient):
+	{
+		if (currentState->isProcessingSymbol)
 		{
-			if (currentState->isProcessingSymbol)
-			{
-				AIRealMatrix originTransform = matrix;
-				originTransform.c = -originTransform.b;
-				originTransform.d = +originTransform.a;
-				sAIRealMath->AIRealMatrixXformPoint(&originTransform, &p1, &p1);
+			AIRealMatrix originTransform = matrix;
+			originTransform.c = -originTransform.b;
+			originTransform.d = +originTransform.a;
+			sAIRealMath->AIRealMatrixXformPoint(&originTransform, &p1, &p1);
 
-				sAIHardSoft->AIRealPointHarden(&p1, &p1);
+			sAIHardSoft->AIRealPointHarden(&p1, &p1);
 
-				sAIRealMath->AIRealMatrixConcatScale(&matrix, 1, -1);
-			}
-			else
-			{
-				AIRealMatrix originTransform = matrix;
-				originTransform.c = +originTransform.b;
-				originTransform.d = -originTransform.a;
-				sAIRealMath->AIRealMatrixXformPoint(&originTransform, &p1, &p1);
-			}
-
-			// Do we have a transform to apply?
-			// We need to fill *without* the current transform, so push an extra state (it will be automatically popped later);
-			depth++;
-			SetContextDrawingState(depth);
-
-			AIRealMatrix stretchTransform = matrix;
-			stretchTransform.tx = 0;
-			stretchTransform.ty = 0;
-
-			AIRealMatrix transform;
-			sAIRealMath->AIRealMatrixSetIdentity(&transform);
-			sAIRealMath->AIRealMatrixConcat(&transform, &stretchTransform, &transform);
-			//sAIRealMath->AIRealMatrixConcatRotate(&transform, -sAIRealMath->DegreeToRadian(gradientStyle.hiliteAngle + gradientStyle.gradientAngle));
-			sAIRealMath->AIRealMatrixConcatRotate(&transform, -sAIRealMath->DegreeToRadian(gradientStyle.gradientAngle));
-			sAIRealMath->AIRealMatrixConcatTranslate(&transform, p1.h, p1.v);
-
-				// Set gradient transform
-			outFile << contextName << ".transform(";
-			RenderTransform(transform);
-			outFile << ");" << endl;
-
-			// Don't pre-transform any points, because our world transformation will do it for us
-			outFile  << "gradient = " << contextName << ".createRadialGradient(" <<
-				setiosflags(ios::fixed) << setprecision(1) <<
-				gradientStyle.hiliteLength * gradientStyle.gradientLength << ", " << 0 << ", " << 0 << ", " 
-				<< 0 << ", " << 0 << ", " << gradientStyle.gradientLength << ");" << endl;
-
-			RenderGradientStops(gradientStyle);
-
-			break;
+			sAIRealMath->AIRealMatrixConcatScale(&matrix, 1, -1);
 		}
+		else
+		{
+			AIRealMatrix originTransform = matrix;
+			originTransform.c = +originTransform.b;
+			originTransform.d = -originTransform.a;
+			sAIRealMath->AIRealMatrixXformPoint(&originTransform, &p1, &p1);
+		}
+
+		// Do we have a transform to apply?
+		// We need to fill *without* the current transform, so push an extra state (it will be automatically popped later);
+		depth++;
+		SetContextDrawingState(depth);
+
+		AIRealMatrix stretchTransform = matrix;
+		stretchTransform.tx = 0;
+		stretchTransform.ty = 0;
+
+		AIRealMatrix transform;
+		sAIRealMath->AIRealMatrixSetIdentity(&transform);
+		sAIRealMath->AIRealMatrixConcatRotate(&transform, sAIRealMath->DegreeToRadian(gradientStyle.hiliteAngle));
+		sAIRealMath->AIRealMatrixConcat(&transform, &stretchTransform, &transform);
+		sAIRealMath->AIRealMatrixConcatRotate(&transform, -sAIRealMath->DegreeToRadian(gradientStyle.gradientAngle));
+		sAIRealMath->AIRealMatrixConcatTranslate(&transform, p1.h, p1.v);
+
+		// Set gradient transform
+		outFile << contextName << ".transform(";
+		RenderTransform(transform);
+		outFile << ");" << endl;
+
+		// HACK: We subtract 0.1 to work around a bug in Chrome/the spec
+		// https://bugs.chromium.org/p/chromium/issues/detail?id=322487
+		outFile << "gradient = " << contextName << ".createRadialGradient(" <<
+			setiosflags(ios::fixed) << setprecision(1) <<
+			gradientStyle.hiliteLength * std::max(0.0, gradientStyle.gradientLength - 0.1) << ", " << 0 << ", " << 0 << ", "
+			<< 0 << ", " << 0 << ", " << gradientStyle.gradientLength << ");" << endl;
+
+		RenderGradientStops(gradientStyle);
+
+		break;
+	}
 	}
 }
 
@@ -1624,7 +1627,7 @@ void Canvas::RenderGradientStops(const AIGradientStyle& gradientStyle)
 	{
 		sAIGradient->GetNthGradientStop(gradientStyle.gradient, index, &gradientStop);
 		stopPoint = gradientStop.rampPoint / (float)100;
-		outFile  << "gradient.addColorStop(" <<
+		outFile << "gradient.addColorStop(" <<
 			setiosflags(ios::fixed) << setprecision(2) <<
 			stopPoint << ", " << GetColor(gradientStop.color, gradientStop.opacity) << ");" << endl;
 
@@ -1633,7 +1636,7 @@ void Canvas::RenderGradientStops(const AIGradientStyle& gradientStyle)
 		{
 			sAIGradient->GetNthGradientStop(gradientStyle.gradient, index + 1, &gradientStopNext);
 			stopPoint = (gradientStop.rampPoint + ((gradientStop.midPoint / (float)100)*(gradientStopNext.rampPoint - gradientStop.rampPoint))) / (float)100;
-			outFile  << "gradient.addColorStop(" <<
+			outFile << "gradient.addColorStop(" <<
 				setiosflags(ios::fixed) << setprecision(2) <<
 				stopPoint << ", \"";
 			RenderMidPointColor(gradientStop.color, gradientStop.opacity, gradientStopNext.color, gradientStopNext.opacity);
@@ -1654,84 +1657,84 @@ void Canvas::RenderFillInfo(const AIColor& fillColor, unsigned int depth)
 	// Render based on the kind of fill style
 	switch (fillColor.kind)
 	{
-		case (kGrayColor):
-        case (kFourColor):
-        case (kCustomColor):
-        case (kThreeColor):
+	case (kGrayColor):
+	case (kFourColor):
+	case (kCustomColor):
+	case (kThreeColor):
+	{
+		// Is the fill color different?
+		if (fillStyle != currentState->fillStyle)
 		{
-			// Is the fill color different?
-			if (fillStyle != currentState->fillStyle)
-			{
-				// Change to new fill color
-				currentState->fillStyle = fillStyle;
+			// Change to new fill color
+			currentState->fillStyle = fillStyle;
 
-				// Change the fill style
-				outFile  << contextName << ".fillStyle = " << currentState->fillStyle << ";" << endl;
-			}
-			break;
+			// Change the fill style
+			outFile << contextName << ".fillStyle = " << currentState->fillStyle << ";" << endl;
 		}
-		case (kPattern): 
+		break;
+	}
+	case (kPattern):
+	{
+		// Find the pattern
+		Pattern* pattern = documentResources->patterns.Find(fillColor.c.p.pattern);
+
+		// Did we find the pattern?
+		// NOTE: This should always succeed
+		if (pattern)
 		{
-			// Find the pattern
-			Pattern* pattern = documentResources->patterns.Find(fillColor.c.p.pattern);
-
-			// Did we find the pattern?
-			// NOTE: This should always succeed
-			if (pattern)
-			{
-				// Change to "pattern" fill style
-				currentState->fillStyle = fillStyle;
-
-				// We need to fill *without* the current transform, so push an extra state (it will be automatically popped later);
-				depth++;
-				SetContextDrawingState(depth);
-
-				// Create the pattern
-				// Don't save context, since this is a different/sub canvas
-				outFile  << "pattern = " << contextName << ".createPattern(" <<
-					"document.getElementById(\"pattern" << pattern->canvasIndex << "\"), \"repeat\");" << endl;
-
-				// Set pattern fill transform
-				// TODO: Need to figure out how to determine proper X and Y offsets
-				// TODO: We should be able to avoid this, if the transform is identity
-				outFile  << contextName << ".transform(";
-				RenderTransform(fillColor.c.p.transform);
-				outFile << ");" << endl;
-
-				// Change fill style to pattern
-				outFile  << contextName << ".fillStyle = " << currentState->fillStyle << ";" << endl;
-			}
-
-			break;
-		}
-		case (kGradient): 
-		{
-			// Write gradient information
-			RenderGradient(fillColor.c.b, depth);
-
-			// Change to "gradient" fill style
-			// NOTE: Gradients are very rarely identical, so no special state optimization here
+			// Change to "pattern" fill style
 			currentState->fillStyle = fillStyle;
 
 			// We need to fill *without* the current transform, so push an extra state (it will be automatically popped later);
-			//depth++;
-			//SetContextDrawingState(depth);
+			depth++;
+			SetContextDrawingState(depth);
 
-			// Set gradient fill transform
+			// Create the pattern
+			// Don't save context, since this is a different/sub canvas
+			outFile << "pattern = " << contextName << ".createPattern(" <<
+				"document.getElementById(\"pattern" << pattern->canvasIndex << "\"), \"repeat\");" << endl;
+
+			// Set pattern fill transform
 			// TODO: Need to figure out how to determine proper X and Y offsets
 			// TODO: We should be able to avoid this, if the transform is identity
-			//outFile << "%s%s.transform(", Indent(depth), m_currentCanvas->contextName.c_str()) << endl;
-			//RenderTransform(fillColor.c.b.matrix);
-			//outFile << ");");
+			outFile << contextName << ".transform(";
+			RenderTransform(fillColor.c.p.transform);
+			outFile << ");" << endl;
 
-			// Change the fill style
-			outFile  << contextName << ".fillStyle = " << currentState->fillStyle << ";" << endl;
-			break;
+			// Change fill style to pattern
+			outFile << contextName << ".fillStyle = " << currentState->fillStyle << ";" << endl;
 		}
-        case kNoneColor:
-        {
-            break;
-        }
+
+		break;
+	}
+	case (kGradient):
+	{
+		// Write gradient information
+		RenderGradient(fillColor.c.b, depth);
+
+		// Change to "gradient" fill style
+		// NOTE: Gradients are very rarely identical, so no special state optimization here
+		currentState->fillStyle = fillStyle;
+
+		// We need to fill *without* the current transform, so push an extra state (it will be automatically popped later);
+		//depth++;
+		//SetContextDrawingState(depth);
+
+		// Set gradient fill transform
+		// TODO: Need to figure out how to determine proper X and Y offsets
+		// TODO: We should be able to avoid this, if the transform is identity
+		//outFile << "%s%s.transform(", Indent(depth), m_currentCanvas->contextName.c_str()) << endl;
+		//RenderTransform(fillColor.c.b.matrix);
+		//outFile << ");");
+
+		// Change the fill style
+		outFile << contextName << ".fillStyle = " << currentState->fillStyle << ";" << endl;
+		break;
+	}
+	case kNoneColor:
+	{
+		break;
+	}
 	}
 }
 
@@ -1742,31 +1745,31 @@ void Canvas::GetFillStyle(const AIColor& color, AIReal alpha, std::string& fillS
 	// Based on kind of color
 	switch (color.kind)
 	{
-		case kGrayColor:
-        case kFourColor:
-        case kCustomColor:
-        case kThreeColor:
-		{
-			// Get the fill color value
-			fillStyle = GetColor(color, alpha);
-			break;
-		}
-		case kPattern:
-		{
-			// Return "pattern"
-			fillStyle = "pattern";
-			break;
-		}
-		case kGradient:
-		{
-			// Return "gradient"
-			fillStyle = "gradient";
-			break;
-		}
-        case kNoneColor:
-        {
-            break;
-        }
+	case kGrayColor:
+	case kFourColor:
+	case kCustomColor:
+	case kThreeColor:
+	{
+		// Get the fill color value
+		fillStyle = GetColor(color, alpha);
+		break;
+	}
+	case kPattern:
+	{
+		// Return "pattern"
+		fillStyle = "pattern";
+		break;
+	}
+	case kGradient:
+	{
+		// Return "gradient"
+		fillStyle = "gradient";
+		break;
+	}
+	case kNoneColor:
+	{
+		break;
+	}
 	}
 }
 
@@ -1811,7 +1814,7 @@ void Canvas::RenderStrokeInfo(const AIStrokeStyle& strokeStyle)
 	if (strokeStyle.dash.length != 0)
 	{
 		// Stroke uses a dash style that has no canvas equivalent
-		outFile  << "// This artwork uses an unsupported dash style" << endl;
+		outFile << "// This artwork uses an unsupported dash style" << endl;
 	}
 
 	// Stroke thickness
@@ -1821,7 +1824,7 @@ void Canvas::RenderStrokeInfo(const AIStrokeStyle& strokeStyle)
 		currentState->lineWidth = strokeStyle.width;
 
 		// Output line width change
-		outFile  << contextName << ".lineWidth = " <<
+		outFile << contextName << ".lineWidth = " <<
 			setiosflags(ios::fixed) << setprecision(1) <<
 			currentState->lineWidth << ";" << endl;
 	}
@@ -1829,34 +1832,34 @@ void Canvas::RenderStrokeInfo(const AIStrokeStyle& strokeStyle)
 	// Stroke color
 	switch (strokeStyle.color.kind)
 	{
-		case kGrayColor:
-        case kFourColor:
-        case kCustomColor:
-        case kThreeColor:
+	case kGrayColor:
+	case kFourColor:
+	case kCustomColor:
+	case kThreeColor:
+	{
+		// Allocate memory for stroke style value string
+		std::string strokeStyleValue;
+
+		// Get the stroke color value
+		strokeStyleValue = GetColor(strokeStyle.color, 1.0f);
+
+		// Is the stroke color different?
+		if (strokeStyleValue != currentState->strokeStyle)
 		{
-			// Allocate memory for stroke style value string
-			std::string strokeStyleValue;
+			// Change to new stroke color
+			currentState->strokeStyle = strokeStyleValue;
 
-			// Get the stroke color value
-			strokeStyleValue = GetColor(strokeStyle.color, 1.0f);
-
-			// Is the stroke color different?
-			if (strokeStyleValue != currentState->strokeStyle)
-			{
-				// Change to new stroke color
-				currentState->strokeStyle = strokeStyleValue;
-
-				// Change the stroke style
-				outFile  << contextName << ".strokeStyle = " << currentState->strokeStyle << ";" << endl;
-			}
-			break;
+			// Change the stroke style
+			outFile << contextName << ".strokeStyle = " << currentState->strokeStyle << ";" << endl;
 		}
-        case kPattern:
-        case kGradient:
-        case kNoneColor:
-        {
-            break;
-        }
+		break;
+	}
+	case kPattern:
+	case kGradient:
+	case kNoneColor:
+	{
+		break;
+	}
 	}
 
 	// Do we have to define both start and end cap styles?
@@ -1868,24 +1871,24 @@ void Canvas::RenderStrokeInfo(const AIStrokeStyle& strokeStyle)
 		// Output new stroke style
 		switch (currentState->lineCap)
 		{
-			case (kAIButtCap): 
-			{
-				// Butt line caps
-				outFile  << contextName << ".lineCap = \"butt\";" << endl;
-				break;
-			}
-			case (kAIRoundCap): 
-			{
-				// Round line caps
-				outFile  << contextName << ".lineCap = \"round\";" << endl;
-				break;
-			}
-			case (kAIProjectingCap): 
-			{
-				// Projecting/square line caps 
-				outFile  << contextName << ".lineCap = \"square\";" << endl;
-				break;
-			}
+		case (kAIButtCap):
+		{
+			// Butt line caps
+			outFile << contextName << ".lineCap = \"butt\";" << endl;
+			break;
+		}
+		case (kAIRoundCap):
+		{
+			// Round line caps
+			outFile << contextName << ".lineCap = \"round\";" << endl;
+			break;
+		}
+		case (kAIProjectingCap):
+		{
+			// Projecting/square line caps 
+			outFile << contextName << ".lineCap = \"square\";" << endl;
+			break;
+		}
 		}
 	}
 
@@ -1900,36 +1903,36 @@ void Canvas::RenderStrokeInfo(const AIStrokeStyle& strokeStyle)
 		// Output new join style
 		switch (currentState->lineJoin)
 		{
-			case (kAIMiterJoin): 
-			{
-				// Miter line joins (the default join type)
-				outFile  << contextName << ".lineJoin = \"miter\";" << endl;
+		case (kAIMiterJoin):
+		{
+			// Miter line joins (the default join type)
+			outFile << contextName << ".lineJoin = \"miter\";" << endl;
 
-				// Accomodate the miter limit (see NOTES to understand why this won't work) - set to "1" for now, which is basically the same as "Bevel"
-				// Although we don't include "Miter", since it's the default, we do need this hack ("10" is the canvas default)
-				// TODO: Report miter bug to IE9 team (Safari, Chrome, and Firefox work fine)
-				AIReal miterLimit = strokeStyle.miterLimit;
-				outFile  << contextName << ".miterLimit = " <<
-					setiosflags(ios::fixed) << setprecision(1) <<
-					miterLimit << ";" << endl;
+			// Accomodate the miter limit (see NOTES to understand why this won't work) - set to "1" for now, which is basically the same as "Bevel"
+			// Although we don't include "Miter", since it's the default, we do need this hack ("10" is the canvas default)
+			// TODO: Report miter bug to IE9 team (Safari, Chrome, and Firefox work fine)
+			AIReal miterLimit = strokeStyle.miterLimit;
+			outFile << contextName << ".miterLimit = " <<
+				setiosflags(ios::fixed) << setprecision(1) <<
+				miterLimit << ";" << endl;
 
-				// Assign new miter limit
-				currentState->miterLimit = miterLimit;
+			// Assign new miter limit
+			currentState->miterLimit = miterLimit;
 
-				break;
-			}
-			case (kAIRoundJoin): 
-			{
-				// Round line joins
-				outFile  << contextName << ".lineJoin = \"round\";" << endl;
-				break;
-			}
-			case (kAIBevelJoin): 
-			{
-				// Bevel line joins
-				outFile  << contextName << ".lineJoin = \"bevel\";" << endl;
-				break;
-			}
+			break;
+		}
+		case (kAIRoundJoin):
+		{
+			// Round line joins
+			outFile << contextName << ".lineJoin = \"round\";" << endl;
+			break;
+		}
+		case (kAIBevelJoin):
+		{
+			// Bevel line joins
+			outFile << contextName << ".lineJoin = \"bevel\";" << endl;
+			break;
+		}
 		}
 	}
 }
@@ -2067,7 +2070,7 @@ void Canvas::RenderGlyphRun(char *contents, const GlyphState& glyphState, unsign
 		glyphState.fontStyleName != currentState->fontStyleName)
 	{
 		// Output font and style information
-		outFile  << contextName << ".font = \"";
+		outFile << contextName << ".font = \"";
 		if (glyphState.fontStyleName != "Regular")
 		{
 			outFile << glyphState.fontStyleName << " ";
@@ -2089,7 +2092,7 @@ void Canvas::RenderGlyphRun(char *contents, const GlyphState& glyphState, unsign
 		SetContextDrawingState(depth);
 
 		// Render transform
-		outFile  << contextName << ".transform(";
+		outFile << contextName << ".transform(";
 		RenderTransform(glyphState.glyphMatrix);
 		outFile << ");" << endl;
 	}
@@ -2104,14 +2107,14 @@ void Canvas::RenderGlyphRun(char *contents, const GlyphState& glyphState, unsign
 		if (isTransformed)
 		{
 			// Allow transformation to position text
-			outFile  << contextName << ".fillText(\"" << contents << "\", " <<
+			outFile << contextName << ".fillText(\"" << contents << "\", " <<
 				setiosflags(ios::fixed) << setprecision(1) <<
 				0 << ", " << 0 << ");" << endl;
 		}
 		else
 		{
 			// Since there's no transformation, simply output text at correct point
-			outFile  << contextName << ".fillText(\"" << contents << "\", " <<
+			outFile << contextName << ".fillText(\"" << contents << "\", " <<
 				setiosflags(ios::fixed) << setprecision(1) <<
 				glyphState.glyphMatrix.tx << ", " << glyphState.glyphMatrix.ty << ");" << endl;
 		}
@@ -2127,14 +2130,14 @@ void Canvas::RenderGlyphRun(char *contents, const GlyphState& glyphState, unsign
 		if (isTransformed)
 		{
 			// Allow transformation to position text
-			outFile  << contextName << ".strokeText(\"" << contents << "\", " <<
+			outFile << contextName << ".strokeText(\"" << contents << "\", " <<
 				setiosflags(ios::fixed) << setprecision(1) <<
 				0 << ", " << 0 << ");" << endl;
 		}
 		else
 		{
 			// Since there's no transformation, simply output text at correct point
-			outFile  << contextName << ".strokeText(\"" << contents << "\", " <<
+			outFile << contextName << ".strokeText(\"" << contents << "\", " <<
 				setiosflags(ios::fixed) << setprecision(1) <<
 				glyphState.glyphMatrix.tx << ", " << glyphState.glyphMatrix.ty << ");" << endl;
 		}
@@ -2155,24 +2158,24 @@ AIBoolean Canvas::GlyphStatesMatch(const GlyphState& state1, const GlyphState& s
 	// TODO: Need to modify fill and stroke color comparisons (string values that we already generate?)
 	//       Should we also watch for a change in glyphMatrix.ty? Since vertical spacing would require a new output.
 	return (
-			(state1.fontSize == state2.fontSize) &&
-			(state1.verticalScale == state2.verticalScale) &&
-			(state1.horizontalScale == state2.horizontalScale) &&
-			(state1.glyphMatrix.a == state2.glyphMatrix.a) &&
-			(state1.glyphMatrix.b == state2.glyphMatrix.b) &&
-			(state1.glyphMatrix.c == state2.glyphMatrix.c) &&
-			(state1.glyphMatrix.d == state2.glyphMatrix.d) &&
-			(state1.fontName== state2.fontName) &&
-			(state1.fontStyleName == state2.fontStyleName) &&
-			(state1.textFilled == state2.textFilled) &&
-			(state1.fillStyle == state2.fillStyle) &&
-			(state1.textStroked == state2.textStroked) &&
-			(state1.strokeStyle == state2.strokeStyle) &&
-			(state1.strokeStyleValue.width == state2.strokeStyleValue.width) &&
-			(state1.strokeStyleValue.cap == state2.strokeStyleValue.cap) &&
-			(state1.strokeStyleValue.join == state2.strokeStyleValue.join) &&
-			(state1.strokeStyleValue.miterLimit == state2.strokeStyleValue.miterLimit)
-			);
+		(state1.fontSize == state2.fontSize) &&
+		(state1.verticalScale == state2.verticalScale) &&
+		(state1.horizontalScale == state2.horizontalScale) &&
+		(state1.glyphMatrix.a == state2.glyphMatrix.a) &&
+		(state1.glyphMatrix.b == state2.glyphMatrix.b) &&
+		(state1.glyphMatrix.c == state2.glyphMatrix.c) &&
+		(state1.glyphMatrix.d == state2.glyphMatrix.d) &&
+		(state1.fontName == state2.fontName) &&
+		(state1.fontStyleName == state2.fontStyleName) &&
+		(state1.textFilled == state2.textFilled) &&
+		(state1.fillStyle == state2.fillStyle) &&
+		(state1.textStroked == state2.textStroked) &&
+		(state1.strokeStyle == state2.strokeStyle) &&
+		(state1.strokeStyleValue.width == state2.strokeStyleValue.width) &&
+		(state1.strokeStyleValue.cap == state2.strokeStyleValue.cap) &&
+		(state1.strokeStyleValue.join == state2.strokeStyleValue.join) &&
+		(state1.strokeStyleValue.miterLimit == state2.strokeStyleValue.miterLimit)
+		);
 }
 
 // Gets all of the important state information for a glyph run
@@ -2206,14 +2209,14 @@ void Canvas::GetGlyphState(const ATE::IGlyphRun& glyphRun, GlyphState& glyphStat
 		sAIFont->GetSystemFontName(fontKey, systemFontName, 1024);
 		if (debug)
 		{
-			outFile  << "// Font system name: " << systemFontName << endl;
+			outFile << "// Font system name: " << systemFontName << endl;
 		}
 
 		// Determine font variant
 		sAIFont->GetFontStyleName(fontKey, fontStyleName, 1024);
 		if (debug)
 		{
-			outFile  << "// Font style name: " << fontStyleName << endl;
+			outFile << "// Font style name: " << fontStyleName << endl;
 		}
 
 		// Copy to glyph state
@@ -2262,9 +2265,9 @@ void Canvas::GetGlyphState(const ATE::IGlyphRun& glyphRun, GlyphState& glyphStat
 	sAIRealMath->AIRealMatrixConcatScale(&glyphState.glyphMatrix, glyphState.horizontalScale, glyphState.verticalScale);
 
 	// Concat by [1 0 0 -1 0 0] as text coordinates are going positive the other direction.
-	AIRealMatrix flipY = 
+	AIRealMatrix flipY =
 	{
-		1, 0, 0,  - 1, 0, 0
+		1, 0, 0,  -1, 0, 0
 	};
 	sAIRealMath->AIRealMatrixConcat(&flipY, &glyphState.glyphMatrix, &glyphState.glyphMatrix);
 
@@ -2517,19 +2520,19 @@ std::string Canvas::GetColor(const AIColor& color, AIReal alpha)
 	{
 		// Include alpha
 		colorValue << "\"rgba(" << (int)(rgbColor.c.rgb.red * 255.0f) <<
-						   ", " << (int)(rgbColor.c.rgb.green * 255.0f) <<
-						   ", " << (int)(rgbColor.c.rgb.blue * 255.0f) <<
-						   ", " << setiosflags(ios::fixed) << setprecision(2) << alpha <<
-						   ")\"";
+			", " << (int)(rgbColor.c.rgb.green * 255.0f) <<
+			", " << (int)(rgbColor.c.rgb.blue * 255.0f) <<
+			", " << setiosflags(ios::fixed) << setprecision(2) << alpha <<
+			")\"";
 	}
 	else
 	{
 		colorValue << "\"rgb(" << (int)(rgbColor.c.rgb.red * 255.0f) <<
-						   ", " << (int)(rgbColor.c.rgb.green * 255.0f) <<
-						   ", " << (int)(rgbColor.c.rgb.blue * 255.0f) <<
-						   ")\"";
+			", " << (int)(rgbColor.c.rgb.green * 255.0f) <<
+			", " << (int)(rgbColor.c.rgb.blue * 255.0f) <<
+			")\"";
 	}
-	
+
 	// Return the color string
 	return colorValue.str();
 }
@@ -2545,68 +2548,68 @@ void Canvas::ConvertColorToRGB(const AIColor& sourceColor, AIColor& rbgColor)
 
 	switch (sourceColor.kind)
 	{
-		case kGrayColor:
+	case kGrayColor:
+	{
+		srcSpace = kAIGrayColorSpace;
+		srcColor[0] = (SampleComponent)(1.0f - sourceColor.c.g.gray); // !!!! Why do I have to invert? Seems wrong !!!!
+		break;
+	}
+	case kFourColor:
+	{
+		srcSpace = kAICMYKColorSpace;
+		srcColor[0] = (SampleComponent)sourceColor.c.f.cyan;
+		srcColor[1] = (SampleComponent)sourceColor.c.f.magenta;
+		srcColor[2] = (SampleComponent)sourceColor.c.f.yellow;
+		srcColor[3] = (SampleComponent)sourceColor.c.f.black;
+		break;
+	}
+	case (kCustomColor):
+	{
+		sAICustomColor->GetCustomColor(sourceColor.c.c.color, &customColor);
+
+		// Convert custom color (why'd they make this different!?)
+		switch (customColor.kind)
 		{
-			srcSpace = kAIGrayColorSpace;
-			srcColor[0] = (SampleComponent)(1.0f - sourceColor.c.g.gray); // !!!! Why do I have to invert? Seems wrong !!!!
-			break;
-		}
-		case kFourColor:
+		case kCustomFourColor:
 		{
 			srcSpace = kAICMYKColorSpace;
-			srcColor[0] = (SampleComponent)sourceColor.c.f.cyan;
-			srcColor[1] = (SampleComponent)sourceColor.c.f.magenta;
-			srcColor[2] = (SampleComponent)sourceColor.c.f.yellow;
-			srcColor[3] = (SampleComponent)sourceColor.c.f.black;
+			srcColor[0] = (SampleComponent)customColor.c.f.cyan;
+			srcColor[1] = (SampleComponent)customColor.c.f.magenta;
+			srcColor[2] = (SampleComponent)customColor.c.f.yellow;
+			srcColor[3] = (SampleComponent)customColor.c.f.black;
 			break;
 		}
-		case (kCustomColor):
-		{
-			sAICustomColor->GetCustomColor(sourceColor.c.c.color, &customColor);
-
-			// Convert custom color (why'd they make this different!?)
-			switch (customColor.kind)
-			{
-				case kCustomFourColor:
-				{
-					srcSpace = kAICMYKColorSpace;
-					srcColor[0] = (SampleComponent)customColor.c.f.cyan;
-					srcColor[1] = (SampleComponent)customColor.c.f.magenta;
-					srcColor[2] = (SampleComponent)customColor.c.f.yellow;
-					srcColor[3] = (SampleComponent)customColor.c.f.black;
-					break;
-				}
-				case kCustomThreeColor:
-				{
-					// Pretty pointless :)
-					srcSpace = kAIRGBColorSpace;
-					srcColor[0] = (SampleComponent)customColor.c.rgb.red;
-					srcColor[1] = (SampleComponent)customColor.c.rgb.green;
-					srcColor[2] = (SampleComponent)customColor.c.rgb.blue;
-					break;
-				}
-                case kCustomLabColor:
-                {
-                    break;
-                }
-			}
-			break;
-		}
-		case kThreeColor:
+		case kCustomThreeColor:
 		{
 			// Pretty pointless :)
 			srcSpace = kAIRGBColorSpace;
-			srcColor[0] = (SampleComponent)sourceColor.c.rgb.red;
-			srcColor[1] = (SampleComponent)sourceColor.c.rgb.green;
-			srcColor[2] = (SampleComponent)sourceColor.c.rgb.blue;
+			srcColor[0] = (SampleComponent)customColor.c.rgb.red;
+			srcColor[1] = (SampleComponent)customColor.c.rgb.green;
+			srcColor[2] = (SampleComponent)customColor.c.rgb.blue;
 			break;
 		}
-        case kPattern:
-        case kGradient:
-        case kNoneColor:
-        {
-            break;
-        }
+		case kCustomLabColor:
+		{
+			break;
+		}
+		}
+		break;
+	}
+	case kThreeColor:
+	{
+		// Pretty pointless :)
+		srcSpace = kAIRGBColorSpace;
+		srcColor[0] = (SampleComponent)sourceColor.c.rgb.red;
+		srcColor[1] = (SampleComponent)sourceColor.c.rgb.green;
+		srcColor[2] = (SampleComponent)sourceColor.c.rgb.blue;
+		break;
+	}
+	case kPattern:
+	case kGradient:
+	case kNoneColor:
+	{
+		break;
+	}
 	}
 
 	// Perform the color conversion
@@ -2686,7 +2689,7 @@ void Canvas::AddBreadcrumb(const std::string& artName, unsigned int depth)
 		// Output path and name
 		if (depth > 1)
 		{
-			outFile  << "// ";
+			outFile << "// ";
 
 			// Loop through breadcrumbs
 			for (unsigned int i = 0; i < breadcrumbs.size(); i++)
