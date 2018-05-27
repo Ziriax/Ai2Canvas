@@ -239,23 +239,17 @@ void TypescriptDocument::SetFunctionOptions(const std::vector<std::string>& opti
 			std::string value = split[1];
 			CleanParameter(value);
 
-			// Process options based on type
-			// TODO: Can we make this more OO?
-			switch (function.type)
-			{
-			case Function::kDrawFunction:
-			{
-				DrawFunction& drawFunction = (DrawFunction&)function;
+			function.SetParameter(parameter, value);
+		}
+		else if (split.size() == 1)
+		{
+			// Clean the parameter name
+			std::string parameter = split[0];
+			CleanParameter(parameter);
+			ToLower(parameter);
 
-				// Set draw function parameter
-				drawFunction.SetParameter(parameter, value);
-			}
-			break;
-			case Function::kAnyFunction:
-			{
-			}
-			break;
-			}
+			// Flag parameter
+			function.SetParameter(parameter, "");
 		}
 	}
 }

@@ -44,6 +44,12 @@ namespace CanvasExport
 	extern std::ostream& outFile;
 	extern bool debug;
 
+	enum RenderMode
+	{
+		RM_Painter,
+		RM_HitTest
+	};
+
 	// Drop shadow parameters
 	// NOTE: Should this move to State? That's where it is in the canvas spec.
 	struct DropShadow
@@ -91,6 +97,7 @@ namespace CanvasExport
 		AIPathStyle							pathfinderStyle;		// Style for PathFinder artwork
 		AIBoolean							usePathfinderStyle;		// Track special kPluginArt/Pathfinder style (seems "hacky")
 		std::vector<std::string>			breadcrumbs;			// Path to the artwork
+		RenderMode							renderMode;				// Painter or hit-tester?
 
 		Canvas(const std::string& id, DocumentResources* documentResources);
 		~Canvas();

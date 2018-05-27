@@ -23,6 +23,7 @@
 #include "IllustratorSDK.h"
 #include "Canvas.h"
 #include <string>
+#include "IndentableStream.h"
 
 #define MAX_BREADCRUMB_DEPTH 256
 
@@ -56,6 +57,7 @@ Canvas::Canvas(const std::string& id, DocumentResources* documentResources)
 	this->contextName = "";
 	this->currentState = NULL;
 	this->usePathfinderStyle = false;
+	this->renderMode = RM_Painter;
 
 	// Push the first drawing state
 	PushState();
@@ -1248,6 +1250,17 @@ void Canvas::RenderPathStyle(const AIPathStyle& style, unsigned int depth)
 	if (style.clip)
 	{
 		outFile << contextName << ".clip();" << endl;
+	}
+	else if (renderMode == RM_HitTest)
+	{
+		outFile << "if (" << contextName << ".isPointInPath(x, y, ";
+
+		if (style.evenodd)
+		{
+			outFile << "'evenodd'" << endl;
+		}
+
+		outFile << "))" << endl << indent << "return true; " << endl << undent;
 	}
 	else
 	{

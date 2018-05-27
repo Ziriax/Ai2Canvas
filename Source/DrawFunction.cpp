@@ -97,8 +97,20 @@ void DrawFunction::RenderDrawFunction(const AIRealRect& documentBounds)
 			<< ", height: " << fixed << bounds.top - bounds.bottom
 			<< " }, " << endl;
 
-		// Painter function
-		outFile << "paint: (ctx: CanvasRenderingContext2D) => {" << endl;
+		const RenderMode renderMode = canvas->renderMode = isHitTest ? RM_HitTest : RM_Painter;
+
+		if (renderMode == RM_HitTest)
+		{
+			// HitTest function
+			outFile << "containsPoint: (ctx: CanvasRenderingContext2D, x: number, y: number): boolean => {" << endl;
+		}
+		else
+		{
+			// Painter function
+			outFile << "paint: (ctx: CanvasRenderingContext2D) => {" << endl;
+		}
+
+		// Code block
 		{
 			Indentation paint_indentation(outFile);
 
@@ -109,20 +121,20 @@ void DrawFunction::RenderDrawFunction(const AIRealRect& documentBounds)
 			//}
 
 			// Does this draw function have alpha changes?
-			if (hasAlpha)
+			if (renderMode == RM_Painter && hasAlpha)
 			{
 				// Grab the alpha value (so we can use it to compute new globalAlpha values during this draw function)
 				outFile << "var alpha = ctx.globalAlpha;" << endl;
 			}
 
 			// Will we be encountering gradients?
-			if (hasGradients)
+			if (renderMode == RM_Painter && hasGradients)
 			{
 				outFile << "var gradient: CanvasGradient;" << endl;
 			}
 
 			// Will we be encountering patterns?
-			if (hasPatterns)
+			if (renderMode == RM_Painter && hasPatterns)
 			{
 				outFile << "var pattern: CanvasPattern;" << endl;
 			}
@@ -150,13 +162,16 @@ void DrawFunction::RenderDrawFunction(const AIRealRect& documentBounds)
 			// Are we supposed to rasterize this function?
 			if (!rasterizeFileName.empty())
 			{
-				// Rasterize the first layer
-				// TODO: Note that this only rasterizes the first associated layer. What if this has multiple layers?
+				if (renderMode == RM_Painter)
+				{
+					// Rasterize the first layer
+					// TODO: Note that this only rasterizes the first associated layer. What if this has multiple layers?
 
-				// Output layer name
-				outFile << "// " << name;
+					// Output layer name
+					outFile << "// " << name;
 
-				canvas->RenderUnsupportedArt(layers[0]->artHandle, rasterizeFileName, 1);
+					canvas->RenderUnsupportedArt(layers[0]->artHandle, rasterizeFileName, 1);
+				}
 			}
 			else
 			{
@@ -170,7 +185,13 @@ void DrawFunction::RenderDrawFunction(const AIRealRect& documentBounds)
 					canvas->SetContextDrawingState(1);
 				}
 			}
+
+			if (renderMode == RM_HitTest)
+			{
+				outFile << "return false;" << endl;
+			}
 		}
+
 		outFile << "}" << endl;
 	}
 
@@ -352,5 +373,17 @@ void DrawFunction::SetParameter(const std::string& parameter, const std::string&
 			// TODO: This only works on the first layer
 			this->layers[0]->crop = false;
 		}
+	}
+
+	// HitTest
+	if (parameter == "hit" ||
+		parameter == "h")
+	{
+		if (debug)
+		{
+			outFile << "//     Found hit parameter" << endl;
+		}
+
+		this->isHitTest = true;
 	}
 }

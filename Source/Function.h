@@ -48,7 +48,7 @@ namespace CanvasExport
 		AIBoolean			translateOrigin;		// Do we need to translate the origin?
 		AIReal				translateOriginH;		// Horizontal origin translation as a percentage
 		AIReal				translateOriginV;		// Vertical origin translation as a percentage
-
+		AIBoolean			isHitTest;				// Is this is a pure hit-testing layer? Strokes will be ignored, fill replaced by 
 		// Set function parameters
 		virtual void		SetParameter(const std::string& parameter, const std::string& value) = 0;
 	};

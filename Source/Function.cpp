@@ -34,6 +34,7 @@ Function::Function()
 	this->translateOrigin = false;
 	this->translateOriginH = 0.0f;
 	this->translateOriginV = 0.0f;
+	this->isHitTest = false;
 
 	// Initialize bounds
 	// Start with absolute maximums and minimums (these will be "trimmed")
